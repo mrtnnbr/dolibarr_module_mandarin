@@ -91,16 +91,6 @@
 	}
 	// FIN N
 	
-	for ($i =1; $i < count($TData); $i++)
-	{
-		//if ($TData[$i]['CA'.$year_n_1] == 0 && isset($TData[$i-1]['CA'.$year_n_1])) $TData[$i]['CA'.$year_n_1] = $TData[$i-1]['CA'.$year_n_1];
-		//if ($TData[$i]['CA'.$year_n] == 0 && isset($TData[$i-1]['CA'.$year_n])) $TData[$i]['CA'.$year_n] = $TData[$i-1]['CA'.$year_n];
-		//if ($TData[$i]['heures'.$year_n_1] == 0 && isset($TData[$i-1]['heures'.$year_n_1])) $TData[$i]['heures'.$year_n_1] = $TData[$i-1]['heures'.$year_n_1];
-		//if ($TData[$i]['heures'.$year_n] == 0 && isset($TData[$i-1]['heures'.$year_n])) $TData[$i]['heures'.$year_n] = $TData[$i-1]['heures'.$year_n];
-	}
-	
-	//var_dump($TData);
-	
 	// Begin of page
 	llxHeader('', $langs->trans('mandarinTitleGraphCAHoraire'), '');
 	

@@ -15,8 +15,16 @@ subTitleHAxisGraphCACumule=Semaines
 
 
 # GRAPH CA HORAIRE
-permGraphCAHoraire=Autoriser la visualisation du graphique CA cumulé par heures travaillées (menu SIG)
+permGraphCAHoraire=Autoriser la visualisation du graphique CA par heures travaillées (menu SIG)
 linkMenuGraphCAHoraire=Graphique CA horaire
 titleGraphCAHoraire=CA / heures travaillées
-subTitleVAxisGraphCAHoraire=CA (rapport de %s) et Nombre d'heures
+subTitleVAxisGraphCAHoraire=CA / %s et Nombre d'heures à la semaine
 subTitleHAxisGraphCAHoraire=Semaines
+
+# GRAPH COUT INTERIM
+MANDARIN_OBJECTIF_COUT_INTERIM=Valeur par défaut de l'objectif coût intérim (vide pour ne pas le voir apparaître sur le graphique)
+permGraphInterim=Autoriser la visualisation du graphique coût intérim (menu utilisateurs)
+linkMenuGraphInterim=Graphique coût intérim
+titleGraphInterim=Coût intérim
+subTitleVAxisGraphInterim=Coût à la semaine
+subTitleHAxisGraphInterim=Semaines

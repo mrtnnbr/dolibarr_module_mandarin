@@ -188,10 +188,10 @@ class modmandarin extends DolibarrModules
 		$r++;
 		
 		$this->rights[$r][0] = $this->numero . $r;	// Permission id (must not be already used)
-		$this->rights[$r][1] = $langs->transnoentitiesnoconv('permGraphCoutInterim');	// Permission label
+		$this->rights[$r][1] = $langs->transnoentitiesnoconv('permGraphInterim');	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'graph';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		$this->rights[$r][5] = 'ca_cumule_interim';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][5] = 'cout_interim';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
 
 
@@ -230,14 +230,14 @@ class modmandarin extends DolibarrModules
 		
 		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=home,fk_leftmenu=users',			                // Put 0 if this is a top menu
 			'type'=>'left',			                // This is a Top menu entry
-			'titre'=>$langs->transnoentitiesnoconv('linkMenuGraphCoutInterim'),
+			'titre'=>$langs->transnoentitiesnoconv('linkMenuGraphInterim'),
 			'mainmenu'=>'',
 			'leftmenu'=>'',
-			'url'=>'/mandarin/graph_ca_cumule_interim.php',
+			'url'=>'/mandarin/graph_cout_interim.php',
 			'langs'=>'mandarin@mandarin',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>220,
 			'enabled'=>'$conf->mandarin->enabled',	// Define condition to show or hide menu entry. Use '$conf->mandarin->enabled' if entry must be visible if module is enabled.
-			'perms'=>'$user->rights->mandarin->graph->ca_cumule_interim',			                // Use 'perms'=>'$user->rights->mandarin->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->rights->mandarin->graph->cout_interim',			                // Use 'perms'=>'$user->rights->mandarin->level1->level2' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
 		);
@@ -316,7 +316,7 @@ class modmandarin extends DolibarrModules
 		
 		dol_include_once('/core/class/extrafields.class.php');
         $extrafields=new ExtraFields($this->db);
-		$res = $extrafields->addExtraField('type_contrat', 'Type Contrat', 'select', 0, '', 'user',0,0,'', 'a:1:{s:7:"options";a:1:{s:16:"interim:Intérim";N;}}');
+		$res = $extrafields->addExtraField('type_contrat', 'Type Contrat', 'select', 0, '', 'user',0,0,'', 'a:1:{s:7:"options";a:1:{s:7:"interim";s:8:"Intérim";}}');
 
 		return $this->_init($sql, $options);
 	}
