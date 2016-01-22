@@ -1,7 +1,7 @@
 <?php
 	require('config.php');
 	
-	if (!$user->rights->mandarin->graph->cout_interim) accessforbidden();
+	if (!$user->rights->mandarin->graph->total_heure) accessforbidden();
 	$langs->load('mandarin@mandarin');
 	
 	$PDOdb = new TPDOdb;
@@ -16,14 +16,13 @@
 	for ($i=1; $i<=53; $i++) 
 	{
 		$TData[$i] = array('week' => $i, $year_n_1 => 0, $year_n => 0);
-		if (!empty($conf->global->MANDARIN_OBJECTIF_COUT_INTERIM)) $TData[$i]['objectif'] = $conf->global->MANDARIN_OBJECTIF_COUT_INTERIM;
 	}
 	
 	$sql_n_1 = 'SELECT WEEKOFYEAR(ppt.task_date) AS `week`, SUM(ppt.task_duration) AS total_time
 				FROM llx_projet_task_time ppt
 				INNER JOIN llx_user_extrafields ue ON (ppt.fk_user = ue.fk_object)
 				WHERE YEAR(ppt.task_date) = '.$year_n_1.'
-				AND ue.type_contrat = "interim"
+				AND ue.type_contrat = "cdi"
 				GROUP BY `week` 
 				ORDER BY `week` ASC';
 
@@ -41,7 +40,7 @@
 				FROM llx_projet_task_time ppt
 				INNER JOIN llx_user_extrafields ue ON (ppt.fk_user = ue.fk_object)
 				WHERE YEAR(ppt.task_date) = '.$year_n.'
-				AND ue.type_contrat = "interim"
+				AND ue.type_contrat = "cdi"
 				GROUP BY `week` 
 				ORDER BY `week` ASC';
 			
@@ -55,23 +54,25 @@
 		}
 	}
 	
-	// Begin of page
-	llxHeader('', $langs->trans('mandarinTitleGraphInterim'), '');
+	// TODO Ajouter la requête qui fait la somme des temps dispo pour les CDI
 	
-	$listeview = new TListviewTBS('graphInterim');
+	// Begin of page
+	llxHeader('', $langs->trans('mandarinTitleGraphTotalHeure'), '');
+	
+	$listeview = new TListviewTBS('graphTotalHeure');
 	print $listeview->renderArray($PDOdb, $TData
 		,array(
 			'type' => 'chart'
 			,'liste'=>array(
-				'titre'=>$langs->transnoentitiesnoconv('titleGraphInterim')
+				'titre'=>$langs->transnoentitiesnoconv('titleGraphTotalHeure')
 			)
 			,'title'=>array(
 				'year' => $langs->transnoentitiesnoconv('Year')
 				,'week' => $langs->transnoentitiesnoconv('Week')
 			)
 			,'xaxis'=>'week'
-			,'hAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleHAxisGraphInterim'))
-			,'vAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleVAxisGraphInterim'))
+			,'hAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleHAxisGraphTotalHeure'))
+			,'vAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleVAxisGraphTotalHeure'))
 		)
 	);
 	
