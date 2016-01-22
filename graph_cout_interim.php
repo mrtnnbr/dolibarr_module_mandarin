@@ -5,7 +5,7 @@
 	$langs->load('mandarin@mandarin');
 	
 	$PDOdb = new TPDOdb;
-	$Tab = $TData = array();
+	$TData = array();
 	
 	$year_n_1 = GETPOST('year_n_1', 'int');
 	if (empty($year_n_1)) $year_n_1 = date('Y')-1;
@@ -15,7 +15,7 @@
 	// Formatage du tableau de base
 	for ($i=1; $i<=53; $i++) $TData[$i] = array('week' => $i, $year_n_1 => 0, $year_n => 0);
 	
-	$sql_n_1 = 'SELECT WEEKOFYEAR(date_valid) AS `week`, SUM(total) as total_ht
+	$sql_n_1 = 'SELECT WEEKOFYEAR(date_valid) AS `week`, sum(total) as total_ht
 			FROM llx_facture
 			WHERE YEAR(date_valid) = '.$year_n_1.'
 			GROUP BY `week` 
@@ -33,7 +33,7 @@
 	}
 	
 	
-	$sql_n = 'SELECT WEEKOFYEAR(date_valid) AS `week`, SUM(total) as total_ht
+	$sql_n = 'SELECT WEEKOFYEAR(date_valid) AS `week`, sum(total) as total_ht
 			FROM llx_facture
 			WHERE YEAR(date_valid) = '.$year_n.'
 			GROUP BY `week` 
@@ -58,22 +58,22 @@
 	
 	
 	// Begin of page
-	llxHeader('', $langs->trans('mandarinTitleGraphCACumule'), '');
+	llxHeader('', $langs->trans('mandarinTitleGraphCAInterim'), '');
 	
-	$listeview = new TListviewTBS('graphCACumule');
+	$listeview = new TListviewTBS('graphCAInterim');
 	print $listeview->renderArray($PDOdb, $TData
 		,array(
 			'type' => 'chart'
 			,'liste'=>array(
-				'titre'=>$langs->transnoentitiesnoconv('titleGraphCACumule')
+				'titre'=>$langs->transnoentitiesnoconv('titleGraphCAInterim')
 			)
 			,'title'=>array(
 				'year' => $langs->transnoentitiesnoconv('Year')
 				,'week' => $langs->transnoentitiesnoconv('Week')
 			)
 			,'xaxis'=>'week'
-			,'hAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleHAxisGraphCACumule'))
-			,'vAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleVAxisGraphCACumule'))
+			,'hAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleHAxisGraphCAInterim'))
+			,'vAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleVAxisGraphCAInterim'))
 		)
 	);
 	

@@ -14,9 +14,9 @@ subTitleVAxisGraphCACumule=Montant HT
 subTitleHAxisGraphCACumule=Semaines
 
 
-# GRAPH CA CUMULE HORAIRE
-permGraphCACumuleHoraire=Autoriser la visualisation du graphique CA cumulé par heures travaillées (menu SIG)
-linkMenuGraphCACumuleHoraire=Graphique CA horaire
-titleGraphCACumuleHoraire=CA / heures travaillées
-subTitleVAxisGraphCACumuleHoraire=CA (rapport de %s) et Nombre d'heures
-subTitleHAxisGraphCACumuleHoraire=Semaines
+# GRAPH CA HORAIRE
+permGraphCAHoraire=Autoriser la visualisation du graphique CA cumulé par heures travaillées (menu SIG)
+linkMenuGraphCAHoraire=Graphique CA horaire
+titleGraphCAHoraire=CA / heures travaillées
+subTitleVAxisGraphCAHoraire=CA (rapport de %s) et Nombre d'heures
+subTitleHAxisGraphCAHoraire=Semaines

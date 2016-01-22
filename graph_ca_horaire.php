@@ -1,12 +1,12 @@
 <?php
 	require('config.php');
 	
-	if (!$user->rights->mandarin->graph->ca_cumule_horaire) accessforbidden();
+	if (!$user->rights->mandarin->graph->ca_horaire) accessforbidden();
 	$langs->load('mandarin@mandarin');
 	
 	$PDOdb = new TPDOdb;
 	$TData = array();
-	$rapport_ca_ht = GETPOST('rapport_ca_ht', 'int');
+	$rapport_ca_ht = GETPOST('rapport_ca_ht', 'int'); // Permet de diviser le montant HT pour réduire l'affichage
 	if (empty($rapport_ca_ht)) $rapport_ca_ht = 1;
 	
 	$year_n_1 = GETPOST('year_n_1', 'int');
@@ -18,7 +18,7 @@
 	for ($i=1; $i<=53; $i++) $TData[$i] = array('week' => $i, 'CA'.$year_n_1 => 0, 'heures'.$year_n_1 => 0, 'CA'.$year_n => 0, 'heures'.$year_n => 0);
 	
 	// ANNEE N-1
-	$sql_n_1_CA = 'SELECT WEEKOFYEAR(date_valid) AS `week`, sum(total) as total_ht
+	$sql_n_1_CA = 'SELECT WEEKOFYEAR(date_valid) AS `week`, SUM(total) as total_ht
 					FROM llx_facture
 					WHERE YEAR(date_valid) = '.$year_n_1.'
 					GROUP BY `week` 
@@ -33,11 +33,9 @@
 	$resql = $db->query($sql_n_1_CA);
 	if ($resql)
 	{
-		$cumulCA = 0;
 		while ($line = $db->fetch_object($resql))
 		{
-			$cumulCA += $line->total_ht / $rapport_ca_ht;
-			$TData[$line->week]['CA'.$year_n_1] = $cumulCA;
+			$TData[$line->week]['CA'.$year_n_1] = $line->total_ht / $rapport_ca_ht;
 		}
 	}
 
@@ -57,7 +55,7 @@
 	// FIN N-1
 	
 	// ANNEE N
-	$sql_n_CA = 'SELECT WEEKOFYEAR(date_valid) AS `week`, sum(total) as total_ht
+	$sql_n_CA = 'SELECT WEEKOFYEAR(date_valid) AS `week`, SUM(total) as total_ht
 					FROM llx_facture
 					WHERE YEAR(date_valid) = '.$year_n.'
 					GROUP BY `week` 
@@ -72,11 +70,9 @@
 	$resql = $db->query($sql_n_CA);
 	if ($resql)
 	{
-		$cumulCA = 0;
 		while ($line = $db->fetch_object($resql))
 		{
-			$cumulCA += $line->total_ht / $rapport_ca_ht;
-			$TData[$line->week]['CA'.$year_n] = $cumulCA;
+			$TData[$line->week]['CA'.$year_n] = $line->total_ht / $rapport_ca_ht;
 		}
 	}
 	
@@ -106,7 +102,7 @@
 	//var_dump($TData);
 	
 	// Begin of page
-	llxHeader('', $langs->trans('mandarinTitleGraphCACumuleHoraire'), '');
+	llxHeader('', $langs->trans('mandarinTitleGraphCAHoraire'), '');
 	
 	$explorer = new stdClass();
 	$explorer->actions = array("dragToZoom", "rightClickToReset");
@@ -116,15 +112,15 @@
 		,array(
 			'type' => 'chart'
 			,'liste'=>array(
-				'titre'=>$langs->transnoentitiesnoconv('titleGraphCACumuleHoraire')
+				'titre'=>$langs->transnoentitiesnoconv('titleGraphCAHoraire')
 			)
 			,'title'=>array(
-				'year' => 'Année'
-				,'week' => 'Semaine'
+				'year' => $langs->transnoentitiesnoconv('Year')
+				,'week' => $langs->transnoentitiesnoconv('Week')
 			)
 			,'xaxis'=>'week'
-			,'hAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleHAxisGraphCACumuleHoraire'))
-			,'vAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleVAxisGraphCACumuleHoraire', $rapport_ca_ht))
+			,'hAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleHAxisGraphCAHoraire'))
+			,'vAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleVAxisGraphCAHoraire', $rapport_ca_ht))
 			,'explorer'=>$explorer
 		)
 	);
