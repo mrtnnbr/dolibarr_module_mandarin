@@ -2,6 +2,7 @@
 	require('config.php');
 	
 	if (!$user->rights->mandarin->graph->ca_cumule) accessforbidden();
+	$langs->load('mandarin@mandarin');
 	
 	$PDOdb = new TPDOdb;
 	$Tab = $TData = array();
@@ -14,9 +15,10 @@
 	// Formatage du tableau de base
 	for ($i=1; $i<=53; $i++) $TData[$i] = array('week' => $i, $year_n_1 => 0, $year_n => 0);
 	
-	$sql_n_1 = 'SELECT WEEKOFYEAR(date_valid) AS `week`, total as total_ht
+	$sql_n_1 = 'SELECT WEEKOFYEAR(date_valid) AS `week`, sum(total) as total_ht
 			FROM llx_facture
 			WHERE YEAR(date_valid) = '.$year_n_1.'
+			GROUP BY `week` 
 			ORDER BY `week` ASC';
 			
 	$resql = $db->query($sql_n_1);
@@ -31,9 +33,10 @@
 	}
 	
 	
-	$sql_n = 'SELECT WEEKOFYEAR(date_valid) AS `week`, total as total_ht
+	$sql_n = 'SELECT WEEKOFYEAR(date_valid) AS `week`, sum(total) as total_ht
 			FROM llx_facture
 			WHERE YEAR(date_valid) = '.$year_n.'
+			GROUP BY `week` 
 			ORDER BY `week` ASC';
 			
 	$resql = $db->query($sql_n);
@@ -69,8 +72,8 @@
 				,'week' => 'Semaine'
 			)
 			,'xaxis'=>'week'
-			,'hAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleHAxis'))
-			,'vAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleVAxis'))
+			,'hAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleHAxisGraphCACumule'))
+			,'vAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleVAxisGraphCACumule'))
 		)
 	);
 	
