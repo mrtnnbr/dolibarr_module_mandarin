@@ -173,18 +173,33 @@ class modmandarin extends DolibarrModules
 
 		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
 		// Example:
-		// $this->rights[$r][0] = $this->numero . $r;	// Permission id (must not be already used)
-		// $this->rights[$r][1] = 'Permision label';	// Permission label
-		// $this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
-		// $this->rights[$r][4] = 'level1';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		// $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
-		// $r++;
+		$this->rights[$r][0] = $this->numero . $r;	// Permission id (must not be already used)
+		$this->rights[$r][1] = $langs->transnoentitiesnoconv('permGraphCACumule');	// Permission label
+		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
+		$this->rights[$r][4] = 'graph';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$this->rights[$r][5] = 'ca_cumule';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+		$r++;
 
 
 		// Main menu entries
 		$this->menu = array();			// List of menus to add
 		$r=0;
-
+		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=sig',			                // Put 0 if this is a top menu
+			'type'=>'left',			                // This is a Top menu entry
+			'titre'=>$langs->transnoentitiesnoconv('linkMenuGraphCACumule'),
+			'mainmenu'=>'accountancy',
+			'leftmenu'=>'sig',
+			'url'=>'/mandarin/graph_ca_cumule.php',
+			'langs'=>'mandarin@mandarin',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position'=>200,
+			'enabled'=>'$conf->mandarin->enabled',	// Define condition to show or hide menu entry. Use '$conf->mandarin->enabled' if entry must be visible if module is enabled.
+			'perms'=>'$user->rights->mandarin->graph->ca_cumule',			                // Use 'perms'=>'$user->rights->mandarin->level1->level2' if you want your menu with a permission rules
+			'target'=>'',
+			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
+		);
+		$r++;
+		
+		
 		// Add here entries to declare new menus
 		//
 		// Example to declare a new Top Menu entry and its Left menu entry:
