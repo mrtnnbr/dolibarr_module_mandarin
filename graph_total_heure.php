@@ -15,10 +15,10 @@
 	// Formatage du tableau de base
 	for ($i=1; $i<=53; $i++) 
 	{
-		$TData[$i] = array('week' => $i, $year_n_1 => 0, $year_n => 0);
+		$TData[$i] = array('week' => $i, $year_n_1 => 0, $year_n => 0, 'Dispo CDI' => 0);
 	}
 	
-	$sql_n_1 = 'SELECT WEEKOFYEAR(ppt.task_date) AS `week`, SUM(ppt.task_duration) AS total_time
+	$sql_n_1 = 'SELECT WEEKOFYEAR(ppt.task_date) AS `week`, (ue.thm * (SUM(ppt.task_duration) / 3600)) AS total_thm
 				FROM llx_projet_task_time ppt
 				INNER JOIN llx_user_extrafields ue ON (ppt.fk_user = ue.fk_object)
 				WHERE YEAR(ppt.task_date) = '.$year_n_1.'
@@ -31,12 +31,12 @@
 	{
 		while ($line = $db->fetch_object($resql))
 		{
-			$TData[$line->week][$year_n_1] = $line->total_time / 3600;
+			$TData[$line->week][$year_n_1] = $line->total_thm;
 		}
 	}
 	
 	
-	$sql_n = 'SELECT WEEKOFYEAR(ppt.task_date) AS `week`, SUM(ppt.task_duration) AS total_time
+	$sql_n = 'SELECT WEEKOFYEAR(ppt.task_date) AS `week`, (ue.thm * (SUM(ppt.task_duration) / 3600)) AS total_thm
 				FROM llx_projet_task_time ppt
 				INNER JOIN llx_user_extrafields ue ON (ppt.fk_user = ue.fk_object)
 				WHERE YEAR(ppt.task_date) = '.$year_n.'
@@ -47,14 +47,56 @@
 	$resql = $db->query($sql_n);
 	if ($resql)
 	{
-		$cumul = 0;
 		while ($line = $db->fetch_object($resql))
 		{
-			$TData[$line->week][$year_n] = $line->total_time / 3600;
+			$TData[$line->week][$year_n] = $line->total_thm;
 		}
 	}
 	
 	// TODO Ajouter la requête qui fait la somme des temps dispo pour les CDI
+	$sql_cdi_n = 'SELECT u.datec, ue.dda, ue.horaire
+				FROM llx_user u 
+				INNER JOIN llx_user_extrafields ue ON (u.rowid = ue.fk_object)
+				WHERE ue.type_contrat = "cdi"
+				AND ue.horaire IS NOT NULL';
+			
+	$resql = $db->query($sql_cdi_n);
+	$Tab = array();
+	if ($resql)
+	{
+		while ($line = $db->fetch_object($resql))
+		{
+			$time_datec = strtotime($line->datec);
+			$year_datec = date('Y', $time_datec); 
+			if ($year_datec < $year_n) $week_start = 1;
+			else $week_start = date('W', $time_datec);
+			
+			if (empty($line->dda)) $week_end = 53;
+			else {
+				$time_dda = strtotime($line->dda);
+				$year_dda = date('Y', $time_dda);
+				if ($year_dda < $year_n) continue;
+				else $week_end = date('W', $time_dda);
+			}
+			
+			$Tab[] = array(
+				'week_start' => $week_start
+				,'week_end' => $week_end
+				,'horaire' => $line->horaire
+			);
+		}
+	}
+
+	if (count($Tab) > 0)
+	{
+		foreach ($Tab as &$TInfo)
+		{
+			for ($i=$TInfo['week_start']; $i <= $TInfo['week_end']; $i++)
+			{
+				$TData[$i]['Dispo CDI'] += $TInfo['horaire']; // Somme des horaires CDI dispo
+			}
+		}
+	}
 	
 	// Begin of page
 	llxHeader('', $langs->trans('mandarinTitleGraphTotalHeure'), '');

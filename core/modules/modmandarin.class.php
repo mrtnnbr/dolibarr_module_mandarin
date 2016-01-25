@@ -339,6 +339,15 @@ class modmandarin extends DolibarrModules
 		dol_include_once('/core/class/extrafields.class.php');
         $extrafields=new ExtraFields($this->db);
 		$res = $extrafields->addExtraField('type_contrat', 'Type Contrat', 'select', 0, '', 'user',0,0,'', 'a:1:{s:7:"options";a:1:{s:7:"interim";s:8:"Intérim";}}');
+		
+		$extrafields=new ExtraFields($this->db);
+		$res = $extrafields->addExtraField('thm', 'THM', 'double', 0, '', 'user');
+		
+		$extrafields=new ExtraFields($this->db);
+		$res = $extrafields->addExtraField('horaire', 'Horaire contractuel', 'varchar', 0, 150, 'user');
+		
+		$extrafields=new ExtraFields($this->db);
+		$res = $extrafields->addExtraField('dda', 'Date d\'ancienneté', 'date', 0, 10, 'user');
 
 		return $this->_init($sql, $options);
 	}
