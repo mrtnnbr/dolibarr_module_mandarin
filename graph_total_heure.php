@@ -53,7 +53,7 @@
 		}
 	}
 	
-	// TODO Ajouter la requête qui fait la somme des temps dispo pour les CDI
+
 	$sql_cdi_n = 'SELECT u.datec, ue.dda, ue.horaire
 				FROM llx_user u 
 				INNER JOIN llx_user_extrafields ue ON (u.rowid = ue.fk_object)
