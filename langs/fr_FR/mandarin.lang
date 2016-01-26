@@ -33,5 +33,12 @@ subTitleHAxisGraphInterim=Semaines
 permGraphTotalHeure=Autoriser la visualisation du graphique total heures travaillées (menu utilisateurs)
 linkMenuGraphTotalHeure=Graphique heures travaillées
 titleGraphTotalHeure=Heures travaillées
-subTitleVAxisGraphTotalHeure=heures à la semaine
+subTitleVAxisGraphTotalHeure=Heures à la semaine
 subTitleHAxisGraphTotalHeure=Semaines
+
+# GRAPH EFFECTIF
+permGraphEffectif=Autoriser la visualisation du graphique de l'effectif (menu utilisateurs)
+linkMenuGraphEffectif=Graphique effectif
+titleGraphEffectif=Effectif
+subTitleVAxisGraphEffectif=Personnels
+subTitleHAxisGraphEffectif=Semaines
