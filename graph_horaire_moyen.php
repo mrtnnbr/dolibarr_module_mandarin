@@ -12,18 +12,13 @@
 	$year_n = GETPOST('year_n', 'int');
 	if (empty($year_n)) $year_n = date('Y');
 	
-	$prefix_n = 'horaire moyen';
-	$prefix_n_1 = 'horaire moyen';
-	
 	// Formatage du tableau de base
 	for ($i=1; $i<=53; $i++) 
 	{
-		$TData[$i] = array('week' => $i, $prefix_n.$year_n_1 => 0, $prefix_n_1.$year_n => 0);
-		if (!empty($conf->global->MANDARIN_HORAIRE_MOYEN_NOMAL)) $TData[$i]['horaire normal'] = $conf->global->MANDARIN_HORAIRE_MOYEN_NOMAL;
+		$TData[$i] = array('week' => $i, 'horaire normal'.$year_n_1 => 0, 'horaire normal'.$year_n => 0, 'Dispo CDI' => 0);
 	}
 	
-	// N-1
-	$sql_n_1 = 'SELECT WEEKOFYEAR(ppt.task_date) AS `week`, ((SUM(ppt.task_duration) / 3600) / COUNT(DISTINCT ppt.fk_user)) AS horaire_moyen
+	$sql_n_1 = 'SELECT WEEKOFYEAR(ppt.task_date) AS `week`, (ue.thm * (SUM(ppt.task_duration) / 3600)) AS total_thm
 				FROM llx_projet_task_time ppt
 				INNER JOIN llx_user_extrafields ue ON (ppt.fk_user = ue.fk_object)
 				WHERE YEAR(ppt.task_date) = '.$year_n_1.'
@@ -36,51 +31,90 @@
 	{
 		while ($line = $db->fetch_object($resql))
 		{
-			$TData[$line->week][$prefix_n_1.$year_n_1] = $line->horaire_moyen;
+			$TData[$line->week][$year_n_1] = $line->total_thm;
 		}
 	}
-	// FIN N-1
 	
-	// N
-	$sql_n = 'SELECT WEEKOFYEAR(ppt.task_date) AS `week`, ((SUM(ppt.task_duration) / 3600) / COUNT(DISTINCT ppt.fk_user)) AS horaire_moyen
+	
+	$sql_n = 'SELECT WEEKOFYEAR(ppt.task_date) AS `week`, (ue.thm * (SUM(ppt.task_duration) / 3600)) AS total_thm
 				FROM llx_projet_task_time ppt
 				INNER JOIN llx_user_extrafields ue ON (ppt.fk_user = ue.fk_object)
 				WHERE YEAR(ppt.task_date) = '.$year_n.'
 				AND ue.type_contrat = "cdi"
 				GROUP BY `week` 
 				ORDER BY `week` ASC';
-
+			
 	$resql = $db->query($sql_n);
 	if ($resql)
 	{
 		while ($line = $db->fetch_object($resql))
 		{
-			$TData[$line->week][$prefix_n.$year_n] = $line->horaire_moyen;
+			$TData[$line->week][$year_n] = $line->total_thm;
 		}
 	}
-	// FIN N
+	
 
+	$sql_cdi_n = 'SELECT u.datec, ue.dda, ue.horaire
+				FROM llx_user u 
+				INNER JOIN llx_user_extrafields ue ON (u.rowid = ue.fk_object)
+				WHERE ue.type_contrat = "cdi"
+				AND ue.horaire IS NOT NULL';
+			
+	$resql = $db->query($sql_cdi_n);
+	$Tab = array();
+	if ($resql)
+	{
+		while ($line = $db->fetch_object($resql))
+		{
+			$time_datec = strtotime($line->datec);
+			$year_datec = date('Y', $time_datec); 
+			if ($year_datec < $year_n) $week_start = 1;
+			else $week_start = date('W', $time_datec);
+			
+			if (empty($line->dda)) $week_end = 53;
+			else {
+				$time_dda = strtotime($line->dda);
+				$year_dda = date('Y', $time_dda);
+				if ($year_dda < $year_n) continue;
+				else $week_end = date('W', $time_dda);
+			}
+			
+			$Tab[] = array(
+				'week_start' => $week_start
+				,'week_end' => $week_end
+				,'horaire' => $line->horaire
+			);
+		}
+	}
+
+	if (count($Tab) > 0)
+	{
+		foreach ($Tab as &$TInfo)
+		{
+			for ($i=$TInfo['week_start']; $i <= $TInfo['week_end']; $i++)
+			{
+				$TData[$i]['Dispo CDI'] += $TInfo['horaire']; // Somme des horaires CDI dispo
+			}
+		}
+	}
+	
 	// Begin of page
-	llxHeader('', $langs->trans('mandarinTitleGraphHoraireMoyen'), '');
+	llxHeader('', $langs->trans('mandarinTitleGraphTotalHeure'), '');
 	
-	$explorer = new stdClass();
-	$explorer->actions = array("dragToZoom", "rightClickToReset");
-	
-	$listeview = new TListviewTBS('graphHoraireMoyen');
+	$listeview = new TListviewTBS('graphTotalHeure');
 	print $listeview->renderArray($PDOdb, $TData
 		,array(
 			'type' => 'chart'
 			,'liste'=>array(
-				'titre'=>$langs->transnoentitiesnoconv('titleGraphHoraireMoyen')
+				'titre'=>$langs->transnoentitiesnoconv('titleGraphTotalHeure')
 			)
 			,'title'=>array(
 				'year' => $langs->transnoentitiesnoconv('Year')
 				,'week' => $langs->transnoentitiesnoconv('Week')
 			)
 			,'xaxis'=>'week'
-			,'hAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleHAxisGraphHoraireMoyen'))
-			,'vAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleVAxisGraphHoraireMoyen'))
-			,'explorer'=>$explorer
+			,'hAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleHAxisGraphTotalHeure'))
+			,'vAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleVAxisGraphTotalHeure'))
 		)
 	);
 	

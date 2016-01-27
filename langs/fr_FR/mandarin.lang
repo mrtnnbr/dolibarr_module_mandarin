@@ -50,3 +50,19 @@ linkMenuGraphHoraireMoyen=Graphique horaire moyen
 titleGraphHoraireMoyen=Horaire moyen
 subTitleVAxisGraphHoraireMoyen=Heures
 subTitleHAxisGraphHoraireMoyen=Semaines
+
+# GRAPH PROPAL FACTURE
+permGraphPropalFacture=Autoriser la visualisation du tableau de bord concernant les propal/facture par commercial (menu sig)
+mandarinTitlePropalFactureCommercial=Commercial
+mandarinTitlePropalFactureNbPropal=Nb propositions
+mandarinTitlePropalFacturePropalPercentNotSigned=Pourcent non signée
+mandarinTitlePropalFacturePropalNbClient=Nb clients
+mandarinTitlePropalFactureTopClient=Top client
+mandarinTitlePropalFactureTopClientPercent=Pourcent
+mandarinTitlePropalFactureCA=CA
+mandarinTitlePropalFacturePropalPercentCA=Pourcent CA
+mandarinPropalsPerCommercial=Propositions par chargé de clientèle
+mandarinInvoicesPerCommercial=Factures par chargé de clientèle
+linkMenuGraphPropalFacture=Graphique propal/facture par commercial
+titleGraphPalmaresPercentCA=Palmares pourcent CA
+titleGraphPercentCAPerCC=Pourcent CA par CC
