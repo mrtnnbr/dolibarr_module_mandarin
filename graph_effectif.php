@@ -71,7 +71,6 @@
 				else $week_end_n = 53;
 			}
 		
-		// TODO à vérifier pcq le nombre d'effectif passe d'un coup à 19 et alors qu'on devrais être à 18 puis un peu après passer à 19
 			if (!$skip_n_1)
 			{
 				for ($i = (int) $week_start_n_1; $i <= (int) $week_end_n_1; $i++)
