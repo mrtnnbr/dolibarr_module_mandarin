@@ -57,6 +57,9 @@
 	// Begin of page
 	llxHeader('', $langs->trans('mandarinTitleGraphInterim'), '');
 	
+	$explorer = new stdClass();
+	$explorer->actions = array("dragToZoom", "rightClickToReset");
+	
 	$listeview = new TListviewTBS('graphInterim');
 	print $listeview->renderArray($PDOdb, $TData
 		,array(
@@ -71,6 +74,7 @@
 			,'xaxis'=>'week'
 			,'hAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleHAxisGraphInterim'))
 			,'vAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleVAxisGraphInterim'))
+			,'explorer'=>$explorer
 		)
 	);
 	

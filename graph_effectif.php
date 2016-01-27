@@ -95,6 +95,9 @@
 	// Begin of page
 	llxHeader('', $langs->trans('mandarinTitleGraphEffectif'), '');
 	
+	$explorer = new stdClass();
+	$explorer->actions = array("dragToZoom", "rightClickToReset");
+	
 	$listeview = new TListviewTBS('graphCACumule');
 	print $listeview->renderArray($PDOdb, $TData
 		,array(
@@ -109,6 +112,7 @@
 			,'xaxis'=>'week'
 			,'hAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleHAxisGraphEffectif'))
 			,'vAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleVAxisGraphEffectif'))
+			,'explorer'=>$explorer
 		)
 	);
 	

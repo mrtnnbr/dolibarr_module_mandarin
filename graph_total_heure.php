@@ -101,6 +101,9 @@
 	// Begin of page
 	llxHeader('', $langs->trans('mandarinTitleGraphTotalHeure'), '');
 	
+	$explorer = new stdClass();
+	$explorer->actions = array("dragToZoom", "rightClickToReset");
+	
 	$listeview = new TListviewTBS('graphTotalHeure');
 	print $listeview->renderArray($PDOdb, $TData
 		,array(
@@ -115,6 +118,7 @@
 			,'xaxis'=>'week'
 			,'hAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleHAxisGraphTotalHeure'))
 			,'vAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleVAxisGraphTotalHeure'))
+			,'explorer'=>$explorer
 		)
 	);
 	
