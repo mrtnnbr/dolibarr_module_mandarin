@@ -42,3 +42,11 @@ linkMenuGraphEffectif=Graphique effectif
 titleGraphEffectif=Effectif
 subTitleVAxisGraphEffectif=Personnels
 subTitleHAxisGraphEffectif=Semaines
+
+# GRAPH HORAIRE MOYEN
+MANDARIN_HORAIRE_MOYEN_NOMAL=Valeur par défaut de l'horaire moyen (vide pour ne pas le voir apparaître sur le graphique)
+permGraphHoraireMoyen=Autoriser la visualisation du graphique horaire moyen (menu utilisateur)
+linkMenuGraphHoraireMoyen=Graphique horaire moyen
+titleGraphHoraireMoyen=Horaire moyen
+subTitleVAxisGraphHoraireMoyen=Heures
+subTitleHAxisGraphHoraireMoyen=Semaines
