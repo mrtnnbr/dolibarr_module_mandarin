@@ -18,7 +18,7 @@
 		$TData[$i] = array('week' => $i, $year_n_1 => 0, $year_n => 0, 'Dispo CDI' => 0);
 	}
 	
-	$sql_n_1 = 'SELECT WEEKOFYEAR(ppt.task_date) AS `week`, (ue.thm * (SUM(ppt.task_duration) / 3600)) AS total_thm
+	$sql_n_1 = 'SELECT WEEKOFYEAR(ppt.task_date) AS `week`, ((SUM(ppt.task_duration) / 3600)) AS total_heure
 				FROM llx_projet_task_time ppt
 				INNER JOIN llx_user_extrafields ue ON (ppt.fk_user = ue.fk_object)
 				WHERE YEAR(ppt.task_date) = '.$year_n_1.'
@@ -31,12 +31,12 @@
 	{
 		while ($line = $db->fetch_object($resql))
 		{
-			$TData[$line->week][$year_n_1] = $line->total_thm;
+			$TData[$line->week][$year_n_1] = $line->total_heure;
 		}
 	}
 	
 	
-	$sql_n = 'SELECT WEEKOFYEAR(ppt.task_date) AS `week`, (ue.thm * (SUM(ppt.task_duration) / 3600)) AS total_thm
+	$sql_n = 'SELECT WEEKOFYEAR(ppt.task_date) AS `week`, ((SUM(ppt.task_duration) / 3600)) AS total_heure
 				FROM llx_projet_task_time ppt
 				INNER JOIN llx_user_extrafields ue ON (ppt.fk_user = ue.fk_object)
 				WHERE YEAR(ppt.task_date) = '.$year_n.'
@@ -49,7 +49,7 @@
 	{
 		while ($line = $db->fetch_object($resql))
 		{
-			$TData[$line->week][$year_n] = $line->total_thm;
+			$TData[$line->week][$year_n] = $line->total_heure;
 		}
 	}
 	
