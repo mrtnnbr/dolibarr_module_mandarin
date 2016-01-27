@@ -230,7 +230,7 @@
 		}
 		else
 		{
-			print '<div class="warning">'.$langs->transnoentitiesnoconv('noData').'</div>';
+			print '<td colspan="16"><div class="warning">'.$langs->transnoentitiesnoconv('noData').'</div></td>';
 		}
 	print '</table>';
 	// Fin table info propal
@@ -321,7 +321,7 @@
 		}
 		else
 		{
-			print '<div class="warning">'.$langs->transnoentitiesnoconv('noData').'</div>';
+			print '<td colspan="16"><div class="warning">'.$langs->transnoentitiesnoconv('noData').'</div></td>';
 		}
 	print '</table>';
 	// Fin table info facture
@@ -329,13 +329,15 @@
 	
 	
 	// Graph %CA par client (7 premiers et le reste dans 'autres')
+	$year_n_1 = $year_n-1;
+	
 	$TPalmaresCAParClient = array();
 	$TValue = array();
 	
 	$sql = 'SELECT s.nom AS name, YEAR(f.datef) AS `year`, SUM(f.total) AS total_ht 
 			FROM '.MAIN_DB_PREFIX.'facture f 
 			INNER JOIN '.MAIN_DB_PREFIX.'societe s ON (s.rowid = f.fk_soc)
-			WHERE YEAR(f.datef) = '.($year_n-1).'
+			WHERE YEAR(f.datef) = '.$year_n_1.'
 			GROUP BY name';
 	
 	$resql = $db->query($sql);
@@ -372,7 +374,7 @@
 			'type' => 'chart'
 			,'chartType' => 'PieChart'
 			,'liste'=>array(
-				'titre'=>$langs->transnoentitiesnoconv('titleGraphPalmaresPercentCA')
+				'titre'=>$langs->transnoentitiesnoconv('titleGraphPalmaresPercentCA', $year_n_1)
 			)
 		)
 	);
@@ -387,7 +389,7 @@
 	$sql = 'SELECT u.firstname AS name, YEAR(f.datef) AS `year`, SUM(f.total) AS total_ht 
 			FROM '.MAIN_DB_PREFIX.'facture f 
 			INNER JOIN '.MAIN_DB_PREFIX.'user u ON (u.rowid = f.fk_user_author)
-			WHERE YEAR(f.datef) = '.($year_n-1).'
+			WHERE YEAR(f.datef) = '.$year_n_1.'
 			GROUP BY name';
 	
 	$resql = $db->query($sql);
@@ -415,7 +417,7 @@
 			'type' => 'chart'
 			,'chartType' => 'PieChart'
 			,'liste'=>array(
-				'titre'=>$langs->transnoentitiesnoconv('titleGraphPercentCAPerCC')
+				'titre'=>$langs->transnoentitiesnoconv('titleGraphPercentCAPerCC', $year_n_1)
 			)
 		)
 	);
