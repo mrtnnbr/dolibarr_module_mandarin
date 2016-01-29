@@ -15,7 +15,7 @@
 	// Formatage du tableau de base
 	for ($i=1; $i<=53; $i++) 
 	{
-		$TData[$i] = array('week' => $i, 'horaire normal'.$year_n_1 => 0, 'horaire normal'.$year_n => 0, 'Dispo CDI' => 0);
+		$TData[$i] = array('week' => $i, 'horaire normal'.$year_n_1 => 0, 'horaire normal'.$year_n => 0, 'Dispo CDI' => 0, $year_n_1 => 0, $year_n => 0);
 	}
 	
 	$sql_n_1 = 'SELECT WEEKOFYEAR(ppt.task_date) AS `week`, (ue.thm * (SUM(ppt.task_duration) / 3600)) AS total_thm
