@@ -68,9 +68,15 @@ titleGraphPalmaresPercentCA=Palmares pourcent CA (%s)
 titleGraphPercentCAPerCC=Pourcent CA par CC (%s)
 noData=Aucune donnée disponible
 
-# GRAPH HORAIRE MOYEN
+# GRAPH PROJECT
 permGraphProject=Autoriser la visualisation du graphique projets (menu projets)
 linkMenuGraphProject=Graphique projets
 titleGraphProject=Etat avancement des projets
 subTitleVAxisGraphProject=Temps (heure)
 subTitleHAxisGraphProject=Projets
+
+# GRAPH PROJECT TASK
+permGraphProjectTask=Autoriser la visualisation du graphique des tâches (onglet sur fiche projet)
+titleGraphProjectTask=Etat avancement des tâches
+subTitleVAxisGraphProjectTask=Progression
+subTitleHAxisGraphProjectTask=Tâches

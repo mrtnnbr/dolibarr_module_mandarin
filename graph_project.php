@@ -32,7 +32,7 @@
 			if (!isset($TData[$line->rowid]))
 			{
 				$TData[$line->rowid] = array(
-					'name'=>dol_sanitizeFileName($line->title)
+					'name'=>dol_escape_js($line->title)
 					,'Temps réelle'=>$temps_reelle
 					,'Temps théorique'=>$temps_theorique
 				);
@@ -51,7 +51,7 @@
 	$explorer = new stdClass();
 	$explorer->actions = array("dragToZoom", "rightClickToReset");
 	
-	$listeview = new TListviewTBS('graphCACumule');
+	$listeview = new TListviewTBS('graphProject');
 	print $listeview->renderArray($PDOdb, $TData
 		,array(
 			'type' => 'chart'
@@ -60,7 +60,7 @@
 				'titre'=>$langs->transnoentitiesnoconv('titleGraphProject')
 			)
 			,'hAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleHAxisGraphProject'))
-			,'vAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleVAxisGraphProject', $rapport_ca_ht))
+			,'vAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleVAxisGraphProject'))
 			,'explorer'=>$explorer
 		)
 	);
