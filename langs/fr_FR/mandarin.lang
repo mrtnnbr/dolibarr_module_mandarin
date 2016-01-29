@@ -67,3 +67,10 @@ linkMenuGraphPropalFacture=Graphique propal/facture par commercial
 titleGraphPalmaresPercentCA=Palmares pourcent CA (%s)
 titleGraphPercentCAPerCC=Pourcent CA par CC (%s)
 noData=Aucune donnée disponible
+
+# GRAPH HORAIRE MOYEN
+permGraphProject=Autoriser la visualisation du graphique projets (menu projets)
+linkMenuGraphProject=Graphique projets
+titleGraphProject=Etat avancement des projets
+subTitleVAxisGraphProject=Temps (heure)
+subTitleHAxisGraphProject=Projets
