@@ -71,8 +71,8 @@ noData=Aucune donnée disponible
 # GRAPH PROJECT
 permGraphProject=Autoriser la visualisation du graphique projets (menu projets)
 linkMenuGraphProject=Graphique projets
-titleGraphProject=Etat avancement des projets
-subTitleVAxisGraphProject=Temps (heure)
+titleGraphProject=Etat d'avancement des projets
+subTitleVAxisGraphProject=Progression
 subTitleHAxisGraphProject=Projets
 
 # GRAPH PROJECT TASK

@@ -9,14 +9,14 @@
 	
 	$fk_statut = GETPOST('fk_statut', 'int');
 	
-	$sql = 'SELECT p.rowid, p.title, p.dateo AS date_deb, p.datee AS date_fin
-				, pt.planned_workload AS temps_prevu
-				, pt.planned_workload * (pt.progress / 100) AS temps_theorique
-				, ptt.task_duration AS temps_reel
-				FROM '.MAIN_DB_PREFIX.'projet p
-				LEFT JOIN '.MAIN_DB_PREFIX.'projet_task pt ON (p.rowid = pt.fk_projet)
-				LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_time ptt ON (pt.rowid = ptt.fk_task)
-				WHERE p.entity = '.$conf->entity;
+	$sql = 'SELECT p.rowid, p.title, pt.rowid AS fk_task
+			, pt.planned_workload AS temps_prevu
+			, pt.planned_workload * (pt.progress / 100) AS temps_theorique
+			, SUM(ptt.task_duration) AS temps_reel
+			FROM llx_projet p
+			LEFT JOIN llx_projet_task pt ON (p.rowid = pt.fk_projet)
+			LEFT JOIN llx_projet_task_time ptt ON (pt.rowid = ptt.fk_task)
+			WHERE p.entity = 1';
 
 	if (!empty($fk_statut)) $sql .= ' AND p.fk_statut = '.$fk_statut;
 	$sql .= ' GROUP BY pt.rowid ORDER BY p.title';
@@ -26,22 +26,33 @@
 	{
 		while ($line = $db->fetch_object($resql))
 		{
-			$temps_reelle = $line->temps_reel / 3600;
-			$temps_theorique = $line->temps_theorique / 3600;
 			
 			if (!isset($TData[$line->rowid]))
 			{
 				$TData[$line->rowid] = array(
 					'name'=>dol_escape_js($line->title)
-					,'Temps réelle'=>$temps_reelle
-					,'Temps théorique'=>$temps_theorique
+					,'temps_prevu' => $line->temps_prevu
+					,'Progression réel'=>$line->temps_reel
+					,'Progression théorique'=> $line->temps_theorique
 				);
 			}
 			else
 			{
-				$TData[$line->rowid]['Temps réelle'] += $temps_reelle;
-				$TData[$line->rowid]['Temps théorique'] += $temps_theorique;
+				$TData[$line->rowid]['temps_prevu'] += $line->temps_prevu;
+				$TData[$line->rowid]['Progression réel'] += $line->temps_reel;
+				$TData[$line->rowid]['Progression théorique'] += $line->temps_theorique;
 			}
+		}
+
+		foreach ($TData as &$Tab)
+		{
+			$temps_prevu = $Tab['temps_prevu'];
+			unset($Tab['temps_prevu']);
+			
+			if (empty($temps_prevu)) unset($Tab);
+			
+			$Tab['Progression réel'] = ($Tab['Progression réel'] * 100) / $temps_prevu;
+			$Tab['Progression théorique'] = ($Tab['Progression théorique'] * 100) / $temps_prevu;
 		}
 	}
 	

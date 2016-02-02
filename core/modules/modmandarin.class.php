@@ -351,7 +351,7 @@ class modmandarin extends DolibarrModules
 			'titre'=>$langs->transnoentitiesnoconv('linkMenuGraphProject'),
 			'mainmenu'=>'',
 			'leftmenu'=>'',
-			'url'=>'/mandarin/graph_project.php',
+			'url'=>'/mandarin/graph_project.php?fk_statut=1',
 			'langs'=>'mandarin@mandarin',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'position'=>270,
 			'enabled'=>'$conf->mandarin->enabled',	// Define condition to show or hide menu entry. Use '$conf->mandarin->enabled' if entry must be visible if module is enabled.
