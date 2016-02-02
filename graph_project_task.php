@@ -3,7 +3,7 @@
 	dol_include_once('/projet/class/project.class.php');
 	dol_include_once('/core/lib/project.lib.php');
 	
-	if (!$user->rights->mandarin->graph->ca_horaire) accessforbidden();
+	if (!$user->rights->mandarin->graph->project_task) accessforbidden();
 	$langs->load('mandarin@mandarin');
 	
 	$progress_min = GETPOST('progress_min', 'int');
@@ -23,7 +23,6 @@
 				FROM '.MAIN_DB_PREFIX.'projet_task pt
 				LEFT JOIN '.MAIN_DB_PREFIX.'projet_task_time ptt ON (pt.rowid = ptt.fk_task)
 				WHERE pt.entity = '.$conf->entity.'
-				#AND pt.rowid = 1546 
 				AND pt.fk_projet = '.$id;
 				
 	if (!empty($progress_min)) $sql .= ' AND pt.progress >= '.$progress_min;
@@ -35,7 +34,6 @@
 	{
 		while ($line = $db->fetch_object($resql))
 		{
-			
 			if (empty($line->temps_prevu)) continue;
 			
 			$temps_prevu = (!empty($line->temps_prevu) ? $line->temps_prevu : 1);
@@ -45,7 +43,7 @@
 			$TData[] = array(
 				'name' => dol_escape_js($line->label).' ('.$line->ref.')'
 				,'Progression réelle' => $progress_reelle
-				,'Progression theorique' => $progress_theorique
+				,'Progression théorique' => $progress_theorique
 			);
 		}
 	}
@@ -55,7 +53,6 @@
 	
 	$head=project_prepare_head($object);
     dol_fiche_head($head, 'mandarin_rapport', $langs->trans("mandarinProjectTask"),0,($object->public?'projectpub':'project'));
-	
 	
 	$explorer = new stdClass();
 	$explorer->actions = array("dragToZoom", "rightClickToReset");

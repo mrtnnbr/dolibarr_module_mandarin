@@ -1,7 +1,7 @@
 <?php
 	require('config.php');
 	
-	if (!$user->rights->mandarin->graph->ca_horaire) accessforbidden();
+	if (!$user->rights->mandarin->graph->project) accessforbidden();
 	$langs->load('mandarin@mandarin');
 	
 	$PDOdb = new TPDOdb;
