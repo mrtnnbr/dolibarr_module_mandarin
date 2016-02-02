@@ -19,10 +19,10 @@
 	}
 	
 	$sql_n_1 = 'SELECT WEEKOFYEAR(ppt.task_date) AS `week`, ((SUM(ppt.task_duration) / 3600)) AS total_heure
-				FROM llx_projet_task_time ppt
-				INNER JOIN llx_user_extrafields ue ON (ppt.fk_user = ue.fk_object)
+				FROM '.MAIN_DB_PREFIX.'projet_task_time ppt
+				INNER JOIN '.MAIN_DB_PREFIX.'user_extrafields ue ON (ppt.fk_user = ue.fk_object)
 				WHERE YEAR(ppt.task_date) = '.$year_n_1.'
-				AND ue.type_contrat = "cdi"
+				AND ue.contrat = "cdi"
 				GROUP BY `week` 
 				ORDER BY `week` ASC';
 
@@ -37,10 +37,10 @@
 	
 	
 	$sql_n = 'SELECT WEEKOFYEAR(ppt.task_date) AS `week`, ((SUM(ppt.task_duration) / 3600)) AS total_heure
-				FROM llx_projet_task_time ppt
-				INNER JOIN llx_user_extrafields ue ON (ppt.fk_user = ue.fk_object)
+				FROM '.MAIN_DB_PREFIX.'projet_task_time ppt
+				INNER JOIN '.MAIN_DB_PREFIX.'user_extrafields ue ON (ppt.fk_user = ue.fk_object)
 				WHERE YEAR(ppt.task_date) = '.$year_n.'
-				AND ue.type_contrat = "cdi"
+				AND ue.contrat = "cdi"
 				GROUP BY `week` 
 				ORDER BY `week` ASC';
 			
@@ -54,11 +54,11 @@
 	}
 	
 
-	$sql_cdi_n = 'SELECT u.datec, ue.dda, ue.horaire
-				FROM llx_user u 
-				INNER JOIN llx_user_extrafields ue ON (u.rowid = ue.fk_object)
-				WHERE ue.type_contrat = "cdi"
-				AND ue.horaire IS NOT NULL';
+	$sql_cdi_n = 'SELECT ue.dda, ue.dds, u.weeklyhours
+				FROM '.MAIN_DB_PREFIX.'user u 
+				INNER JOIN '.MAIN_DB_PREFIX.'user_extrafields ue ON (u.rowid = ue.fk_object)
+				WHERE ue.contrat = "cdi"
+				AND u.weeklyhours IS NOT NULL';
 			
 	$resql = $db->query($sql_cdi_n);
 	$Tab = array();
@@ -66,23 +66,23 @@
 	{
 		while ($line = $db->fetch_object($resql))
 		{
-			$time_datec = strtotime($line->datec);
-			$year_datec = date('Y', $time_datec); 
-			if ($year_datec < $year_n) $week_start = 1;
-			else $week_start = date('W', $time_datec);
+			$time_date_entree = strtotime($line->dda);
+			$year_date_entree = date('Y', $time_date_entree); 
+			if ($year_date_entree < $year_n) $week_start = 1;
+			else $week_start = date('W', $time_date_entree);
 			
-			if (empty($line->dda)) $week_end = 53;
+			if (empty($line->dds)) $week_end = 53;
 			else {
-				$time_dda = strtotime($line->dda);
-				$year_dda = date('Y', $time_dda);
-				if ($year_dda < $year_n) continue;
-				else $week_end = date('W', $time_dda);
+				$time_dds = strtotime($line->dds);
+				$year_dds = date('Y', $time_dds);
+				if ($year_dds < $year_n) continue;
+				else $week_end = date('W', $time_dds);
 			}
 			
 			$Tab[] = array(
 				'week_start' => $week_start
 				,'week_end' => $week_end
-				,'horaire' => $line->horaire
+				,'horaire' => $line->weeklyhours
 			);
 		}
 	}

@@ -15,9 +15,10 @@
 	// Formatage du tableau de base
 	for ($i=1; $i<=53; $i++) $TData[$i] = array('week' => $i, 'permanents'.$year_n_1 => 0, 'effectif'.$year_n_1 => 0, 'permanents'.$year_n => 0, 'effectif'.$year_n => 0);
 	
-	$sql_effectif = 'SELECT u.datec, ue.dda, ue.type_contrat
+	$sql_effectif = 'SELECT ue.dda, ue.dds, ue.contrat AS type_contrat
 					FROM llx_user u 
-					INNER JOIN llx_user_extrafields ue ON (u.rowid = ue.fk_object)';
+					INNER JOIN llx_user_extrafields ue ON (u.rowid = ue.fk_object)
+					WHERE ue.dda IS NOT NULL';
 	
 	$resql = $db->query($sql_effectif);
 	$Tab = array();
@@ -25,14 +26,14 @@
 	{
 		while ($line = $db->fetch_object($resql))
 		{
-			$time_datec = strtotime($line->datec);
-			$year_datec = date('Y', $time_datec); 
+			$time_date_entree = strtotime($line->dda);
+			$year_date_entree = date('Y', $time_date_entree); 
 			
 			$Tab[] = array(
-				'time_datec' => $time_datec
-				,'year_datec' => $year_datec
-				,'datec' => $line->datec
+				'time_date_entree' => $time_date_entree
+				,'year_date_entree' => $year_date_entree
 				,'dda' => $line->dda
+				,'dds' => $line->dds
 				,'type_contrat' => $line->type_contrat
 			);
 		}
@@ -42,32 +43,32 @@
 			$skip_n = $skip_n_1 = false;
 			
 			// N-1
-			if ($year_datec < $year_n_1) $week_start_n_1 = 1;
-			elseif ($year_datec == $year_n_1) $week_start_n_1 = date('W', $TInfo['time_datec']);
+			if ($TInfo['year_date_entree'] < $year_n_1) $week_start_n_1 = 1;
+			elseif ($TInfo['year_date_entree'] == $year_n_1) $week_start_n_1 = date('W', $TInfo['time_date_entree']);
 			else $skip_n_1 = true;
 
-			if (empty($TInfo['dda'])) $week_end_n_1 = 53;
+			if (empty($TInfo['dds'])) $week_end_n_1 = 53;
 			else 
 			{
-				$time_dda = strtotime($TInfo['dda']);
-				$year_dda = date('Y', $time_dda);
-				if ($year_dda < $year_n_1) $skip_n_1 = true;
-				elseif ($year_dda == $year_n_1) $week_end_n_1 = date('W', $time_dda);
+				$time_dds = strtotime($TInfo['dds']);
+				$year_dds = date('Y', $time_dds);
+				if ($year_dds < $year_n_1) $skip_n_1 = true;
+				elseif ($year_dds == $year_n_1) $week_end_n_1 = date('W', $time_dds);
 				else $week_end_n_1 = 53;
 			}
 
 
 			// N
-			if ($year_datec < $year_n) $week_start_n = 1;
-			else $week_start_n = date('W', $TInfo['time_datec']);
+			if ($TInfo['year_date_entree'] < $year_n) $week_start_n = 1;
+			else $week_start_n = date('W', $TInfo['time_date_entree']);
 			
-			if (empty($TInfo['dda'])) $week_end_n = 53;
+			if (empty($TInfo['dds'])) $week_end_n = 53;
 			else 
 			{
-				$time_dda = strtotime($TInfo['dda']);
-				$year_dda = date('Y', $time_dda);
-				if ($year_dda < $year_n) $skip_n = true;
-				elseif ($year_dda == $year_n) $week_end_n = date('W', $time_dda);
+				$time_dds = strtotime($TInfo['dds']);
+				$year_dds = date('Y', $time_dds);
+				if ($year_dds < $year_n) $skip_n = true;
+				elseif ($year_dds == $year_n) $week_end_n = date('W', $time_dds);
 				else $week_end_n = 53;
 			}
 		

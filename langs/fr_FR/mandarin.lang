@@ -32,7 +32,7 @@ subTitleHAxisGraphInterim=Semaines
 # GRAPH HEURES TRAVAILLEES
 permGraphTotalHeure=Autoriser la visualisation du graphique total heures travaillées (menu utilisateurs)
 linkMenuGraphTotalHeure=Graphique heures travaillées
-titleGraphTotalHeure=Heures travaillées
+titleGraphTotalHeure=Heures travaillées (CDI)
 subTitleVAxisGraphTotalHeure=Heures à la semaine
 subTitleHAxisGraphTotalHeure=Semaines
 

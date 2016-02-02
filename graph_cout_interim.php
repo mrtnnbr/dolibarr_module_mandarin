@@ -23,7 +23,7 @@
 				FROM llx_projet_task_time ppt
 				INNER JOIN llx_user_extrafields ue ON (ppt.fk_user = ue.fk_object)
 				WHERE YEAR(ppt.task_date) = '.$year_n_1.'
-				AND ue.type_contrat = "interim"
+				AND ue.contrat = "interim"
 				GROUP BY `week` 
 				ORDER BY `week` ASC';
 
@@ -41,7 +41,7 @@
 				FROM llx_projet_task_time ppt
 				INNER JOIN llx_user_extrafields ue ON (ppt.fk_user = ue.fk_object)
 				WHERE YEAR(ppt.task_date) = '.$year_n.'
-				AND ue.type_contrat = "interim"
+				AND ue.contrat = "interim"
 				GROUP BY `week` 
 				ORDER BY `week` ASC';
 			
