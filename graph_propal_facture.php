@@ -382,15 +382,15 @@
 	
 	
 	
-	// Graph %CA par client (7 premiers et le reste dans 'autres')
-	$TPalmaresCAParClient = array();
+	// Graph %CA par CC
+	$TPalmaresCAParCC = array();
 	$TValue = array();
 	
-	$sql = 'SELECT u.firstname AS name, YEAR(f.datef) AS `year`, SUM(f.total) AS total_ht 
+	$sql = 'SELECT u.firstname, u.lastname, YEAR(f.datef) AS `year`, SUM(f.total) AS total_ht 
 			FROM '.MAIN_DB_PREFIX.'facture f 
 			INNER JOIN '.MAIN_DB_PREFIX.'user u ON (u.rowid = f.fk_user_author)
 			WHERE YEAR(f.datef) = '.$year_n_1.'
-			GROUP BY name';
+			GROUP BY u.rowid';
 	
 	$resql = $db->query($sql);
 	if ($resql)
@@ -398,13 +398,14 @@
 		$total_ca;
 		while ($line = $db->fetch_object($resql))
 		{
-			$TPalmaresCAParClient[$line->name] += $line->total_ht;
+			$name = strtoupper($line->lastname[0]).'. '.$line->firstname;
+			$TPalmaresCAParCC[$name] += $line->total_ht;
 			$total_ca += $line->total_ht;
 		}
 		
-		arsort($TPalmaresCAParClient);
+		arsort($TPalmaresCAParCC);
 		
-		foreach ($TPalmaresCAParClient as $name => $total)
+		foreach ($TPalmaresCAParCC as $name => $total)
 		{
 			$TValue[] = array('name' => $name, 'val' => $total);
 		}

@@ -63,8 +63,8 @@ mandarinTitlePropalFactureCA=CA
 mandarinTitlePropalFacturePropalPercentCA=Pourcent CA
 mandarinPropalsPerCommercial=Propositions par chargé de clientèle
 mandarinInvoicesPerCommercial=Factures par chargé de clientèle
-linkMenuGraphPropalFacture=Graphique propal/facture par commercial
-titleGraphPalmaresPercentCA=Palmares pourcent CA (%s)
+linkMenuGraphPropalFacture=Tableaux propal/facture par commercial
+titleGraphPalmaresPercentCA=Palmares pourcent CA par client (%s)
 titleGraphPercentCAPerCC=Pourcent CA par CC (%s)
 noData=Aucune donnée disponible
 
