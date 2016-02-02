@@ -32,14 +32,14 @@
 				$TData[$line->rowid] = array(
 					'name'=>dol_escape_js($line->title)
 					,'temps_prevu' => $line->temps_prevu
-					,'Progression réel'=>$line->temps_reel
+					,'Progression réelle'=>$line->temps_reel
 					,'Progression théorique'=> $line->temps_theorique
 				);
 			}
 			else
 			{
 				$TData[$line->rowid]['temps_prevu'] += $line->temps_prevu;
-				$TData[$line->rowid]['Progression réel'] += $line->temps_reel;
+				$TData[$line->rowid]['Progression réelle'] += $line->temps_reel;
 				$TData[$line->rowid]['Progression théorique'] += $line->temps_theorique;
 			}
 		}
@@ -51,7 +51,7 @@
 			
 			if (empty($temps_prevu)) unset($Tab);
 			
-			$Tab['Progression réel'] = ($Tab['Progression réel'] * 100) / $temps_prevu;
+			$Tab['Progression réelle'] = ($Tab['Progression réelle'] * 100) / $temps_prevu;
 			$Tab['Progression théorique'] = ($Tab['Progression théorique'] * 100) / $temps_prevu;
 		}
 	}
