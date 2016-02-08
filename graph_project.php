@@ -41,7 +41,7 @@
 		}
 
 		$TDataTransform = array();
-		foreach ($TData as $k=>&$Tab)
+		foreach ($TData as $fk_project=>&$Tab)
 		{
 			$temps_prevu = $Tab['temps_prevu'];
 			//unset($Tab['temps_prevu']);
@@ -50,12 +50,14 @@
 				continue;	
 			}
 			
-			$TDataTransform[] = array(
+			$TDataTransform[$fk_project] = array(
 				'name'=>dol_escape_js($Tab['name'])
 				
 				,'Progression réelle' => $temps_prevu>0 ? round($Tab['Progression réelle'] * 100 / $temps_prevu) : 100
 				,'Progression théorique' => $temps_prevu > 0 ? round($Tab['Progression théorique'] * 100 / $temps_prevu) : 100
 			);
+			
+			$TDataTransform[$fk_project]['Achat'] = _completeAchat($PDOdb, $fk_project);
 		}
 	}
 	//var_dump($TDataTransform);
@@ -81,3 +83,49 @@
 	
 	// End of page
 	llxFooter();
+	
+function _completeAchat(&$PDOdb,  $fk_project) {
+	//TODO comment calculer les achats théorique / réel ? 
+	
+	// méthode 1 PA propal / PA Commande Founisseur ?
+	//TODO methode en conf
+
+	$PDOdb->Execute("SELECT SUM(d.buy_price_ht * d.qty) as total_achat_prevu
+		FROM ".MAIN_DB_PREFIX."commandedet d
+		LEFT JOIN ".MAIN_DB_PREFIX."commande p ON (p.rowid=d.fk_commande) 
+		WHERE p.fk_projet=".$fk_project);
+	$obj = $PDOdb->Get_line();
+	$total_achat_prevu = $obj->total_achat_prevu;
+	
+	if(empty($total_achat_prevu)) {
+		$PDOdb->Execute("SELECT SUM(d.buy_price_ht * d.qty) as total_achat_prevu
+		FROM ".MAIN_DB_PREFIX."propaldet d
+		LEFT JOIN ".MAIN_DB_PREFIX."propal p ON (p.rowid=d.fk_propal) 
+		WHERE p.fk_projet=".$fk_project);
+		$obj = $PDOdb->Get_line();
+		$total_achat_prevu = $obj->total_achat_prevu;
+	}
+
+	$PDOdb->Execute("SELECT SUM(d.total_ht) as total_achat_effectue
+		FROM ".MAIN_DB_PREFIX."commande_fournisseurdet d
+		LEFT JOIN ".MAIN_DB_PREFIX."commande_fournisseur p ON (p.rowid=d.fk_commande) 
+		WHERE p.fk_projet=".$fk_project);
+	$obj = $PDOdb->Get_line();
+		
+	$total_achat_effectue = $obj->total_achat_effectue;
+	if(empty($total_achat_effectue)) {
+		
+		$PDOdb->Execute("SELECT SUM(d.total_ht) as total_achat_effectue
+			FROM ".MAIN_DB_PREFIX."facture_fourn_det d
+			LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn p ON (p.rowid=d.fk_facture_fourn) 
+			WHERE p.fk_projet=".$fk_project);
+		$obj = $PDOdb->Get_line();
+		$total_achat_effectue = $obj->total_achat_effectue;
+	} 
+	//var_dump($total_achat_effectue , $total_achat_prevu ,round($total_achat_effectue / $total_achat_prevu * 100));
+	return $total_achat_prevu>0 ? round($total_achat_effectue / $total_achat_prevu * 100) : 100; 
+	
+	
+	return 0;
+	
+}
