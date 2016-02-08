@@ -9,7 +9,7 @@
 	
 	$fk_statut = GETPOST('fk_statut', 'int');
 	
-	$sql = 'SELECT p.rowid, p.title, pt.rowid AS fk_task
+	$sql = 'SELECT p.rowid, p.ref, p.title, pt.rowid AS fk_task
 			, (SELECT SUM(task_duration) 
 				FROM '.MAIN_DB_PREFIX.'projet_task_time ptt
 				LEFT JOIN '.MAIN_DB_PREFIX.'projet_task t ON (t.rowid = ptt.fk_task)
@@ -32,7 +32,7 @@
 		{
 			
 			$TData[$line->rowid] = array(
-					'name'=>$line->title
+					'name'=>$line->ref.' - '.$line->title
 					,'temps_prevu' => $line->temps_prevu
 					,'Progression réelle'=>$line->temps_reel
 					,'Progression théorique'=> $line->temps_theorique
