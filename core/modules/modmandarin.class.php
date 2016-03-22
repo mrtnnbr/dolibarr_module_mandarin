@@ -271,7 +271,7 @@ class modmandarin extends DolibarrModules
 		);
 		$r++;
 		
-		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=home,fk_leftmenu=users',			                // Put 0 if this is a top menu
+		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=sig',			                // Put 0 if this is a top menu
 			'type'=>'left',			                // This is a Top menu entry
 			'titre'=>$langs->transnoentitiesnoconv('linkMenuGraphInterim'),
 			'mainmenu'=>'',
@@ -286,7 +286,7 @@ class modmandarin extends DolibarrModules
 		);
 		$r++;
 		
-		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=home,fk_leftmenu=users',			                // Put 0 if this is a top menu
+		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=sig',			                // Put 0 if this is a top menu
 			'type'=>'left',			                // This is a Top menu entry
 			'titre'=>$langs->transnoentitiesnoconv('linkMenuGraphTotalHeure'),
 			'mainmenu'=>'',
@@ -301,7 +301,7 @@ class modmandarin extends DolibarrModules
 		);
 		$r++;
 		
-		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=home,fk_leftmenu=users',			                // Put 0 if this is a top menu
+		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=sig',			                // Put 0 if this is a top menu
 			'type'=>'left',			                // This is a Top menu entry
 			'titre'=>$langs->transnoentitiesnoconv('linkMenuGraphHoraireMoyen'),
 			'mainmenu'=>'',
@@ -316,7 +316,7 @@ class modmandarin extends DolibarrModules
 		);
 		$r++;
 		
-		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=home,fk_leftmenu=users',			                // Put 0 if this is a top menu
+		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=sig',			                // Put 0 if this is a top menu
 			'type'=>'left',			                // This is a Top menu entry
 			'titre'=>$langs->transnoentitiesnoconv('linkMenuGraphEffectif'),
 			'mainmenu'=>'',
