@@ -68,6 +68,11 @@ titleGraphPalmaresPercentCA=Palmares pourcent CA par client (%s)
 titleGraphPercentCAPerCC=Pourcent CA par CC (%s)
 noData=Aucune donnée disponible
 
+#GRAPH EXCES TIMPESPENT
+permGraphProjectExceed=Autoriser la visualisation des projets en dépassement
+linkMenuProjectExceedReport=Projets en dépassement
+ReportExceed=Rapport dépassement projet
+
 # GRAPH PROJECT
 permGraphProject=Autoriser la visualisation du graphique projets (menu projets)
 linkMenuGraphProject=Graphique projets
