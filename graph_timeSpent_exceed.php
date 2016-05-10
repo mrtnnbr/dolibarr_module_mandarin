@@ -51,17 +51,17 @@
 						$projet=$proj['projet'];
 						$societe = new Societe($db);
 						$societe->fetch($projet->socid);
-						
-						print '<tr>';
-							print '<td>'.$projet->getNomUrl(1).'</td>';
-							print '<td>'.$societe->getNomUrl(1).'</td>';
-							print '<td>'.date('d/m/Y', strtotime($projet->date_start)).'</td>';
-							print '<td>'.date('d/m/Y', strtotime($projet->date_end)).'</td>';
-							print '<td>'.convertSecondToTime($proj['timeplanned']).'</td>';
-							print '<td>'.convertSecondToTime($proj['timespent']).'</td>';
-							print '<td>'.convertSecondToTime($proj['exceed']).'</td>';
-						print '</tr>';
-						
+						?>
+						<tr>
+							<td><?php echo $projet->getNomUrl(1) ?></td>
+							<td><?php echo $societe->getNomUrl(1) ?></td>
+							<td><?php echo date('d/m/Y', strtotime($projet->date_start)) ?></td>
+							<td><?php echo date('d/m/Y', strtotime($projet->date_end)) ?></td>
+							<td><?php echo convertSecondToTime($proj['timeplanned']) ?></td>
+							<td><?php echo convertSecondToTime($proj['timespent']) ?></td>
+							<td <?php echo ($proj['percentage'] < 100) ? ' style="color:#FF8000;" ' : ' style="color:red;font-weight: bold" ' ?> ><?php echo convertSecondToTime($proj['exceed']) ?></td>
+						</tr>
+					<?php	
 					}
 					?>
 				</tbody>
@@ -99,14 +99,18 @@
 					$timeplanned+=$task->planned_workload;
 					$exceed+=$timespent-$timeplanned;
 				}
-				//var_dump($exceed);
 				
-				if($exceed > 0){
+				if ($timeplanned != 0)$percentage = ($timespent/$timeplanned)*100;
+				else if($timespent > $timeplanned)$percentage = 100;
+				else $percentage = 0;
+				
+				if($percentage >= 80){
 					$TProject[]= array(
 						'projet'       => $projet,
 						'timespent'    => $timespent,
 						'timeplanned'  => $timeplanned,
-						'exceed'       => $exceed
+						'exceed'       => $exceed,
+						'percentage'   => $percentage
 					);
 				}					
 			}
