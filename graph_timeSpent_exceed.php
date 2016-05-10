@@ -57,9 +57,9 @@
 							<td><?php echo $societe->getNomUrl(1) ?></td>
 							<td><?php echo date('d/m/Y', strtotime($projet->date_start)) ?></td>
 							<td><?php echo date('d/m/Y', strtotime($projet->date_end)) ?></td>
-							<td><?php echo convertSecondToTime($proj['timeplanned']) ?></td>
-							<td><?php echo convertSecondToTime($proj['timespent']) ?></td>
-							<td <?php echo ($proj['percentage'] < 100) ? ' style="color:#FF8000;" ' : ' style="color:red;font-weight: bold" ' ?> ><?php echo convertSecondToTime($proj['exceed']) ?></td>
+							<td <?php echo ($proj['percentage'] < 100) ? ' style="color:#FF8000;font-weight: bold"" ' : ' style="color:red;font-weight: bold" ' ?> ><?php echo convertSecondToTime($proj['timeplanned']) ?></td>
+							<td <?php echo ($proj['percentage'] < 100) ? ' style="color:#FF8000;font-weight: bold"" ' : ' style="color:red;font-weight: bold" ' ?> ><?php echo convertSecondToTime($proj['timespent']) ?></td>
+							<td <?php echo ($proj['percentage'] < 100) ? ' style="color:#FF8000;font-weight: bold"" ' : ' style="color:red;font-weight: bold" ' ?> ><?php echo convertSecondToTime($proj['exceed']) ?></td>
 						</tr>
 					<?php	
 					}
@@ -109,7 +109,7 @@
 						'projet'       => $projet,
 						'timespent'    => $timespent,
 						'timeplanned'  => $timeplanned,
-						'exceed'       => $exceed,
+						'exceed'       => $exceed > 0 ? $exceed : 0,
 						'percentage'   => $percentage
 					);
 				}					
