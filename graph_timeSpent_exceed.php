@@ -44,10 +44,16 @@
 				<tbody>
 					<?php
 					$TProjet=getProjectExceeded($fk_statut);
-					
+					$total_timespent=0;
+					$total_timeplanned=0;
+					$total_exceed=0;
 					
 					foreach ($TProjet as $proj){
 						
+						
+						$total_timespent+=$proj['timespent'];
+						$total_timeplanned+=$proj['timeplanned'];
+						$total_exceed+=$proj['exceed'];
 						$projet=$proj['projet'];
 						$societe = new Societe($db);
 						$societe->fetch($projet->socid);
@@ -64,6 +70,17 @@
 					<?php	
 					}
 					?>
+					<tfoot>
+		                <tr style="font-weight: bold;">
+		                    <td>Totaux</td>
+		                    <td></td>
+		                    <td></td>
+		                    <td></td>
+		                    <td><?php echo convertSecondToTime($total_timeplanned) ?></td>
+		                    <td><?php echo convertSecondToTime($total_timespent) ?></td>
+		                    <td><?php echo convertSecondToTime($total_exceed) ?></td>
+		            	</tr>
+		            </tfoot>
 				</tbody>
 			</table>
 		</div>
