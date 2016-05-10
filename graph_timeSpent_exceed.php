@@ -55,8 +55,8 @@
 						<tr>
 							<td><?php echo $projet->getNomUrl(1) ?></td>
 							<td><?php echo $societe->getNomUrl(1) ?></td>
-							<td><?php echo date('d/m/Y', strtotime($projet->date_start)) ?></td>
-							<td><?php echo date('d/m/Y', strtotime($projet->date_end)) ?></td>
+							<td><?php echo date('d/m/Y', intval($projet->date_start)) ?></td>
+							<td><?php echo ($projet->date_end !=null) ? date('d/m/Y', intval($projet->date_end)) : ""?></td>
 							<td <?php echo ($proj['percentage'] < 100) ? ' style="color:#FF8000;font-weight: bold"" ' : ' style="color:red;font-weight: bold" ' ?> ><?php echo convertSecondToTime($proj['timeplanned']) ?></td>
 							<td <?php echo ($proj['percentage'] < 100) ? ' style="color:#FF8000;font-weight: bold"" ' : ' style="color:red;font-weight: bold" ' ?> ><?php echo convertSecondToTime($proj['timespent']) ?></td>
 							<td <?php echo ($proj['percentage'] < 100) ? ' style="color:#FF8000;font-weight: bold"" ' : ' style="color:red;font-weight: bold" ' ?> ><?php echo convertSecondToTime($proj['exceed']) ?></td>
