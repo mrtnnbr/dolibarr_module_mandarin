@@ -46,6 +46,7 @@ subTitleHAxisGraphEffectif=Semaines
 #GRAPH CAPACITE DE PRODUCTION PERIODE
 RapportCapaciteProduction=Capacité de production 
 timeInput=Temps saisi sur la période
+set_MANDARIN_GRAPH_TIME_ON_PERIOD=Afficher le rapport de temps saisi/capacité de production.
 
 # GRAPH HORAIRE MOYEN
 MANDARIN_HORAIRE_MOYEN_NOMAL=Valeur par défaut de l'horaire moyen (vide pour ne pas le voir apparaître sur le graphique)
