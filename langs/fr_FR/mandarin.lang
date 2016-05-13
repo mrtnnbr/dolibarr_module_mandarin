@@ -90,3 +90,8 @@ permGraphProjectTask=Autoriser la visualisation du graphique des tâches (onglet
 titleGraphProjectTask=Etat avancement des tâches
 subTitleVAxisGraphProjectTask=Progression
 subTitleHAxisGraphProjectTask=Tâches
+
+# RAPPORT EVENEMENTS PAR COMMERCIAUX
+permReportActionByUser=Autoriser la visualisation du rapport nombre événements par commerciaux (menu agenda)
+Reports=Rapports
+RapportEvenementsParCommerciaux=Evénements par commerciaux
