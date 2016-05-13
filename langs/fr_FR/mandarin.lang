@@ -95,3 +95,4 @@ subTitleHAxisGraphProjectTask=Tâches
 permReportActionByUser=Autoriser la visualisation du rapport nombre événements par commerciaux (menu agenda)
 Reports=Rapports
 RapportEvenementsParCommerciaux=Evénements par commerciaux
+EventType=Types d'événements

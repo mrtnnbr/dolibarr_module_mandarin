@@ -18,27 +18,11 @@ if (empty($year_n)) $year_n = date('Y');
 // Begin of page
 llxHeader('', $langs->trans('mandarinTitleGraphCAHoraire'), '');
 
+print_fiche_titre($langs->trans('RapportEvenementsParCommerciaux'));
+
 $TData = get_data_tab();
-draw_table($TData, get_list_id_user($TData));
+draw_table($TData, get_list_id_user($TData), get_tab_label_action_comm());
 
-/*$explorer = new stdClass();
-$explorer->actions = array("dragToZoom", "rightClickToReset");
-
-$listeview = new TListviewTBS('graphCACumule');
-print $listeview->renderArray($PDOdb, $TData
-	,array(
-		'type' => 'chart'
-		,'liste'=>array(
-			'titre'=>$langs->transnoentitiesnoconv('titleGraphCAHoraire')
-		)
-		,'title'=>array(
-			'year' => $langs->transnoentitiesnoconv('Year')
-			,'week' => $langs->transnoentitiesnoconv('Week')
-		)
-	)
-);*/
-
-// End of page
 llxFooter();
 
 function get_data_tab() {
@@ -62,6 +46,20 @@ function get_data_tab() {
 	
 }
 
+function get_tab_label_action_comm() {
+	
+	global $db;
+	
+	$TLabel = array();
+	
+	$sql = 'SELECT code, libelle FROM '.MAIN_DB_PREFIX.'c_actioncomm';
+	$resql = $db->query($sql);
+	while($res = $db->fetch_object($resql)) $TLabel[$res->code] = $res->libelle;
+	
+	return $TLabel;
+	
+}
+
 function get_list_id_user(&$TData) {
 	
 	global $db;
@@ -79,41 +77,72 @@ function get_list_id_user(&$TData) {
 	
 }
 
-function draw_table(&$TData, &$TIDUser) {
+function draw_table(&$TData, &$TIDUser, &$TLabelActionComm) {
 	
 	global $db, $langs;
 	
+	$langs->load('agenda');
+	
 	print '<table class="noborder" width="100%">';
+	
 	$TTypeEvents = array_keys($TData);
+	asort($TTypeEvents);
+	
 	print '<tr class="liste_titre">';
 	print '<td>';
-	print $langs->trans('User');
+	print $langs->trans('Users'). ' / '.$langs->trans('EventType');
 	print '</td>';
-	foreach($TTypeEvents as $type) print '<td>'.$type.'</td>';
+	
+	foreach($TTypeEvents as $type) {
+		$key=$langs->trans("Action".strtoupper($type));
+        $valuetoshow=($type && $key != "Action".strtoupper($type)?$key:$TLabelActionComm[$type]);
+		print '<td>'.$valuetoshow.'</td>';
+	}
+	
+	print '<td>';
+	print 'Total';
+	print '</td>';
 	print '</tr>';
 	
 	$u = new User($db);
 	
 	$class = array('pair', 'impair');
-	$_class = true;
+	$var = true;
 	
+	$TNBTotalType = array(); // Contient le nombre d'occurences pour chaque type d'événement, tout user confondu
 	foreach($TIDUser as $id_user) {
 		
-		print '<tr class="'.$class[$_class].'">';
+		print '<tr class="'.$class[$var].'">';
 		print '<td>';
 		$u->fetch($id_user);
 		print $u->getNomUrl(1);
 		print '</td>';
+		
+		$nb_total_user = 0; // Contient le nombre d'occurences pour chaque user, tout type d'événement confondu
 		foreach($TTypeEvents as $type) {
 			print '<td>';
 			print $TData[$type][$id_user];
 			print '</td>';
+			$nb_total_user+=$TData[$type][$id_user];
+			$TNBTotalType[$type]+=$TData[$type][$id_user];
 		}
+		
+		print '<td style="color:#332266">';
+		print $nb_total_user;
+		print '</td>';
 		print '</tr>';
 		
-		$_class = !$_class;
+		$var = !$var;
 		
 	}
+	
+	print '<tr class="liste_total">';
+	print '<td>';
+	print 'Total';
+	print '</td>';
+	foreach($TTypeEvents as $type) print '<td>'.$TNBTotalType[$type].'</td>';
+	print '</tr>';
+	
 	print '</table>';
 	
 }
