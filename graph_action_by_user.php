@@ -17,7 +17,7 @@ $year_n = GETPOST('year_n', 'int');
 if (empty($year_n)) $year_n = date('Y');
 
 // Begin of page
-llxHeader('', $langs->trans('mandarinTitleGraphCAHoraire'), '');
+llxHeader('', $langs->trans('mandarinTitleGraphEventByUser'), '');
 
 print_fiche_titre($langs->trans('RapportEvenementsParCommerciaux'));
 
