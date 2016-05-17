@@ -13,6 +13,7 @@ elseif(user_est_responsable_hierarchique()) $userid = $user->id;
 // Begin of page
 llxHeader('', $langs->trans('mandarinTitleGraphEventByUser'), '');
 
+print dol_get_fiche_head('RapportEvenementsParCommerciaux');
 print_fiche_titre($langs->trans('RapportEvenementsParCommerciaux'));
 
 print_form_filter($userid);
