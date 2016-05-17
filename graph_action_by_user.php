@@ -6,19 +6,23 @@ dol_include_once('/core/class/html.form.class.php');
 if (!$user->rights->mandarin->graph->action_by_user) accessforbidden();
 $langs->load('mandarin@mandarin');
 
+$userid = GETPOST('userid');
+if($userid != 0) $userdefault = $userid;
+elseif(user_est_responsable_hierarchique()) $userid = $user->id;
+
 // Begin of page
 llxHeader('', $langs->trans('mandarinTitleGraphEventByUser'), '');
 
 print_fiche_titre($langs->trans('RapportEvenementsParCommerciaux'));
 
-print_form_filter();
+print_form_filter($userid);
 
-$TData = get_data_tab();
+$TData = get_data_tab($userid);
 draw_table($TData, get_list_id_user($TData), get_tab_label_action_comm());
 
 llxFooter();
 
-function print_form_filter() {
+function print_form_filter($userid) {
 	
 	global $db, $langs;
 	
@@ -29,7 +33,8 @@ function print_form_filter() {
 	print '<form name="filter" methode="GET" action="'.$_SERVER['PHP_SELF'].'">';
 	
 	print $langs->trans('HierarchicalResponsible');
-	print $form->select_users(GETPOST('userid'), 'userid', 1);
+	
+	print $form->select_users($userid, 'userid', 1);
 	
 	print '<br /><br />';
 	
@@ -51,7 +56,19 @@ function print_form_filter() {
 	
 }
 
-function get_data_tab() {
+function user_est_responsable_hierarchique() {
+	
+	global $db, $user;
+	
+	$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'user WHERE fk_user = '.$user->id;
+	$resql = $db->query($sql);
+	$res = $db->fetch_object($resql);
+	
+	return $res->rowid > 0;
+	
+}
+
+function get_data_tab($userid) {
 	
 	global $db;
 	
@@ -65,7 +82,7 @@ function get_data_tab() {
 
 	if(!empty($_REQUEST['date_deb'])) $sql.= ' AND a.datep >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debday'].' 00:00:00"';
 	if(!empty($_REQUEST['date_fin'])) $sql.= ' AND a.datep <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
-	if($_REQUEST['userid'] > 0) $sql.= ' AND u.fk_user = '.$_REQUEST['userid'];
+	if($userid > 0) $sql.= ' AND u.fk_user = '.$userid;
 	$sql.= ' AND a.code NOT IN ("AC_OTH_AUTO")
 			GROUP BY u.rowid, a.fk_action';
 	
@@ -151,14 +168,14 @@ function draw_table(&$TData, &$TIDUser, &$TLabelActionComm) {
 		$nb_total_user = 0; // Contient le nombre d'occurences pour chaque user, tout type d'événement confondu
 		foreach($TTypeEvents as $type) {
 			print '<td>';
-			print $TData[$type][$id_user];
+			print '<a href="'.dol_buildpath('/comm/action/listactions.php?actioncode='.$type.'&usertodo='.$id_user, 1).'">'.$TData[$type][$id_user].'</a>';
 			print '</td>';
 			$nb_total_user+=$TData[$type][$id_user];
 			$TNBTotalType[$type]+=$TData[$type][$id_user];
 		}
 		
-		print '<td style="color:#332266">';
-		print $nb_total_user;
+		print '<td>';
+		print '<a href="'.dol_buildpath('/comm/action/listactions.php?&usertodo='.$id_user, 1).'">'.$nb_total_user.'</a>';
 		print '</td>';
 		print '</tr>';
 		
@@ -170,7 +187,8 @@ function draw_table(&$TData, &$TIDUser, &$TLabelActionComm) {
 	print '<td>';
 	print 'Total';
 	print '</td>';
-	foreach($TTypeEvents as $type) print '<td>'.$TNBTotalType[$type].'</td>';
+	foreach($TTypeEvents as $type) print '<td><a href="'.dol_buildpath('/comm/action/listactions.php?actioncode='.$type.'&usertodo=-1', 1).'">'.$TNBTotalType[$type].'</a></td>';
+	print '<td>'.array_sum($TNBTotalType).'</td>';
 	print '</tr>';
 	
 	print '</table>';
