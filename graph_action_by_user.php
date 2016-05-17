@@ -30,11 +30,18 @@ llxFooter();
 
 function print_form_filter() {
 	
-	global $db;
+	global $db, $langs;
+	
+	$langs->load('users');
 	
 	$form = new Form($db);
 	
 	print '<form name="filter" methode="GET" action="'.$_SERVER['PHP_SELF'].'">';
+	
+	print $langs->trans('HierarchicalResponsible');
+	print $form->select_users(GETPOST('userid'), 'userid', 1);
+	
+	print '<br /><br />';
 	
 	$date_deb = explode('/', $_REQUEST['date_deb']);
 	$date_deb = implode('/', array_reverse($date_deb));
@@ -46,7 +53,7 @@ function print_form_filter() {
 	print 'Au ';
 	$form->select_date(strtotime($date_fin), 'date_fin');
 	
-	print '<input type="SUBMIT" value="Filtrer" />';
+	print '<input type="SUBMIT" class="butAction" value="Filtrer" />';
 	
 	print '</form>';
 	
@@ -65,8 +72,10 @@ function get_data_tab() {
 			LEFT JOIN llx_actioncomm a ON (a.fk_user_action = u.rowid)
 			LEFT JOIN llx_c_actioncomm ON (a.id = a.fk_action)
 			WHERE (u.rowid > 1)';
-	if(!empty($_REQUEST['date_deb'])) $sql.=' AND a.datep >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debyear'].' 00:00:00"';
-	if(!empty($_REQUEST['date_fin'])) $sql.=' AND a.datep <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finyear'].' 23:59:59"';
+
+	if(!empty($_REQUEST['date_deb'])) $sql.= ' AND a.datep >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debday'].' 00:00:00"';
+	if(!empty($_REQUEST['date_fin'])) $sql.= ' AND a.datep <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
+	if($_REQUEST['userid'] > 0) $sql.= ' AND u.fk_user = '.$_REQUEST['userid'];
 	$sql.= ' AND a.code NOT IN ("AC_OTH_AUTO")
 			GROUP BY u.rowid, a.fk_action';
 	
