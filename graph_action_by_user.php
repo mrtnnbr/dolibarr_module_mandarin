@@ -6,16 +6,6 @@ dol_include_once('/core/class/html.form.class.php');
 if (!$user->rights->mandarin->graph->action_by_user) accessforbidden();
 $langs->load('mandarin@mandarin');
 
-$PDOdb = new TPDOdb;
-$TData = array();
-$rapport_ca_ht = GETPOST('rapport_ca_ht', 'int'); // Permet de diviser le montant HT pour réduire l'affichage
-if (empty($rapport_ca_ht)) $rapport_ca_ht = 1;
-
-$year_n_1 = GETPOST('year_n_1', 'int');
-if (empty($year_n_1)) $year_n_1 = date('Y')-1;
-$year_n = GETPOST('year_n', 'int');
-if (empty($year_n)) $year_n = date('Y');
-
 // Begin of page
 llxHeader('', $langs->trans('mandarinTitleGraphEventByUser'), '');
 
