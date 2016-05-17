@@ -92,5 +92,5 @@ subTitleVAxisGraphProjectTask=Progression
 subTitleHAxisGraphProjectTask=Tâches
 
 # GRAPH PROJECT BY USER
-linkMenuProjectByUserReport=Projets par statut opportunité et par commercial
+linkMenuProjectByUserReport=Nombre de projets par statut opportunité et par commercial
 permGraphProjectByUser=Autoriser la visualisation du graphique projets par commercial et par statut opportunité (menu projets)

@@ -11,9 +11,10 @@ if($userid != 0) $userdefault = $userid;
 elseif(user_est_responsable_hierarchique()) $userid = $user->id;
 
 // Begin of page
-llxHeader('', $langs->trans('mandarinTitleGraphEventByUser'), '');
+llxHeader('', $langs->trans('linkMenuProjectByUserReport'), '');
 
-print_fiche_titre($langs->trans('RapportEvenementsParCommerciaux'));
+print dol_get_fiche_head('linkMenuProjectByUserReport');
+print_fiche_titre($langs->trans('linkMenuProjectByUserReport'));
 
 print_form_filter($userid);
 
@@ -78,9 +79,16 @@ function get_data_tab($userid) {
 			FROM '.MAIN_DB_PREFIX.'projet p
 			LEFT JOIN '.MAIN_DB_PREFIX.'c_lead_status ls ON (p.fk_opp_status = ls.rowid)
 			LEFT JOIN '.MAIN_DB_PREFIX.'element_contact c ON (p.rowid = c.element_id AND fk_c_type_contact IN(160, 161))
-			WHERE fk_opp_status > 0
-			GROUP BY p.fk_opp_status, c.fk_socpeople';
+			LEFT JOIN '.MAIN_DB_PREFIX.'user u ON (u.rowid = c.fk_socpeople)
+			WHERE fk_opp_status > 0';
+			
+	if(!empty($_REQUEST['date_deb'])) $sql.= ' AND p.dateo >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debday'].' 00:00:00"';
+	if(!empty($_REQUEST['date_fin'])) $sql.= ' AND p.dateo <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
+	if($userid > 0) $sql.= ' AND u.fk_user = '.$userid;
 	
+	$sql.= ' GROUP BY p.fk_opp_status, c.fk_socpeople
+			 ORDER BY ls.percent';
+	//echo $sql;exit;
 	$resql = $db->query($sql);
 	while($res = $db->fetch_object($resql)) $TData[$res->code][$res->fk_socpeople] = $res->nb_projects;
 	
@@ -132,9 +140,12 @@ function draw_table(&$TData, &$TIDUser, &$TLabelStatutOpportunite) {
 	
 	print '<tr class="liste_titre">';
 	print '<td>';
-	print $langs->trans('Users'). ' / '.$langs->trans('EventType');
+	print $langs->trans('User'). ' / '.$langs->trans('OpportunityStatus');
 	print '</td>';
 	
+	// Rangement par pourcentage croissant
+	ksort($TFkStatutOpportunite);
+
 	foreach($TFkStatutOpportunite as $status) {
 		print '<td>';
 		print $langs->transnoentitiesnoconv("OppStatus".$TLabelStatutOpportunite[$status]['code']) != "OppStatus".$TLabelStatutOpportunite[$status]['code']
