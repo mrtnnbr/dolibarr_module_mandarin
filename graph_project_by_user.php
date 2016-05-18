@@ -232,8 +232,6 @@ function draw_graphique(&$TData, &$TabTrad) {
 			,'liste'=>array(
 				'titre'=>$langs->transnoentitiesnoconv('titleGraphProjectByType')
 			)
-			,'hAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleHAxisGraphProject'))
-			,'vAxis'=>array('title'=>$langs->transnoentitiesnoconv('subTitleVAxisGraphProject'))
 		)
 	);
 	
