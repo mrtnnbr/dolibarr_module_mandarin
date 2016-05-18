@@ -22,7 +22,6 @@ $TData = get_data_tab($userid);
 draw_table($TData, get_list_id_user($TData), get_tab_label_statut_opportunite());
 
 print '<br />';
-print_fiche_titre($langs->trans('titleGraphProjectByTypeShort'));
 draw_graphique($TData, get_tab_label_statut_opportunite());
 
 llxFooter();
