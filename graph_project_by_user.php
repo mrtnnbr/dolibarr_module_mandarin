@@ -21,6 +21,9 @@ print_form_filter($userid);
 $TData = get_data_tab($userid);
 draw_table($TData, get_list_id_user($TData), get_tab_label_statut_opportunite());
 
+print '<br />';
+draw_graphique($TData, get_tab_label_statut_opportunite());
+
 llxFooter();
 
 function print_form_filter($userid) {
@@ -98,13 +101,18 @@ function get_data_tab($userid) {
 
 function get_tab_label_statut_opportunite() {
 	
-	global $db;
+	global $db, $langs;
 	
 	$TLabel = array();
 	
 	$sql = 'SELECT rowid, code, label, percent FROM '.MAIN_DB_PREFIX.'c_lead_status';
 	$resql = $db->query($sql);
-	while($res = $db->fetch_object($resql)) $TLabel[$res->code] = array('rowid'=>$res->rowid, 'code'=>$res->code, 'label'=>$res->label, 'percent'=>$res->percent);
+	while($res = $db->fetch_object($resql)) {
+		$label = $langs->transnoentitiesnoconv("OppStatus".$res->code) != "OppStatus".$res->code
+			  ? $langs->transnoentitiesnoconv("OppStatus".$res->code)
+			  : $res->label;
+		$TLabel[$res->code] = array('rowid'=>$res->rowid, 'code'=>$res->code, 'label'=>$label, 'percent'=>$res->percent);
+	}
 	
 	return $TLabel;
 	
@@ -148,9 +156,7 @@ function draw_table(&$TData, &$TIDUser, &$TLabelStatutOpportunite) {
 
 	foreach($TFkStatutOpportunite as $status) {
 		print '<td>';
-		print $langs->transnoentitiesnoconv("OppStatus".$TLabelStatutOpportunite[$status]['code']) != "OppStatus".$TLabelStatutOpportunite[$status]['code']
-			  ? $langs->transnoentitiesnoconv("OppStatus".$TLabelStatutOpportunite[$status]['code'])
-			  : $TLabelStatutOpportunite[$status]['label'];
+		print $TLabelStatutOpportunite[$status]['label'];
 		print ' ('.$TLabelStatutOpportunite[$status]['percent'].')';
 		print '</td>';
 	}
@@ -201,5 +207,31 @@ function draw_table(&$TData, &$TIDUser, &$TLabelStatutOpportunite) {
 	print '</tr>';
 	
 	print '</table>';
+	
+}
+
+function draw_graphique(&$TData, &$TabTrad) {
+	
+	global $langs;
+	
+	$PDOdb = new TPDOdb;
+	
+	$TSum = array();
+
+	foreach($TData as $code=>$Tab) {
+		$TSum[] = array($TabTrad[$code]['label'], array_sum($Tab));
+	}
+
+	$listeview = new TListviewTBS('graphProjectByType');
+	
+	print $listeview->renderArray($PDOdb, $TSum
+		,array(
+			'type' => 'chart'
+			,'chartType' => 'PieChart'
+			,'liste'=>array(
+				'titre'=>$langs->transnoentitiesnoconv('titleGraphProjectByType')
+			)
+		)
+	);
 	
 }
