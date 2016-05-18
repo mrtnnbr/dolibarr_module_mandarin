@@ -394,7 +394,7 @@ class modmandarin extends DolibarrModules
 		
 		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=project,fk_leftmenu=projects',			                // Put 0 if this is a top menu
 			'type'=>'left',			                // This is a Top menu entry
-			'titre'=>$langs->transnoentitiesnoconv('linkMenuProjectByUserReport'),
+			'titre'=>$langs->transnoentitiesnoconv('linkMenuProjectByUserReportShort'),
 			'mainmenu'=>'',
 			'leftmenu'=>'',
 			'url'=>'/mandarin/graph_project_by_user.php',
