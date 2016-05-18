@@ -38,7 +38,7 @@ function print_form_filter($userid) {
 	
 	print $langs->trans('HierarchicalResponsible');
 	
-	print $form->select_users($userid, 'userid', 1);
+	print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', '', 1);
 	
 	print '<br /><br />';
 	
@@ -83,7 +83,8 @@ function get_data_tab($userid) {
 			LEFT JOIN '.MAIN_DB_PREFIX.'c_lead_status ls ON (p.fk_opp_status = ls.rowid)
 			LEFT JOIN '.MAIN_DB_PREFIX.'element_contact c ON (p.rowid = c.element_id AND fk_c_type_contact IN(160, 161))
 			LEFT JOIN '.MAIN_DB_PREFIX.'user u ON (u.rowid = c.fk_socpeople)
-			WHERE fk_opp_status > 0';
+			WHERE fk_opp_status > 0
+			AND u.statut = 1';
 			
 	if(!empty($_REQUEST['date_deb'])) $sql.= ' AND p.dateo >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debday'].' 00:00:00"';
 	if(!empty($_REQUEST['date_fin'])) $sql.= ' AND p.dateo <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
