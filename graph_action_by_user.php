@@ -21,6 +21,9 @@ print_form_filter($userid);
 $TData = get_data_tab($userid);
 draw_table($TData, get_list_id_user($TData), get_tab_label_action_comm());
 
+print '<br />';
+draw_graphique($TData, get_tab_label_action_comm());
+
 llxFooter();
 
 function print_form_filter($userid) {
@@ -97,13 +100,17 @@ function get_data_tab($userid) {
 
 function get_tab_label_action_comm() {
 	
-	global $db;
+	global $db, $langs;
 	
 	$TLabel = array();
 	
 	$sql = 'SELECT code, libelle FROM '.MAIN_DB_PREFIX.'c_actioncomm';
 	$resql = $db->query($sql);
-	while($res = $db->fetch_object($resql)) $TLabel[$res->code] = $res->libelle;
+	while($res = $db->fetch_object($resql)) {
+		$key=$langs->trans("Action".strtoupper($res->code));
+        $label=($res->code && $key != "Action".strtoupper($res->code)?$key:$res->libelle);
+		$TLabel[$res->code] = $label;
+	}
 	
 	return $TLabel;
 	
@@ -142,11 +149,7 @@ function draw_table(&$TData, &$TIDUser, &$TLabelActionComm) {
 	print $langs->trans('Users'). ' / '.$langs->trans('EventType');
 	print '</td>';
 	
-	foreach($TTypeEvents as $type) {
-		$key=$langs->trans("Action".strtoupper($type));
-        $valuetoshow=($type && $key != "Action".strtoupper($type)?$key:$TLabelActionComm[$type]);
-		print '<td>'.$valuetoshow.'</td>';
-	}
+	foreach($TTypeEvents as $type) print '<td>'.$TLabelActionComm[$type].'</td>';
 	
 	print '<td>';
 	print 'Total';
@@ -194,5 +197,29 @@ function draw_table(&$TData, &$TIDUser, &$TLabelActionComm) {
 	print '</tr>';
 	
 	print '</table>';
+	
+}
+
+function draw_graphique(&$TData, &$TabTrad) {
+	
+	global $langs;
+	
+	$PDOdb = new TPDOdb;
+	
+	$TSum = array();
+
+	foreach($TData as $code=>$Tab) $TSum[] = array($TabTrad[$code], array_sum($Tab));
+
+	$listeview = new TListviewTBS('graphProjectByType');
+	
+	print $listeview->renderArray($PDOdb, $TSum
+		,array(
+			'type' => 'chart'
+			,'chartType' => 'PieChart'
+			,'liste'=>array(
+				'titre'=>$langs->transnoentitiesnoconv('titleGraphEventByUser')
+			)
+		)
+	);
 	
 }
