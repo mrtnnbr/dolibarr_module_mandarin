@@ -97,6 +97,7 @@ Reports=Rapports
 RapportEvenementsParCommerciaux=Nombre d'événements par type et par commercial
 EventType=Types d'événements
 mandarinTitleGraphEventByUser=Nombre d'événements par type et par commercial
+titleGraphEventByUser=Graphique du nombre d'événements par type
 
 # GRAPH PROJECT BY USER
 linkMenuProjectByUserReport=Nombre de projets par statut opportunité et par commercial
