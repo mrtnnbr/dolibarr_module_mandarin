@@ -399,6 +399,22 @@ class modmandarin extends DolibarrModules
 			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
+		
+		
+		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=sig',			                // Put 0 if this is a top menu
+			'type'=>'left',			                // This is a Top menu entry
+			'titre'=>$langs->transnoentitiesnoconv('RapportHeuresFacturees'),
+			'mainmenu'=>'',
+			'leftmenu'=>'',
+			'url'=>'/mandarin/graph_invoiced_day.php',
+			'langs'=>'mandarin@mandarin',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position'=>280,
+			'enabled'=>'$conf->mandarin->enabled',	// Define condition to show or hide menu entry. Use '$conf->mandarin->enabled' if entry must be visible if module is enabled.
+			'perms'=>'$conf->global->MANDARIN_GRAPH_TIME_ON_PERIOD',			                // Use 'perms'=>'$user->rights->mandarin->level1->level2' if you want your menu with a permission rules
+			'target'=>'',
+			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
+		);
+		$r++;
 		// Add here entries to declare new menus
 		//
 		// Example to declare a new Top Menu entry and its Left menu entry:
