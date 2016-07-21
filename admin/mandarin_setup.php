@@ -51,6 +51,11 @@ if (preg_match('/set_(.*)/',$action,$reg))
 	$code=$reg[1];
 	if (dolibarr_set_const($db, $code, GETPOST($code), 'chaine', 0, '', $conf->entity) > 0)
 	{
+		
+		if($code == 'MANDARIN_TRACE_COST_PRICE') {
+			dolibarr_set_const($db, 'PRODUCT_PRICE_SUPPLIER_NO_LOG', 1, 'chaine', 0, '', $conf->entity);
+		}
+		
 		header("Location: ".$_SERVER["PHP_SELF"]);
 		exit;
 	}
@@ -158,6 +163,21 @@ print '<input type="hidden" name="action" value="set_MANDARIN_GRAPH_TIME_ON_PERI
 echo ajax_constantonoff('MANDARIN_GRAPH_TIME_ON_PERIOD');
 print '</form>';
 print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("set_MANDARIN_TRACE_COST_PRICE").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_MANDARIN_TRACE_COST_PRICE">';
+echo $form->selectyesno('MANDARIN_TRACE_COST_PRICE',$conf->global->MANDARIN_TRACE_COST_PRICE); // attention pas ajax car je dois passer en haut
+
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print '</td></tr>';
+
 
 print '</table>';
 
