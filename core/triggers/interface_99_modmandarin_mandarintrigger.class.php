@@ -236,6 +236,10 @@ class Interfacemandarintrigger
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         } elseif ($action == 'PRODUCT_MODIFY') {
+        				
+        	
+        		
+        	
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
