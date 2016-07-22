@@ -132,12 +132,20 @@ class Interfacemandarintrigger
         // Put here code you want to execute when a Dolibarr business events occurs.
         // Data and type of action are stored into $object and $action
         // Users
-        
+      //  var_dump($action);
         if ($action == 'USER_LOGIN') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'SUPPLIER_PRODUCT_BUYPRICE_UPDATE' || $action == 'SUPPLIER_PRODUCT_BUYPRICE_CREATE') {
+        } 
+		elseif($action === 'TASSETOFLINE_UPDATE' || $action == 'TASSETOFLINE_CREATE') {
+			
+			$this->logPrice($object->fk_product,$object->qty_used,$object->pmp, 'OF',-1);
+			
+		}
+        
+        
+        elseif ($action == 'SUPPLIER_PRODUCT_BUYPRICE_UPDATE' || $action == 'SUPPLIER_PRODUCT_BUYPRICE_CREATE') {
               
 		    if ( !empty($conf->global->MANDARIN_TRACE_COST_PRICE)) {
                 
@@ -178,7 +186,6 @@ class Interfacemandarintrigger
 			 }
 				
 		}
-        
         
         elseif ($action == 'USER_UPDATE_SESSION') {
             // Warning: To increase performances, this action is triggered only if

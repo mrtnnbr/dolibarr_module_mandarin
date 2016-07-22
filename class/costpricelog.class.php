@@ -17,13 +17,15 @@ class TProductCostPriceLog extends TObjetStd {
 	
 	static function add(&$PDOdb, $fk_product, $qty,$price, $log_type = 'PA', $fk_supplier=0) {
 		
+		if(empty($price) || empty($qty)) return false;
+		
 		$cpl=new TProductCostPriceLog;
 		$cpl->fk_product = $fk_product;
 		$cpl->fk_supplier = $fk_supplier;
 		$cpl->price = $price;
 		$cpl->qty = $qty;
 		$cpl->log_type = $log_type;
-		$cpl->save($PDOdb);
+		return $cpl->save($PDOdb);
 		
 	}
 	
