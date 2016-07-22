@@ -59,24 +59,39 @@ class Actionsmandarin
 	 * @param   HookManager     $hookmanager    Hook manager propagated to allow calling another hook
 	 * @return  int                             < 0 on error, 0 on success, 1 to replace standard code
 	 */
-	function doActions($parameters, &$object, &$action, $hookmanager)
+	function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager)
 	{
-		$error = 0; // Error counter
-		$myvalue = 'test'; // A result value
-
-		print_r($parameters);
-		echo "action: " . $action;
-		print_r($object);
-
-		if (in_array('somecontext', explode(':', $parameters['context'])))
+		
+		 $error = 0;
+		
+		if (in_array('pricesuppliercard', explode(':', $parameters['context'])))
 		{
-		  // do something only for the context 'somecontext'
+		 	global $conf;
+		 	if ( !empty($conf->global->MANDARIN_TRACE_COST_PRICE)) {
+		 		var_dump();
+					
+	        	define('INC_FROM_DOLIBARR',true);
+	        	dol_include_once('/mandarin/config.php');			
+	        	dol_include_once('/mandarin/class/costpricelog.class.php');
+				
+				$PDOdb=new TPDOdb;
+	        		        
+				$Tab = TProductCostPriceLog::getDataForProduct($PDOdb, $object->id);
+				if(!empty($Tab)) {
+					
+					
+					
+				}
+				
+				
+					
+			}
+			
+		 
 		}
 
 		if (! $error)
 		{
-			$this->results = array('myreturn' => $myvalue);
-			$this->resprints = 'A text to show';
 			return 0; // or return 1 to replace standard code
 		}
 		else

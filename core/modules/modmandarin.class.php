@@ -89,6 +89,7 @@ class modmandarin extends DolibarrModules
 		//                        );
 		$this->module_parts = array(
 			'triggers'=>1
+			,'hooks'=>array('pricesuppliercard')
 		);
 
 		// Data directories to create when module is enabled.

@@ -29,4 +29,17 @@ class TProductCostPriceLog extends TObjetStd {
 		
 	}
 	
+	static function getDataForProduct(&$PDOdb, $fk_product) {
+		
+		$sql="SELECT log_type,YEAR(date_cre) as year,MONTH(date_cre) as month, (SUM(qty * price) / SUM(qty)) as price
+			FROM ".MAIN_DB_PREFIX."product_cost_price_log
+			WHERE fk_product = ".(int)$fk_product."
+			GROUP BY log_type,YEAR(date_cre),MONTH(date_cre)
+			";
+		
+		return $PDOdb->ExecuteAsArray($sql);
+		
+		
+	}
+	
 } 
