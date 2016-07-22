@@ -49,11 +49,17 @@ $action = GETPOST('action', 'alpha');
 if (preg_match('/set_(.*)/',$action,$reg))
 {
 	$code=$reg[1];
-	if (dolibarr_set_const($db, $code, GETPOST($code), 'chaine', 0, '', $conf->entity) > 0)
+	if (dolibarr_set_const($db, $code, GETPOST($code) == 'yes' ? 1 : 0, 'entier', 0, '', $conf->entity) > 0)
 	{
-		
-		if($code == 'MANDARIN_TRACE_COST_PRICE') {
-			dolibarr_set_const($db, 'PRODUCT_PRICE_SUPPLIER_NO_LOG', 1, 'chaine', 0, '', $conf->entity);
+		if($code == 'MANDARIN_TRACE_COST_PRICE' &&  GETPOST($code) == 'yes') {
+			define('INC_FROM_DOLIBARR',true);
+			dol_include_once('/mandarin/config.php');
+			dol_include_once('/mandarin/class/costpricelog.class.php');
+			$o=new TProductCostPriceLog;
+			$PDOdb=new TPDOdb;
+			$PDOdb->debug =true;
+			$o->init_db_by_vars($PDOdb);
+			
 		}
 		
 		header("Location: ".$_SERVER["PHP_SELF"]);

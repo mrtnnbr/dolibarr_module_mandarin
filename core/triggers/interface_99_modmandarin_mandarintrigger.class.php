@@ -99,6 +99,22 @@ class Interfacemandarintrigger
         }
     }
 
+	function logPrice($fk_product,$qty, $price, $log_type,$fk_supplier) {
+		global $conf;
+		
+		if ( !empty($conf->global->MANDARIN_TRACE_COST_PRICE)) {	
+        	define('INC_FROM_DOLIBARR',true);
+        	dol_include_once('/mandarin/config.php');			
+        	dol_include_once('/mandarin/class/costpricelog.class.php');
+			
+			$PDOdb=new TPDOdb;
+        		        
+			TProductCostPriceLog::add($PDOdb, $fk_product,$qty,$price, $log_type,$fk_supplier);
+				
+		}
+		
+	}
+
     /**
      * Function called when a Dolibarrr business event is done.
      * All functions "run_trigger" are triggered if file
@@ -120,27 +136,31 @@ class Interfacemandarintrigger
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
-        } elseif ($action == 'SUPPLIER_PRODUCT_BUYPRICE_UPDATE') {
+        } elseif ($action == 'SUPPLIER_PRODUCT_BUYPRICE_UPDATE' || $action == 'SUPPLIER_PRODUCT_BUYPRICE_CREATE') {
               
-		    if (! empty($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG) && !empty($conf->global->MANDARIN_TRACE_COST_PRICE)) {
+		    if ( !empty($conf->global->MANDARIN_TRACE_COST_PRICE)) {
                 
 				$db = &	$object->db;
-				$sql = "INSERT INTO " . MAIN_DB_PREFIX . "product_fournisseur_price_log(datec, fk_product_fournisseur,fk_user,price,quantity)
-					
-						SELECT pfp.datec,pfp.fk_product,pfp.fk_user,pfp.price,pfp.quantity 
+				$idinserted = $db->last_insert_id(MAIN_DB_PREFIX . "product_fournisseur_price");
+				
+				$sql = "SELECT pfp.datec,pfp.fk_product,pfp.fk_user,pfp.price,pfp.quantity ,pfp.fk_soc
 							FROM ".MAIN_DB_PREFIX."product_fournisseur_price pfp WHERE  pfp.rowid=".$object->product_fourn_price_id."
-					";
-					
-					
-                $resql = $db->query($sql);
-             // var_dump($conf->global->PRODUCT_PRICE_SUPPLIER_NO_LOG,$db,$sql);exit;  
-				dol_syslog(
+				";
+				
+				
+				
+				$resql = $db->query($sql);
+				if($obj = $db->fetch_object($resql)){
+					//pre($object,true);
+					$this->logPrice($obj->fk_product,$obj->quantity,$obj->price, 'PA',$obj->fk_soc);
+					 //var_dump($conf->global->MANDARIN_TRACE_COST_PRICE,$sql,$object->product_fourn_price_id,$obj);exit('la');
+				}
+				
+             	dol_syslog(
 	                "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
 	            );
             }
 		   
-		   
-           
         } elseif ($action == 'USER_UPDATE_SESSION') {
             // Warning: To increase performances, this action is triggered only if
             // constant MAIN_ACTIVATE_UPDATESESSIONTRIGGER is set to 1.
@@ -236,9 +256,8 @@ class Interfacemandarintrigger
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
             );
         } elseif ($action == 'PRODUCT_MODIFY') {
-        				
-        	
         		
+        	$this->logPrice($object->id,1, $object->cost_price, 'PA',-1);
         	
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
