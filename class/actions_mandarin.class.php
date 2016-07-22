@@ -68,11 +68,10 @@ class Actionsmandarin
 		{
 		 	global $conf;
 		 	if ( !empty($conf->global->MANDARIN_TRACE_COST_PRICE)) {
-		 		var_dump();
 					
-	        	define('INC_FROM_DOLIBARR',true);
-	        	dol_include_once('/mandarin/config.php');			
-	        	dol_include_once('/mandarin/class/costpricelog.class.php');
+		        	define('INC_FROM_DOLIBARR',true);
+		        	dol_include_once('/mandarin/config.php');			
+	        		dol_include_once('/mandarin/class/costpricelog.class.php');
 				
 				$PDOdb=new TPDOdb;
 	        		        
