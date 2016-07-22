@@ -63,22 +63,20 @@ class Actionsmandarin
 	{
 		
 		 $error = 0;
-		
 		if (in_array('pricesuppliercard', explode(':', $parameters['context'])))
 		{
-		 	global $conf;
-		 	if ( !empty($conf->global->MANDARIN_TRACE_COST_PRICE)) {
+		 	global $conf,$user;
+		 	if ( !empty($conf->global->MANDARIN_TRACE_COST_PRICE) && !empty($user->rights->mandarin->graph->product_cost_price)) {
 					
 		        	define('INC_FROM_DOLIBARR',true);
 		        	dol_include_once('/mandarin/config.php');			
 	        		dol_include_once('/mandarin/class/costpricelog.class.php');
 				
 				$PDOdb=new TPDOdb;
-	        		        
 				$Tab = TProductCostPriceLog::getDataForProduct($PDOdb, $object->id);
 				if(!empty($Tab)) {
 					
-					
+					var_dump($Tab);					
 					
 				}
 				
