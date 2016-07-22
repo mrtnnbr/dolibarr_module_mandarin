@@ -132,6 +132,7 @@ class Interfacemandarintrigger
         // Put here code you want to execute when a Dolibarr business events occurs.
         // Data and type of action are stored into $object and $action
         // Users
+        
         if ($action == 'USER_LOGIN') {
             dol_syslog(
                 "Trigger '" . $this->name . "' for action '$action' launched by " . __FILE__ . ". id=" . $object->id
@@ -161,7 +162,25 @@ class Interfacemandarintrigger
 	            );
             }
 		   
-        } elseif ($action == 'USER_UPDATE_SESSION') {
+        } 
+		else if ($action === 'STOCK_MOVEMENT') {
+			
+			 if ( !empty($conf->global->MANDARIN_TRACE_COST_PRICE)) {
+                
+				$db = &	$object->db;
+				$sql = "SELECT price,value,fk_product FROM ".MAIN_DB_PREFIX."stock_mouvement WHERE rowid=".$object->id;
+				$db->query($sql);
+				$resql = $db->query($sql);
+				if($obj = $db->fetch_object($resql)){
+					$this->logPrice($obj->fk_product,$obj->value,$obj->price, 'PMP',-1);
+				}
+			
+			 }
+				
+		}
+        
+        
+        elseif ($action == 'USER_UPDATE_SESSION') {
             // Warning: To increase performances, this action is triggered only if
             // constant MAIN_ACTIVATE_UPDATESESSIONTRIGGER is set to 1.
             dol_syslog(
