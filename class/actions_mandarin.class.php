@@ -66,9 +66,9 @@ class Actionsmandarin
 		
 		if (in_array('pricesuppliercard', explode(':', $parameters['context'])))
 		{
-		 	global $conf;
+		 	global $conf,$langs;
 		 	if ( !empty($conf->global->MANDARIN_TRACE_COST_PRICE)) {
-		 		var_dump();
+		 		
 					
 	        	define('INC_FROM_DOLIBARR',true);
 	        	dol_include_once('/mandarin/config.php');			
@@ -76,11 +76,31 @@ class Actionsmandarin
 				
 				$PDOdb=new TPDOdb;
 	        		        
-				$Tab = TProductCostPriceLog::getDataForProduct($PDOdb, $object->id);
-				if(!empty($Tab)) {
+				$TData = TProductCostPriceLog::getDataForProduct($PDOdb, $object->id);
+				if(!empty($TData)) {
+				
+					$l=new TListviewTBS('graphrate');
+					echo $l->renderArray($PDOdb, $TData,array(
+						'type'=>'chart'
+						,'curveType'=>'none'
+						,'liste'=>array(
+							'titre'=>$langs->trans('GraphTraceCostPrice')
+						)
+						,'title'=>array(
+							'PA'=>$langs->transnoentities('PricePA')
+							,'PMP'=>$langs->transnoentities('PricePMP')
+							,'OF'=>$langs->transnoentities('PriceOF')
+						)
+					));
 					
-					
-					
+					?>
+					<script type="text/javascript">
+						$(document).ready(function() {
+							$('#div_query_chartgraphrate').insertAfter('div.fiche:first');
+						});
+						
+					</script>
+					<?php
 				}
 				
 				

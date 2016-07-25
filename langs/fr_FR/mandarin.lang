@@ -108,3 +108,4 @@ titleGraphProjectByType=Graphique du nombre de projets par statut d'opportunité
 
 #Cost Price
 set_MANDARIN_TRACE_COST_PRICE=Tracer les prix de revient
+GraphTraceCostPrice=Analyse des prix de revient

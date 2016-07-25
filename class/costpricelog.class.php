@@ -31,13 +31,58 @@ class TProductCostPriceLog extends TObjetStd {
 	
 	static function getDataForProduct(&$PDOdb, $fk_product) {
 		
-		$sql="SELECT log_type,YEAR(date_cre) as year,MONTH(date_cre) as month, (SUM(qty * price) / SUM(qty)) as price
+		$sql="SELECT log_type, DATE_FORMAT(date_cre,'%Y-%m-%d') as 'date' , (SUM(qty * price) / SUM(qty)) as price
 			FROM ".MAIN_DB_PREFIX."product_cost_price_log
 			WHERE fk_product = ".(int)$fk_product."
-			GROUP BY log_type,YEAR(date_cre),MONTH(date_cre)
+			GROUP BY log_type,DATE_FORMAT(date_cre,'%Y-%m-%d')
+			ORDER BY date_cre
 			";
 		
-		return $PDOdb->ExecuteAsArray($sql);
+		$Tab = $PDOdb->ExecuteAsArray($sql);
+	//	var_dump($Tab);
+		$TData = $Tmp = array();
+		foreach($Tab as &$row) {
+							
+			if(!isset($Tmp[$row->date])) $Tmp[$row->date] = array('PA'=>0,'PMP'=>0, 'OF'=>0);
+				
+			$Tmp[$row->date][$row->log_type] = (double)$row->price;
+			
+		}
+		
+		self::normalizeArray($Tmp);
+		
+
+		foreach($Tmp as $date=>$values) {
+			
+			$TData[]= array_merge( array('date'=>$date), $values );
+			
+		}
+		
+	
+		return $TData;
+		
+	}
+	
+	function normalizeArray(&$TData) {
+		
+		$previous_line= array();
+		
+		foreach($TData as $kd=>&$row) {
+			
+			if(!empty($previous_line)) {
+				
+				foreach($row as $k=>&$v) {
+					
+					if(empty($v) && !empty($previous_line[$k])) $v = $previous_line[$k];	
+					
+				}
+				
+				
+			}
+			
+			$previous_line = $row;
+			
+		}
 		
 		
 	}
