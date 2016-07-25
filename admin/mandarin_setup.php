@@ -57,7 +57,7 @@ if (preg_match('/set_(.*)/',$action,$reg))
 			dol_include_once('/mandarin/class/costpricelog.class.php');
 			$o=new TProductCostPriceLog;
 			$PDOdb=new TPDOdb;
-			$PDOdb->debug =true;
+//			$PDOdb->debug =true;
 			$o->init_db_by_vars($PDOdb);
 			
 		}

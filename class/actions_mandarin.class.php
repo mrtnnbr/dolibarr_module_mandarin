@@ -63,18 +63,18 @@ class Actionsmandarin
 	{
 		
 		 $error = 0;
-		
 		if (in_array('pricesuppliercard', explode(':', $parameters['context'])))
 		{
-		 	global $conf,$langs;
-		 	if ( !empty($conf->global->MANDARIN_TRACE_COST_PRICE)) {
-		 		
+		 	global $conf,$user,$langs;
+		 	if ( !empty($conf->global->MANDARIN_TRACE_COST_PRICE) && !empty($user->rights->mandarin->graph->product_cost_price)) {
+
 					
-	        	define('INC_FROM_DOLIBARR',true);
-	        	dol_include_once('/mandarin/config.php');			
-	        	dol_include_once('/mandarin/class/costpricelog.class.php');
+		        	define('INC_FROM_DOLIBARR',true);
+		        	dol_include_once('/mandarin/config.php');			
+	        		dol_include_once('/mandarin/class/costpricelog.class.php');
 				
 				$PDOdb=new TPDOdb;
+
 	        		        
 				$TData = TProductCostPriceLog::getDataForProduct($PDOdb, $object->id);
 				if(!empty($TData)) {
@@ -92,6 +92,7 @@ class Actionsmandarin
 							,'OF'=>$langs->transnoentities('PriceOF')
 						)
 					));
+
 					
 					?>
 					<script type="text/javascript">
