@@ -63,24 +63,45 @@ class Actionsmandarin
 	{
 		
 		 $error = 0;
-		
 		if (in_array('pricesuppliercard', explode(':', $parameters['context'])))
 		{
-		 	global $conf;
-		 	if ( !empty($conf->global->MANDARIN_TRACE_COST_PRICE)) {
-		 		var_dump();
+		 	global $conf,$user,$langs;
+		 	if ( !empty($conf->global->MANDARIN_TRACE_COST_PRICE) && !empty($user->rights->mandarin->graph->product_cost_price)) {
+
 					
-	        	define('INC_FROM_DOLIBARR',true);
-	        	dol_include_once('/mandarin/config.php');			
-	        	dol_include_once('/mandarin/class/costpricelog.class.php');
+		        	define('INC_FROM_DOLIBARR',true);
+		        	dol_include_once('/mandarin/config.php');			
+	        		dol_include_once('/mandarin/class/costpricelog.class.php');
 				
 				$PDOdb=new TPDOdb;
+
 	        		        
-				$Tab = TProductCostPriceLog::getDataForProduct($PDOdb, $object->id);
-				if(!empty($Tab)) {
+				$TData = TProductCostPriceLog::getDataForProduct($PDOdb, $object->id);
+				if(!empty($TData)) {
+				
+					$l=new TListviewTBS('graphrate');
+					echo $l->renderArray($PDOdb, $TData,array(
+						'type'=>'chart'
+						,'curveType'=>'none'
+						,'liste'=>array(
+							'titre'=>$langs->trans('GraphTraceCostPrice')
+						)
+						,'title'=>array(
+							'PA'=>$langs->transnoentities('PricePA')
+							,'PMP'=>$langs->transnoentities('PricePMP')
+							,'OF'=>$langs->transnoentities('PriceOF')
+						)
+					));
+
 					
-					
-					
+					?>
+					<script type="text/javascript">
+						$(document).ready(function() {
+							$('#div_query_chartgraphrate').insertAfter('div.fiche:first');
+						});
+						
+					</script>
+					<?php
 				}
 				
 				
