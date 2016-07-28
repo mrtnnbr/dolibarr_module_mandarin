@@ -146,7 +146,7 @@
 				,'date_cre'=>$langs->trans('Date')
 			)
 			,'search'=>array(
-				'date_maj'=>array('recherche'=>'calendars','table'=>'l')
+				'date_cre'=>array('recherche'=>'calendars','table'=>'l')
 			)
 		));
 		
