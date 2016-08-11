@@ -78,26 +78,43 @@ function get_data_tab($userid) {
 	
 	$TData = array();
 	
-	$sql = 'SELECT ls.code, c.fk_socpeople, COUNT(*) as nb_projects
-			FROM '.MAIN_DB_PREFIX.'projet p
-			LEFT JOIN '.MAIN_DB_PREFIX.'c_lead_status ls ON (p.fk_opp_status = ls.rowid)
-			LEFT JOIN '.MAIN_DB_PREFIX.'element_contact c ON (p.rowid = c.element_id AND fk_c_type_contact IN(160, 161))
-			LEFT JOIN '.MAIN_DB_PREFIX.'user u ON (u.rowid = c.fk_socpeople)
-			WHERE fk_opp_status > 0
-			AND u.statut = 1';
-			
-	if(!empty($_REQUEST['date_deb'])) $sql.= ' AND p.dateo >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debday'].' 00:00:00"';
-	if(!empty($_REQUEST['date_fin'])) $sql.= ' AND p.dateo <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
-	if($userid > 0) $sql.= ' AND u.fk_user = '.$userid;
+	$sql = getSqlForData($userid);
+	$resql = $db->query($sql);
+	while($res = $db->fetch_object($resql)) $TData[$res->code][$res->fk_socpeople] = $res->nb_projects;
 	
-	$sql.= ' GROUP BY p.fk_opp_status, c.fk_socpeople
-			 ORDER BY ls.percent';
-	//echo $sql;exit;
+	$sql = getSqlForData($userid, true);
 	$resql = $db->query($sql);
 	while($res = $db->fetch_object($resql)) $TData[$res->code][$res->fk_socpeople] = $res->nb_projects;
 	
 	return $TData;
 	
+}
+
+function getSqlForData($userid, $only_draft=false)
+{
+	if (!$only_draft) $sql = 'SELECT ls.code, c.fk_socpeople, COUNT(*) as nb_projects';
+	else  $sql = 'SELECT "DRAFT" as code, c.fk_socpeople, COUNT(*) as nb_projects';
+	
+	$sql.=' FROM '.MAIN_DB_PREFIX.'projet p 
+			LEFT JOIN '.MAIN_DB_PREFIX.'c_lead_status ls ON (p.fk_opp_status = ls.rowid)
+			LEFT JOIN '.MAIN_DB_PREFIX.'element_contact c ON (p.rowid = c.element_id AND fk_c_type_contact IN(160, 161))
+			LEFT JOIN '.MAIN_DB_PREFIX.'user u ON (u.rowid = c.fk_socpeople)';
+			
+	if (!$only_draft) $sql.=' WHERE p.fk_statut > 0	AND fk_opp_status > 0';
+	else $sql.=' WHERE p.fk_statut = 0';
+	
+	$sql.=' AND u.statut = 1';
+	
+	if(!empty($_REQUEST['date_deb'])) $sql.= ' AND p.dateo >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debday'].' 00:00:00"';
+	if(!empty($_REQUEST['date_fin'])) $sql.= ' AND p.dateo <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
+	if($userid > 0) $sql.= ' AND u.fk_user = '.$userid;
+	
+	if (!$only_draft) $sql.= ' GROUP BY p.fk_opp_status, c.fk_socpeople';
+	else $sql.= ' GROUP BY c.fk_socpeople';
+
+	$sql .= ' ORDER BY ls.percent';
+	
+	return $sql;
 }
 
 function get_tab_label_statut_opportunite() {
@@ -157,8 +174,15 @@ function draw_table(&$TData, &$TIDUser, &$TLabelStatutOpportunite) {
 
 	foreach($TFkStatutOpportunite as $status) {
 		print '<td>';
-		print $TLabelStatutOpportunite[$status]['label'];
-		print ' ('.$TLabelStatutOpportunite[$status]['percent'].')';
+		if ($status != 'DRAFT')
+		{
+			print $TLabelStatutOpportunite[$status]['label'];
+			print ' ('.$TLabelStatutOpportunite[$status]['percent'].')';
+		}
+		else {
+			print $langs->trans('Draft');
+		}
+		
 		print '</td>';
 	}
 	
@@ -220,6 +244,7 @@ function draw_graphique(&$TData, &$TabTrad) {
 	$TSum = array();
 
 	foreach($TData as $code=>$Tab) {
+		if (empty($TabTrad[$code]['label'])) continue;
 		$TSum[] = array($TabTrad[$code]['label'], array_sum($Tab));
 	}
 
