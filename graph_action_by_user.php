@@ -89,10 +89,12 @@ function get_data_tab($userid) {
 	if(!empty($_REQUEST['date_fin'])) $sql.= ' AND a.datep <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
 	if($userid > 0) $sql.= ' AND u.fk_user = '.$userid;
 	$sql.= ' AND a.code NOT IN ("AC_OTH_AUTO")
-			GROUP BY u.rowid, a.fk_action';
+			GROUP BY u.rowid, a.code';
 	
 	$resql = $db->query($sql);
-	while($res = $db->fetch_object($resql)) $TData[$res->code][$res->rowid] = $res->nb_events;
+	while($res = $db->fetch_object($resql)){
+		$TData[$res->code][$res->rowid] = $res->nb_events;
+	}
 	
 	return $TData;
 	
@@ -136,6 +138,10 @@ function get_list_id_user(&$TData) {
 function draw_table(&$TData, &$TIDUser, &$TLabelActionComm) {
 	
 	global $db, $langs;
+	
+	/*pre($TData,true);
+	pre($TIDUser,true);
+	pre($TLabelActionComm,true);*/
 	
 	$langs->load('agenda');
 	
