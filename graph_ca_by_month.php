@@ -34,14 +34,18 @@
 
 	if($mode == 'order') {
 		//commande non brouillon par date de livraison
-		$sql = "SELECT commande.fk_soc, commande.total_ht as total, MONTH(commande.date_livraison) as 'month' FROM ".MAIN_DB_PREFIX."commande as commande
-				INNER JOIN ".MAIN_DB_PREFIX."societe as soc ON soc.rowid=commande.fk_soc WHERE commande.fk_statut>0 AND YEAR(commande.date_livraison)=".$year." ORDER BY soc.nom,date_livraison";
+		$sql = "SELECT commande.fk_soc, SUM(commande.total_ht) as total, MONTH(commande.date_livraison) as 'month' FROM ".MAIN_DB_PREFIX."commande as commande
+				INNER JOIN ".MAIN_DB_PREFIX."societe as soc ON soc.rowid=commande.fk_soc WHERE commande.fk_statut>0 AND YEAR(commande.date_livraison)=".$year."
+				GROUP BY commande.fk_soc,soc.nom, MONTH(commande.date_livraison)
+                ORDER BY soc.nom,MONTH(commande.date_livraison)";
 	}
 	else{
 		//facture payée sur date de facturation
-		$sql = "SELECT fact.fk_soc, fact.total, MONTH(fact.datef) as 'month' FROM ".MAIN_DB_PREFIX."facture as fact
+		$sql = "SELECT fact.fk_soc, SUM(fact.total) as total, MONTH(fact.datef) as 'month' FROM ".MAIN_DB_PREFIX."facture as fact
 				INNER JOIN ".MAIN_DB_PREFIX."societe as soc ON soc.rowid=fact.fk_soc
-						WHERE fk_statut>0 AND paye=1 AND YEAR(datef)=".$year." ORDER BY soc.nom,datef";
+						WHERE fk_statut>0 AND paye=1 AND YEAR(datef)=".$year."
+								GROUP BY fact.fk_soc,soc.nom, MONTH(fact.datef)
+								ORDER BY soc.nom,MONTH(fact.datef)";
 	}
 
 	$Tab = $PDOdb->ExecuteAsArray($sql);
@@ -55,7 +59,7 @@
 	}
 
 	_get_company_object($TData);
-	usort($TData, '_sort_company');
+	//usort($TData, '_sort_company');
 
 	?>
 	<style type="text/css">
