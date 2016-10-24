@@ -11,7 +11,7 @@
 	dol_fiche_head();
 
 	$PDOdb=new TPDOdb;
-	$PDOdb->debug=true;
+	//$PDOdb->debug=true;
 
 	$year = (int)GETPOST('year');
 	if(empty($year))$year=(int)date('Y');
