@@ -15,6 +15,7 @@
 	if(empty($year))$year=(int)date('Y');
 
 	$payed=GETPOST('payed');
+	$invoiced=GETPOST('invoiced');
 
 	$TYear = $TMonth = $ColFormat= $ColTotal =array();
 	$y = (int)date('Y');
@@ -36,6 +37,7 @@
 		//commande non brouillon par date de livraison
 		$sql = "SELECT commande.fk_soc, SUM(commande.total_ht) as total, MONTH(commande.date_livraison) as 'month' FROM ".MAIN_DB_PREFIX."commande as commande
 				INNER JOIN ".MAIN_DB_PREFIX."societe as soc ON soc.rowid=commande.fk_soc WHERE commande.fk_statut>0 AND YEAR(commande.date_livraison)=".$year."
+						".(empty($invoiced)?'AND facture=0':"AND facture=1")."
 				GROUP BY commande.fk_soc,soc.nom, MONTH(commande.date_livraison)
                 ORDER BY soc.nom,MONTH(commande.date_livraison)";
 	}
@@ -74,6 +76,8 @@
 	$headsearch.= $formCore->combo($langs->trans('Year'), 'year', $TYear, $year);
 	if (empty($mode)) {
 		$headsearch.= $formCore->checkbox1($langs->trans('Paid'), 'payed', 1, $payed);
+	} elseif ($mode=='order') {
+		$headsearch.= $formCore->checkbox1($langs->trans('PropalStatusBilled'), 'invoiced', 1, $invoiced);
 	}
 	$headsearch.= $formCore->btsubmit($langs->trans('Ok'),'bt_ok');
 
