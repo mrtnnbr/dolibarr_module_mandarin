@@ -12,17 +12,19 @@ $date_deb = GETPOST('date_deb');
 $date_fin = GETPOST('date_fin');
 $type = GETPOST('type');
 
-llxHeader('', $langs->trans('RapportMoyenneProduitsVendusCommandesEnvoyes'), '');
-	
-print dol_get_fiche_head('RapportMoyenneProduitsVendusCommandesEnvoyes');
-print_fiche_titre($langs->trans('RapportMoyenneProduitsVendusCommandesEnvoyes'));
-print_form_filter($date_deb, $date_fin, $type);
-
 switch($action) {
 	
 	case 'print_data':
+		llxHeader('', $langs->trans('RapportMoyenneProduitsVendusCommandesEnvoyes'), '');
+		print dol_get_fiche_head('RapportMoyenneProduitsVendusCommandesEnvoyes');
+		print_fiche_titre($langs->trans('RapportMoyenneProduitsVendusCommandesEnvoyes'));
+		print_form_filter($date_deb, $date_fin, $type);
 		$TData = get_data_tab($date_deb, $date_fin, $type);
 		draw_table($TData);
+		break;
+	case 'download_file':
+		$TData = get_data_tab($date_deb, $date_fin, $type);
+		download_file($TData, $type);
 		break;
 	
 }
@@ -149,7 +151,12 @@ function draw_table(&$TData) {
 	global $db, $langs;
 	
 	// Je ne fais pas de liste TBS parce que je vais devoir afficher le tableau en base 64 dans la dom pour le poster vers un fichier download.php pour télécharger un csv
-	print_entete();
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td>Semaine</td>';
+	print '<td>Produit</td>';
+	print '<td>Nombres de produits</td>';
+	print '</tr>';
 	
 	$p = new Product($db);
 	foreach($TData as $Tab) {
@@ -164,15 +171,30 @@ function draw_table(&$TData) {
 
 	print '</table>';
 	
+	print '<a href="'.$_SERVER['PHP_SELF'].'?action=download_file&type='.GETPOST('type');
+	print '&date_deb='.GETPOST('date_deb').'&date_fin='.GETPOST('date_fin');
+	print '&date_debyear='.GETPOST('date_debyear').'&date_debmonth='.GETPOST('date_debmonth').'&date_debday='.GETPOST('date_debday');
+	print '&date_finyear='.GETPOST('date_finyear').'&date_finmonth='.GETPOST('date_finmonth').'&date_finday='.GETPOST('date_finday').'">dl</a>';
+	
 }
 
-function print_entete() {
+function download_file(&$TData, $type) {
 	
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td>Semaine</td>';
-	print '<td>Produit</td>';
-	print '<td>Nombres de produits</td>';
-	print '</tr>';
+	$name = $type.'_'.$_REQUEST['date_debyear'].$_REQUEST['date_debmonth'].$_REQUEST['date_debday'].'_'
+					 .$_REQUEST['date_finyear'].$_REQUEST['date_finmonth'].$_REQUEST['date_finday'].'.csv';
+	$fname = sys_get_temp_dir().'/'.$name;
+	$f = fopen($fname, 'w+');
+	fwrite($f, 'coucou');
+	fclose($f);
+	
+	header('Content-Description: File Transfer');
+    header('Content-Type: application/CSV');
+    header('Content-Disposition: attachment; filename="'.$name.'"');
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate');
+    header('Pragma: public');
+    header('Content-Length: ' . filesize($fname));
+    readfile($fname);
+	exit;
 	
 }
