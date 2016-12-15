@@ -99,6 +99,9 @@ EventType=Types d'événements
 mandarinTitleGraphEventByUser=Nombre d'événements par type et par commercial
 titleGraphEventByUser=Graphique du nombre d'événements par type
 
+# RAPPORT Moyenne des produits commandés, facturés et envoyés
+RapportMoyenneProduitsVendusCommandesEnvoyes=Moyenne des produits commandés, facturés et envoyés
+
 # GRAPH PROJECT BY USER
 linkMenuProjectByUserReport=Nombre de projets par statut opportunité et par commercial
 linkMenuProjectByUserReportShort=Nb projets par commercial
