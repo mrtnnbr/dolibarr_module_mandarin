@@ -1,7 +1,8 @@
 <?php
 
 require('config.php');
-dol_include_once('/core/class/html.form.class.php');
+require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
+require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 if (!$user->rights->mandarin->graph->action_by_user) accessforbidden();
 $langs->load('mandarin@mandarin');
@@ -20,7 +21,8 @@ print_form_filter($date_deb, $date_fin, $type);
 switch($action) {
 	
 	case 'print_data':
-		get_data_tab($date_deb, $date_fin, $type);
+		$TData = get_data_tab($date_deb, $date_fin, $type);
+		draw_table($TData);
 		break;
 	
 }
@@ -74,10 +76,15 @@ function get_data_tab($date_deb, $date_fin, $type) {
 	$TData = array();
 	
 	$sql = get_sql($date_deb, $date_fin, $type);
-	var_dump($sql);exit;
+	
 	$resql = $db->query($sql);
 	while($res = $db->fetch_object($resql)){
-		$TData[] = $res;
+		$TData[] = array(
+							'semaine'=>$res->semaine
+							,'id_prod'=>$res->id_prod
+							,'ref_prod'=>$res->ref_prod
+							,'nb_products'=>$res->nb_products
+						);
 	}
 	
 	return $TData;
@@ -89,10 +96,10 @@ function get_sql($date_deb, $date_fin, $type) {
 	if($type === 'expedition') {
 		
 		$field_date = 'e.date_valid';
-		
+		// TODO average
 		$sql = 'SELECT WEEK('.$field_date.') as semaine
 					   , '.$field_date.' as date_valid
-					   , p.ref as llx_product_ref
+					   , p.rowid as id_prod, p.ref as ref_prod
 					   , SUM(ed.qty) as nb_products
 				FROM llx_expeditiondet ed
 				INNER JOIN llx_expedition e ON (ed.fk_expedition = e.rowid)
@@ -106,7 +113,7 @@ function get_sql($date_deb, $date_fin, $type) {
 		
 		$sql = 'SELECT WEEK('.$field_date.') as semaine
 					   , '.$field_date.' as date_valid
-					   , p.ref as llx_product_ref
+					  , p.rowid as id_prod, p.ref as ref_prod
 					   , SUM(cd.qty) as nb_products
 				FROM llx_commandedet cd
 				INNER JOIN llx_commande c ON (cd.fk_commande = c.rowid)
@@ -119,7 +126,7 @@ function get_sql($date_deb, $date_fin, $type) {
 		
 		$sql = 'SELECT WEEK('.$field_date.') as semaine
 					   , '.$field_date.' as date_valid
-					   , p.ref as llx_product_ref
+					   , p.rowid as id_prod, p.ref as ref_prod
 					   , SUM(fd.qty) as nb_products
 				FROM llx_facturedet fd
 				INNER JOIN llx_facture f ON (fd.fk_facture = f.rowid)
@@ -140,4 +147,32 @@ function get_sql($date_deb, $date_fin, $type) {
 function draw_table(&$TData) {
 	
 	global $db, $langs;
+	
+	// Je ne fais pas de liste TBS parce que je vais devoir afficher le tableau en base 64 dans la dom pour le poster vers un fichier download.php pour télécharger un csv
+	print_entete();
+	
+	$p = new Product($db);
+	foreach($TData as $Tab) {
+		$p->fetch($Tab['id_prod']);
+		print '<tr>';
+		print '<td>'.$Tab['semaine'].'</td>';
+		print '<td>'.$p->getNomUrl(1).'</td>';
+		print '<td>'.$Tab['nb_products'].'</td>';
+		print '</tr>';
+		
+	}
+
+	print '</table>';
+	
+}
+
+function print_entete() {
+	
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td>Semaine</td>';
+	print '<td>Produit</td>';
+	print '<td>Nombres de produits</td>';
+	print '</tr>';
+	
 }
