@@ -4,7 +4,7 @@ require('config.php');
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
-if (!$user->rights->mandarin->graph->action_by_user) accessforbidden();
+if (!$user->rights->mandarin->graph->products_average) accessforbidden();
 $langs->load('mandarin@mandarin');
 
 $action = GETPOST('action');
