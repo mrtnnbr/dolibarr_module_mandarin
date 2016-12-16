@@ -116,10 +116,10 @@ function get_average(&$TData, $type) {
 		if($type === 'expedition') {
 			
 			$sql = 'SELECT e.rowid, ed.rowid, SUM(ed.qty) as nb_prods
-				   	FROM llx_expeditiondet ed
-				   	INNER JOIN llx_expedition e ON (ed.fk_expedition = e.rowid)
-				   	INNER JOIN llx_commandedet cd ON (cd.rowid = ed.fk_origin_line)
-				   	INNER JOIN llx_product p ON (p.rowid = cd.fk_product)
+				   	FROM '.MAIN_DB_PREFIX.'expeditiondet ed
+				   	INNER JOIN '.MAIN_DB_PREFIX.'expedition e ON (ed.fk_expedition = e.rowid)
+				   	INNER JOIN '.MAIN_DB_PREFIX.'commandedet cd ON (cd.rowid = ed.fk_origin_line)
+				   	INNER JOIN '.MAIN_DB_PREFIX.'product p ON (p.rowid = cd.fk_product)
 				   	WHERE p.rowid = '.$id_prod;
 			$sql.= ' AND e.date_valid >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debday'].' 00:00:00"';
 			$sql.= ' AND e.date_valid <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
@@ -128,9 +128,9 @@ function get_average(&$TData, $type) {
 		} elseif($type === 'commande') {
 			
 	  		$sql = 'SELECT SUM(cd.qty) as nb_prods
-					FROM llx_commandedet cd
-					INNER JOIN llx_commande c ON (cd.fk_commande = c.rowid)
-					INNER JOIN llx_product p ON (p.rowid = cd.fk_product)
+					FROM '.MAIN_DB_PREFIX.'commandedet cd
+					INNER JOIN '.MAIN_DB_PREFIX.'commande c ON (cd.fk_commande = c.rowid)
+					INNER JOIN '.MAIN_DB_PREFIX.'product p ON (p.rowid = cd.fk_product)
 					WHERE p.rowid = '.$id_prod;
 			$sql.= ' AND c.date_commande >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debday'].' 00:00:00"';
 			$sql.= ' AND c.date_commande <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
@@ -139,9 +139,9 @@ function get_average(&$TData, $type) {
 		} else {
 			
 	  		$sql = 'SELECT SUM(fd.qty) as nb_prods
-					FROM llx_facturedet fd
-					INNER JOIN llx_facture f ON (fd.fk_facture = f.rowid)
-					INNER JOIN llx_product p ON (p.rowid = fd.fk_product)
+					FROM '.MAIN_DB_PREFIX.'facturedet fd
+					INNER JOIN '.MAIN_DB_PREFIX.'facture f ON (fd.fk_facture = f.rowid)
+					INNER JOIN '.MAIN_DB_PREFIX.'product p ON (p.rowid = fd.fk_product)
 					WHERE p.rowid = '.$id_prod;
 			$sql.= ' AND f.datef >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debday'].' 00:00:00"';
 			$sql.= ' AND f.datef <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
@@ -171,10 +171,10 @@ function get_sql($date_deb, $date_fin, $type) {
 					   , '.$field_date.'
 					   , p.rowid as id_prod, p.ref as ref_prod
 					   , SUM(ed.qty) as nb_products
-				FROM llx_expeditiondet ed
-				INNER JOIN llx_expedition e ON (ed.fk_expedition = e.rowid)
-				INNER JOIN llx_commandedet cd ON (cd.rowid = ed.fk_origin_line)
-				INNER JOIN llx_product p ON (p.rowid = cd.fk_product)
+				FROM '.MAIN_DB_PREFIX.'expeditiondet ed
+				INNER JOIN '.MAIN_DB_PREFIX.'expedition e ON (ed.fk_expedition = e.rowid)
+				INNER JOIN '.MAIN_DB_PREFIX.'commandedet cd ON (cd.rowid = ed.fk_origin_line)
+				INNER JOIN '.MAIN_DB_PREFIX.'product p ON (p.rowid = cd.fk_product)
 				WHERE (1)';
 		
 	} elseif($type === 'commande') {
@@ -186,9 +186,9 @@ function get_sql($date_deb, $date_fin, $type) {
 					  , '.$field_date.'
 					  , p.rowid as id_prod, p.ref as ref_prod
 					  , SUM(cd.qty) as nb_products
-				FROM llx_commandedet cd
-				INNER JOIN llx_commande c ON (cd.fk_commande = c.rowid)
-				INNER JOIN llx_product p ON (p.rowid = cd.fk_product)
+				FROM '.MAIN_DB_PREFIX.'commandedet cd
+				INNER JOIN '.MAIN_DB_PREFIX.'commande c ON (cd.fk_commande = c.rowid)
+				INNER JOIN '.MAIN_DB_PREFIX.'product p ON (p.rowid = cd.fk_product)
 				WHERE (1)';
 				
 	} elseif($type === 'facture') {
@@ -199,9 +199,9 @@ function get_sql($date_deb, $date_fin, $type) {
 					   , '.$field_date.'
 					   , p.rowid as id_prod, p.ref as ref_prod
 					   , SUM(fd.qty) as nb_products
-				FROM llx_facturedet fd
-				INNER JOIN llx_facture f ON (fd.fk_facture = f.rowid)
-				INNER JOIN llx_product p ON (p.rowid = fd.fk_product)
+				FROM '.MAIN_DB_PREFIX.'facturedet fd
+				INNER JOIN '.MAIN_DB_PREFIX.'facture f ON (fd.fk_facture = f.rowid)
+				INNER JOIN '.MAIN_DB_PREFIX.'product p ON (p.rowid = fd.fk_product)
 				WHERE (1)';
 		
 	}
