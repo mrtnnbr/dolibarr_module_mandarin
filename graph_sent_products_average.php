@@ -60,10 +60,11 @@ function print_form_filter($date_deb, $date_fin, $type) {
 	$date_fin = explode('/', $date_fin);
 	$date_fin = implode('/', array_reverse($date_fin));
 	
-	print 'Du ';
-	$form->select_date(strtotime($date_deb), 'date_deb');
-	print 'Au ';
-	$form->select_date(strtotime($date_fin), 'date_fin');
+	print 'Du&nbsp;&nbsp;';
+	$form->select_date(strtotime($date_deb), 'date_deb', 0, 0, 0, '', 1, 1);
+	print '<br />Au&nbsp;&nbsp;';
+	$form->select_date(strtotime($date_fin), 'date_fin', 0, 0, 0, '', 1, 1);
+	print '<br /><br />';
 	
 	print '<input type="SUBMIT" class="butAction" value="Filtrer" />';
 	
@@ -169,7 +170,7 @@ function get_sql($date_deb, $date_fin, $type) {
 		$field_date2 = 'e2.date_valid';
 		
 		$sql = 'SELECT WEEK('.$field_date.') as semaine
-					   , '.$field_date.' as date_valid
+					   , '.$field_date.'
 					   , p.rowid as id_prod, p.ref as ref_prod
 					   , SUM(ed.qty) as nb_products
 				FROM llx_expeditiondet ed
@@ -184,7 +185,7 @@ function get_sql($date_deb, $date_fin, $type) {
 		$field_date2 = 'c2.date_commande';
 		
 		$sql = 'SELECT WEEK('.$field_date.') as semaine
-					  , '.$field_date.' as date_valid
+					  , '.$field_date.'
 					  , p.rowid as id_prod, p.ref as ref_prod
 					  , SUM(cd.qty) as nb_products
 				FROM llx_commandedet cd
@@ -197,7 +198,7 @@ function get_sql($date_deb, $date_fin, $type) {
 		$field_date = 'f.datef';
 		
 		$sql = 'SELECT WEEK('.$field_date.') as semaine
-					   , '.$field_date.' as date_valid
+					   , '.$field_date.'
 					   , p.rowid as id_prod, p.ref as ref_prod
 					   , SUM(fd.qty) as nb_products
 				FROM llx_facturedet fd
