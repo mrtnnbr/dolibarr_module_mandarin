@@ -106,6 +106,7 @@ AnalyzedData=Données analysées
 
 # Rapport temps moyen de réception des produits
 RapportTempsMoyenReceptionProduits=Temps moyen de réception des produits
+AverageReceipProducts=Tps moyen récep. produits
 
 # GRAPH PROJECT BY USER
 linkMenuProjectByUserReport=Nombre de projets par statut opportunité et par commercial
