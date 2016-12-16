@@ -226,7 +226,7 @@ function draw_table(&$TData) {
 	print '<tr class="liste_titre">';
 	print '<td>Semaine</td>';
 	print '<td>Produit</td>';
-	print '<td>Nombres de produits</td>';
+	print '<td>Nombre de produits</td>';
 	print '<td>Moyenne période</td>';
 	print '</tr>';
 	
