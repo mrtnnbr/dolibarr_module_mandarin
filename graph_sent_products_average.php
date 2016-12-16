@@ -20,12 +20,19 @@ switch($action) {
 		print_fiche_titre($langs->trans('RapportMoyenneProduitsVendusCommandesEnvoyes'));
 		print_form_filter($date_deb, $date_fin, $type);
 		$TData = get_data_tab($date_deb, $date_fin, $type);
-		draw_table($TData);
+		if(!empty($TData)) draw_table($TData);
 		break;
+		
 	case 'download_file':
 		$TData = get_data_tab($date_deb, $date_fin, $type);
 		download_file($TData, $type);
 		break;
+	
+	default:
+		llxHeader('', $langs->trans('RapportMoyenneProduitsVendusCommandesEnvoyes'), '');
+		print dol_get_fiche_head('RapportMoyenneProduitsVendusCommandesEnvoyes');
+		print_fiche_titre($langs->trans('RapportMoyenneProduitsVendusCommandesEnvoyes'));
+		print_form_filter($date_deb, $date_fin, $type);
 	
 }
 
@@ -86,6 +93,7 @@ function get_data_tab($date_deb, $date_fin, $type) {
 							,'id_prod'=>$res->id_prod
 							,'ref_prod'=>$res->ref_prod
 							,'nb_products'=>$res->nb_products
+							,'avg_products'=>round($res->avg, 1)
 						);
 	}
 	
@@ -98,11 +106,22 @@ function get_sql($date_deb, $date_fin, $type) {
 	if($type === 'expedition') {
 		
 		$field_date = 'e.date_valid';
-		// TODO average
+		$field_date2 = 'e2.date_valid';
+		
 		$sql = 'SELECT WEEK('.$field_date.') as semaine
 					   , '.$field_date.' as date_valid
 					   , p.rowid as id_prod, p.ref as ref_prod
 					   , SUM(ed.qty) as nb_products
+					   ,(
+					   		SELECT AVG(ed2.qty)
+							FROM llx_expeditiondet ed2
+							INNER JOIN llx_expedition e2 ON (ed2.fk_expedition = e2.rowid)
+							INNER JOIN llx_commandedet cd2 ON (cd2.rowid = ed2.fk_origin_line)
+							INNER JOIN llx_product p2 ON (p2.rowid = cd2.fk_product)
+							WHERE p2.rowid = p.rowid';
+							$sql.= ' AND '.$field_date2.' >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debday'].' 00:00:00"';
+							$sql.= ' AND '.$field_date2.' <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
+		$sql.= '	   	) as avg
 				FROM llx_expeditiondet ed
 				INNER JOIN llx_expedition e ON (ed.fk_expedition = e.rowid)
 				INNER JOIN llx_commandedet cd ON (cd.rowid = ed.fk_origin_line)
@@ -137,11 +156,11 @@ function get_sql($date_deb, $date_fin, $type) {
 		
 	}
 	
-	if(!empty($date_deb)) $sql.= ' AND '.$field_date.' >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debday'].' 00:00:00"';
-	if(!empty($date_fin)) $sql.= ' AND '.$field_date.' <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
+	$sql.= ' AND '.$field_date.' >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debday'].' 00:00:00"';
+	$sql.= ' AND '.$field_date.' <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
 	
 	$sql.= ' GROUP BY WEEK('.$field_date.'), p.ref';
-	
+	//echo $sql;exit;
 	return $sql;
 	
 }
@@ -156,6 +175,7 @@ function draw_table(&$TData) {
 	print '<td>Semaine</td>';
 	print '<td>Produit</td>';
 	print '<td>Nombres de produits</td>';
+	print '<td>Moyenne période</td>';
 	print '</tr>';
 	
 	$p = new Product($db);
@@ -165,16 +185,21 @@ function draw_table(&$TData) {
 		print '<td>'.$Tab['semaine'].'</td>';
 		print '<td>'.$p->getNomUrl(1).'</td>';
 		print '<td>'.$Tab['nb_products'].'</td>';
+		print '<td>'.$Tab['avg_products'].'</td>';
 		print '</tr>';
 		
 	}
 
 	print '</table>';
 	
-	print '<a href="'.$_SERVER['PHP_SELF'].'?action=download_file&type='.GETPOST('type');
+	print '<div class="tabsAction">';
+	print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?action=download_file&type='.GETPOST('type');
 	print '&date_deb='.GETPOST('date_deb').'&date_fin='.GETPOST('date_fin');
 	print '&date_debyear='.GETPOST('date_debyear').'&date_debmonth='.GETPOST('date_debmonth').'&date_debday='.GETPOST('date_debday');
-	print '&date_finyear='.GETPOST('date_finyear').'&date_finmonth='.GETPOST('date_finmonth').'&date_finday='.GETPOST('date_finday').'">dl</a>';
+	print '&date_finyear='.GETPOST('date_finyear').'&date_finmonth='.GETPOST('date_finmonth').'&date_finday='.GETPOST('date_finday').'">';
+	print 'Télécharger CSV';
+	print '</a>';
+	print '</div>';
 	
 }
 
@@ -184,7 +209,19 @@ function download_file(&$TData, $type) {
 					 .$_REQUEST['date_finyear'].$_REQUEST['date_finmonth'].$_REQUEST['date_finday'].'.csv';
 	$fname = sys_get_temp_dir().'/'.$name;
 	$f = fopen($fname, 'w+');
-	fwrite($f, 'coucou');
+	fputcsv($f, array('Semaine', 'Produit', 'Nombre de produits', 'Moyenne période'), ';');
+	
+	foreach($TData as $Tab) {
+		
+		fputcsv($f, array($Tab['semaine']
+						  , $Tab['ref_prod']
+						  , $Tab['nb_products']
+						  , $Tab['avg_products']
+						  )
+				, ';');
+		
+	}
+	
 	fclose($f);
 	
 	header('Content-Description: File Transfer');
