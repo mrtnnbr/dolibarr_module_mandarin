@@ -102,6 +102,7 @@ titleGraphEventByUser=Graphique du nombre d'événements par type
 # RAPPORT Moyenne des produits commandés, facturés et envoyés
 RapportMoyenneProduitsVendusCommandesEnvoyes=Moyenne par période des produits commandés, facturés ou envoyés
 AverageProducts=Moyennes par période
+AnalyzedData=Données analysées
 
 # GRAPH PROJECT BY USER
 linkMenuProjectByUserReport=Nombre de projets par statut opportunité et par commercial

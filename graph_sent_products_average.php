@@ -50,20 +50,18 @@ function print_form_filter($date_deb, $date_fin, $type) {
 	
 	print '<input type="hidden" name="action" value="print_data" />';
 	
-	print $langs->trans('Données analysées :&nbsp&nbsp');
+	print $langs->trans('AnalyzedData').'&nbsp;&nbsp;';
 	print $form->selectarray('type', array('expedition'=>'Expéditions', 'commande'=>'Commandes', 'facture'=>'Factures'), $type);
 	
 	print '<br /><br />';
 	
-	$date_deb = explode('/', $date_deb);
-	$date_deb = implode('/', array_reverse($date_deb));
-	$date_fin = explode('/', $date_fin);
-	$date_fin = implode('/', array_reverse($date_fin));
+	$date_deb_t = dol_mktime(0, 0, 0, GETPOST('date_debmonth'), GETPOST('date_debday'), GETPOST('date_debyear'));
+	$date_fin_t = dol_mktime(0, 0, 0, GETPOST('date_finmonth'), GETPOST('date_finday'), GETPOST('date_finyear'));
 	
 	print 'Du&nbsp;&nbsp;';
-	$form->select_date(strtotime($date_deb), 'date_deb', 0, 0, 0, '', 1, 1);
+	$form->select_date(empty($date_deb) ? false : $date_deb_t, 'date_deb', 0, 0, 0, '', 1, 1);
 	print '<br />Au&nbsp;&nbsp;';
-	$form->select_date(strtotime($date_fin), 'date_fin', 0, 0, 0, '', 1, 1);
+	$form->select_date(empty($date_fin) ? false : $date_fin_t, 'date_fin', 0, 0, 0, '', 1, 1);
 	print '<br /><br />';
 	
 	print '<input type="SUBMIT" class="butAction" value="Filtrer" />';
