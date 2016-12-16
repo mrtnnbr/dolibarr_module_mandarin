@@ -93,11 +93,71 @@ function get_data_tab($date_deb, $date_fin, $type) {
 							,'id_prod'=>$res->id_prod
 							,'ref_prod'=>$res->ref_prod
 							,'nb_products'=>$res->nb_products
-							,'avg_products'=>round($res->avg, 1)
 						);
 	}
 	
+	get_average($TData, $type);
+	
 	return $TData;
+	
+}
+
+function get_average(&$TData, $type) {
+	
+	global $db;
+	
+	// On récupère tous les produits différents
+	$TProds = array();
+	foreach($TData as $Tab) $TProds[$Tab['id_prod']] = $Tab['id_prod'];
+	
+	// On récupère la moyenne du nombre de produits traités pour la période
+	$TProdAverage = array();
+	foreach($TProds as $id_prod) {
+		
+		if($type === 'expedition') {
+			
+			$sql = 'SELECT e.rowid, ed.rowid, SUM(ed.qty) as nb_prods
+				   	FROM llx_expeditiondet ed
+				   	INNER JOIN llx_expedition e ON (ed.fk_expedition = e.rowid)
+				   	INNER JOIN llx_commandedet cd ON (cd.rowid = ed.fk_origin_line)
+				   	INNER JOIN llx_product p ON (p.rowid = cd.fk_product)
+				   	WHERE p.rowid = '.$id_prod;
+			$sql.= ' AND e.date_valid >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debday'].' 00:00:00"';
+			$sql.= ' AND e.date_valid <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
+			$sql.= ' GROUP BY e.rowid';
+			
+		} elseif($type === 'commande') {
+			
+	  		$sql = 'SELECT SUM(cd.qty) as nb_prods
+					FROM llx_commandedet cd
+					INNER JOIN llx_commande c ON (cd.fk_commande = c.rowid)
+					INNER JOIN llx_product p ON (p.rowid = cd.fk_product)
+					WHERE p.rowid = '.$id_prod;
+			$sql.= ' AND c.date_commande >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debday'].' 00:00:00"';
+			$sql.= ' AND c.date_commande <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
+			$sql.= ' GROUP BY c.rowid';
+			
+		} else {
+			
+	  		$sql = 'SELECT SUM(fd.qty) as nb_prods
+					FROM llx_facturedet fd
+					INNER JOIN llx_facture f ON (fd.fk_facture = f.rowid)
+					INNER JOIN llx_product p ON (p.rowid = fd.fk_product)
+					WHERE p.rowid = '.$id_prod;
+			$sql.= ' AND f.datef >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debday'].' 00:00:00"';
+			$sql.= ' AND f.datef <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
+			$sql.= ' GROUP BY f.rowid';
+			
+		}
+		//echo $sql.'<br>';exit;
+		$resql = $db->query($sql);
+		$TResql = array();
+		while($res = $db->fetch_object($resql)) $TResql[$id_prod][] = $res->nb_prods;
+		$TProdAverage[$id_prod] = array_sum($TResql[$id_prod]) / count($TResql[$id_prod]);
+		
+	}
+
+	foreach($TData as &$Tab) $Tab['avg_products'] = $TProdAverage[$Tab['id_prod']];
 	
 }
 
@@ -112,16 +172,6 @@ function get_sql($date_deb, $date_fin, $type) {
 					   , '.$field_date.' as date_valid
 					   , p.rowid as id_prod, p.ref as ref_prod
 					   , SUM(ed.qty) as nb_products
-					   ,(
-					   		SELECT AVG(ed2.qty)
-							FROM llx_expeditiondet ed2
-							INNER JOIN llx_expedition e2 ON (ed2.fk_expedition = e2.rowid)
-							INNER JOIN llx_commandedet cd2 ON (cd2.rowid = ed2.fk_origin_line)
-							INNER JOIN llx_product p2 ON (p2.rowid = cd2.fk_product)
-							WHERE p2.rowid = p.rowid';
-							$sql.= ' AND '.$field_date2.' >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debday'].' 00:00:00"';
-							$sql.= ' AND '.$field_date2.' <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
-		$sql.= '	   	) as avg
 				FROM llx_expeditiondet ed
 				INNER JOIN llx_expedition e ON (ed.fk_expedition = e.rowid)
 				INNER JOIN llx_commandedet cd ON (cd.rowid = ed.fk_origin_line)
@@ -131,11 +181,12 @@ function get_sql($date_deb, $date_fin, $type) {
 	} elseif($type === 'commande') {
 		
 		$field_date = 'c.date_commande';
+		$field_date2 = 'c2.date_commande';
 		
 		$sql = 'SELECT WEEK('.$field_date.') as semaine
-					   , '.$field_date.' as date_valid
+					  , '.$field_date.' as date_valid
 					  , p.rowid as id_prod, p.ref as ref_prod
-					   , SUM(cd.qty) as nb_products
+					  , SUM(cd.qty) as nb_products
 				FROM llx_commandedet cd
 				INNER JOIN llx_commande c ON (cd.fk_commande = c.rowid)
 				INNER JOIN llx_product p ON (p.rowid = cd.fk_product)
