@@ -104,6 +104,10 @@ RapportMoyenneProduitsVendusCommandesEnvoyes=Moyenne par période des produits c
 AverageProducts=Moyennes par période
 AnalyzedData=Données analysées
 
+# Rapport temps moyen de réception des produits
+RapportTempsMoyenReceptionProduits=Temps moyen de réception des produits
+AverageReceipProducts=Tps moyen récep. produits
+
 # GRAPH PROJECT BY USER
 linkMenuProjectByUserReport=Nombre de projets par statut opportunité et par commercial
 linkMenuProjectByUserReportShort=Nb projets par commercial
