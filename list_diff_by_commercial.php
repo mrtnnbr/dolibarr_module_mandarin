@@ -27,13 +27,13 @@ $TData=array();
 
 $sql = 'SELECT p.fk_user_valid, SUM(p.total_ht) as propal_amout_ht, SUM(p.total) as propal_amout_ttc';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'propal p';
-$sql.= ' WHERE p.fk_statut IN ('..', 4)'; // TODO vérifier statut
-$sql.= ' AND p.date_valid BETWEEN "'.date('Y-m-d H:i:s', $date_start).'" AND "'.date('Y-m-d H:i:s', $date_end).'"';
+$sql.= ' WHERE p.fk_statut IN ('.Propal::STATUS_SIGNED.', '.Propal::STATUS_BILLED.')';
+if (!empty($date_start)) $sql.= ' AND p.date_valid >= "'.date('Y-m-d H:i:s', $date_start).'"';
+if (!empty($date_end)) $sql.= ' AND p.date_valid <= "'.date('Y-m-d H:i:s', $date_end).'"';
 $sql.= ' GROUP BY p.fk_user_valid';
-new Propal;
+
 $Tab = $PDOdb->ExecuteAsArray($sql);
 
-// TODO réécrire l'afféctation
 foreach($Tab as &$row)
 {
 	if (!isset($TUser[$row->fk_user_valid]))
@@ -51,16 +51,16 @@ foreach($Tab as &$row)
 }
 
 
-// TODO finir la requete pour les commandes
 $sql = 'SELECT c.fk_user_valid, SUM(c.total_ht) as commande_amout_ht, SUM(c.total_ttc) as commande_amout_ttc';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'commande c';
-$sql.= ' WHERE c.fk_statut IN (2, 4)'; // TODO vérifier statut
-$sql.= ' AND c.date_valid BETWEEN "'.date('Y-m-d H:i:s', $date_start).'" AND "'.date('Y-m-d H:i:s', $date_end).'"';
+$sql.= ' WHERE c.fk_statut IN ('.Commande::STATUS_VALIDATED.', '.Commande::STATUS_ACCEPTED.')';
+if (!empty($date_start)) $sql.= ' AND c.date_valid >= "'.date('Y-m-d H:i:s', $date_start).'"';
+if (!empty($date_end)) $sql.= ' AND c.date_valid <= "'.date('Y-m-d H:i:s', $date_end).'"';
 $sql.= ' GROUP BY c.fk_user_valid';
 
 $Tab = $PDOdb->ExecuteAsArray($sql);
 
-// TODO réécrire l'afféctation
+
 foreach($Tab as &$row)
 {
 	if (!isset($TUser[$row->fk_user_valid]))
