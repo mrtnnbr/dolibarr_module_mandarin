@@ -141,3 +141,15 @@ monthJun=Juin
 monthJul=Juil
 monthAug=Aou
 ExportCSV=Export CSV
+
+# GRAPH DIFF VENTE PAR COMMERCIAL - DIFF ENTRE LES TOTAUX HT ET TTC (PROPAL / COMMANDE)
+permGraphDiffByCommercial=Autoriser la visualisation du graphique horaire moyen (menu commande)
+linkMenuGraphByCommercial=Diff Propal/Cmd
+titleGraphByCommercial=Différence HT/TTC des propals/commandes
+commercial=Commercial
+propal_amount_ht=Montant Propal HT
+propal_amount_ttc=Montant Propal TTC
+commande_amount_ht=Montant Commande HT
+commande_amount_ttc=Montant Commande TTC
+diff_ht=Diff HT
+diff_ttc=Diff TTC
