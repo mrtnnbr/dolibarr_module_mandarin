@@ -607,6 +607,21 @@ class modmandarin extends DolibarrModules
 		);
 		$r++;
 		
+		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=commercial,fk_leftmenu=propals',			                // Put 0 if this is a top menu
+			'type'=>'left',			                // This is a Top menu entry
+			'titre'=>$langs->transnoentitiesnoconv('linkMenuGraphByCommercial'),
+			'mainmenu'=>'',
+			'leftmenu'=>'',
+			'url'=>'/mandarin/list_diff_by_commercial.php',
+			'langs'=>'mandarin@mandarin',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position'=>401,
+			'enabled'=>'$conf->mandarin->enabled',	// Define condition to show or hide menu entry. Use '$conf->mandarin->enabled' if entry must be visible if module is enabled.
+			'perms'=>'$user->rights->mandarin->list->diff_by_commercial',			                // Use 'perms'=>'$user->rights->mandarin->level1->level2' if you want your menu with a permission rules
+			'target'=>'',
+			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
+		);
+		$r++;
+		
 		
 		// Add here entries to declare new menus
 		//
