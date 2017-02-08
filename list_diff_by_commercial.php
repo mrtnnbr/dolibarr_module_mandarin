@@ -96,6 +96,7 @@ $formCore=new TFormCore('auto','form2', 'get');
 // print 2x datepicker
 $form = new Form($db);
 
+$headsearch='';
 $headsearch.=$form->select_date($date_start, 'start', 0, 0, 1, '', 1, 0, 1, 0);
 $headsearch.=$form->select_date($date_end, 'end', 0, 0, 1, '', 1, 0, 1, 0);
 
