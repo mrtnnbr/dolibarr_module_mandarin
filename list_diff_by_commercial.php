@@ -20,16 +20,19 @@ $TUser = array();
 
 
 
-$date_start = dol_mktime(0, 0, 0, GETPOST('startmonth'), GETPOST('startday'), GETPOST('startyear'));
-$date_end = dol_mktime(23, 59, 59, GETPOST('endmonth'), GETPOST('endday'), GETPOST('endyear'));
+$date_start_p = dol_mktime(0, 0, 0, GETPOST('startpmonth'), GETPOST('startpday'), GETPOST('startpyear'));
+$date_end_p = dol_mktime(23, 59, 59, GETPOST('endpmonth'), GETPOST('endpday'), GETPOST('endpyear'));
+
+$date_start_c = dol_mktime(0, 0, 0, GETPOST('startcmonth'), GETPOST('startcday'), GETPOST('startcyear'));
+$date_end_c = dol_mktime(23, 59, 59, GETPOST('endcmonth'), GETPOST('endcday'), GETPOST('endcyear'));
 
 $TData=array();
 
 $sql = 'SELECT p.fk_user_valid, SUM(p.total_ht) as propal_amout_ht, SUM(p.total) as propal_amout_ttc';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'propal p';
 $sql.= ' WHERE p.fk_statut IN ('.Propal::STATUS_SIGNED.', '.Propal::STATUS_BILLED.')';
-if (!empty($date_start)) $sql.= ' AND p.date_valid >= "'.date('Y-m-d H:i:s', $date_start).'"';
-if (!empty($date_end)) $sql.= ' AND p.date_valid <= "'.date('Y-m-d H:i:s', $date_end).'"';
+if (!empty($date_start_p)) $sql.= ' AND p.date_valid >= "'.date('Y-m-d H:i:s', $date_start_p).'"';
+if (!empty($date_end_p)) $sql.= ' AND p.date_valid <= "'.date('Y-m-d H:i:s', $date_end_p).'"';
 $sql.= ' GROUP BY p.fk_user_valid';
 
 $Tab = $PDOdb->ExecuteAsArray($sql);
@@ -54,8 +57,8 @@ foreach($Tab as &$row)
 $sql = 'SELECT c.fk_user_valid, SUM(c.total_ht) as commande_amout_ht, SUM(c.total_ttc) as commande_amout_ttc';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'commande c';
 $sql.= ' WHERE c.fk_statut IN ('.Commande::STATUS_VALIDATED.', '.Commande::STATUS_ACCEPTED.')';
-if (!empty($date_start)) $sql.= ' AND c.date_valid >= "'.date('Y-m-d H:i:s', $date_start).'"';
-if (!empty($date_end)) $sql.= ' AND c.date_valid <= "'.date('Y-m-d H:i:s', $date_end).'"';
+if (!empty($date_start_c)) $sql.= ' AND c.date_valid >= "'.date('Y-m-d H:i:s', $date_start_c).'"';
+if (!empty($date_end_c)) $sql.= ' AND c.date_valid <= "'.date('Y-m-d H:i:s', $date_end_c).'"';
 $sql.= ' GROUP BY c.fk_user_valid';
 
 $Tab = $PDOdb->ExecuteAsArray($sql);
@@ -96,9 +99,13 @@ $formCore=new TFormCore('auto','form2', 'get');
 // print 2x datepicker
 $form = new Form($db);
 
-$headsearch='';
-$headsearch.=$form->select_date($date_start, 'start', 0, 0, 1, '', 1, 0, 1, 0);
-$headsearch.=$form->select_date($date_end, 'end', 0, 0, 1, '', 1, 0, 1, 0);
+$headsearch='Dates Propal ';
+$headsearch.=$form->select_date($date_start_p, 'startp', 0, 0, 1, '', 1, 0, 1, 0);
+$headsearch.=$form->select_date($date_end_p, 'endp', 0, 0, 1, '', 1, 0, 1, 0);
+
+$headsearch.='Dates Commande ';
+$headsearch.=$form->select_date($date_start_c, 'startc', 0, 0, 1, '', 1, 0, 1, 0);
+$headsearch.=$form->select_date($date_end_c, 'endc', 0, 0, 1, '', 1, 0, 1, 0);
 
 $headsearch.= $formCore->btsubmit($langs->trans('Ok'),'bt_ok');
 
