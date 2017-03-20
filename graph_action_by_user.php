@@ -81,7 +81,7 @@ function get_data_tab($userid) {
 	$sql = 'SELECT u.rowid, c.code, COUNT(*) as nb_events
  			FROM llx_user u
  			LEFT JOIN llx_actioncomm a ON (a.fk_user_action = u.rowid)
-			LEFT JOIN llx_c_actioncomm ON (a.id = a.fk_action)
+			LEFT JOIN llx_c_actioncomm c ON (c.id = a.fk_action)
  			WHERE u.rowid > 1
  			AND u.statut = 1';
  
