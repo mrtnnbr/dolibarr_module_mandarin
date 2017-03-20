@@ -77,28 +77,30 @@ function get_data_tab($userid) {
 	global $db;
 	
 	$TData = array();
-	
-	$sql = 'SELECT u.rowid, a.code, COUNT(*) as nb_events
-			FROM llx_user u
-			LEFT JOIN llx_actioncomm a ON (a.fk_user_action = u.rowid)
+ 	
+	$sql = 'SELECT u.rowid, c.code, COUNT(*) as nb_events
+ 			FROM llx_user u
+ 			LEFT JOIN llx_actioncomm a ON (a.fk_user_action = u.rowid)
 			LEFT JOIN llx_c_actioncomm ON (a.id = a.fk_action)
-			WHERE u.rowid > 1
-			AND u.statut = 1';
+		LEFT JOIN llx_c_actioncomm c ON (c.id = a.fk_action)
+ 			WHERE u.rowid > 1
+ 			AND u.statut = 1';
+ 
+ 	if(!empty($_REQUEST['date_deb'])) $sql.= ' AND a.datep >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debday'].' 00:00:00"';
+ 	if(!empty($_REQUEST['date_fin'])) $sql.= ' AND a.datep <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
+ 	if($userid > 0) $sql.= ' AND u.fk_user = '.$userid;
+ 	$sql.= ' AND a.code NOT IN ("AC_OTH_AUTO")
+			GROUP BY u.rowid, c.code';
+ 	
+ 	$resql = $db->query($sql);
+ 	while($res = $db->fetch_object($resql)){
+ 		$TData[$res->code][$res->rowid] = $res->nb_events;
+ 	}
+ 	return $TData;
+ 	
+ }
+	
 
-	if(!empty($_REQUEST['date_deb'])) $sql.= ' AND a.datep >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debday'].' 00:00:00"';
-	if(!empty($_REQUEST['date_fin'])) $sql.= ' AND a.datep <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
-	if($userid > 0) $sql.= ' AND u.fk_user = '.$userid;
-	$sql.= ' AND a.code NOT IN ("AC_OTH_AUTO")
-			GROUP BY u.rowid, a.code';
-	
-	$resql = $db->query($sql);
-	while($res = $db->fetch_object($resql)){
-		$TData[$res->code][$res->rowid] = $res->nb_events;
-	}
-	
-	return $TData;
-	
-}
 
 function get_tab_label_action_comm() {
 	
