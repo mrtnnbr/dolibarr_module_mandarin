@@ -156,5 +156,5 @@ diff_ttc=Diff TTC
 
 # Report Repartition achats fournisseurs
 mandarinTitleRepartitionAchatsFournisseurs=Répartition des achats par fournisseur
-YearOfSearch=Année de recherche
+AnalyseDate=Période d'analyse
 MANDARIN_POURCENTAGE_ALERTE=Pourcentage à partir duquel les données sont affichées en rouge
