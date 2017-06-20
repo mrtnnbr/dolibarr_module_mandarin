@@ -4,6 +4,7 @@ require './config.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT . '/core/class/html.formother.class.php';
 require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+require_once DOL_DOCUMENT_ROOT . '/core/lib/security.lib.php';
 
 $action = GETPOST('action');
 $date_debut = GETPOST('date_debut');
@@ -38,8 +39,10 @@ if(empty($sortfield)) {
 	$sortorder = 'asc';
 }
 
-llxHeader('', $langs->trans('mandarinTitleRepartitionAchatsFournisseurs'), '');
-print_fiche_titre($langs->trans('mandarinTitleRepartitionAchatsFournisseurs'));
+llxHeader('', $langs->trans('mandarinTitleRepartitionAchatsFournisseurs', strtolower($langs->trans('Supplier'))), '');
+print_fiche_titre($langs->trans('mandarinTitleRepartitionAchatsFournisseurs', strtolower($langs->trans('Supplier'))));
+
+if(empty($user->rights->mandarin->list->repartition_by_supplier)) accessforbidden('', 0);
 
 switch ($action) {
 	case 'report':
@@ -72,7 +75,7 @@ function _print_repartition_achats($date_debut, $date_fin) {
 	
 	global $conf, $db, $langs, $sortfield, $sortorder, $param, $bc;
 	
-	$sql = 'SELECT soc.rowid, soc.nom, SUM(facf.total_ht) as mt_total_ht_producteur, (SELECT SUM(facf.total_ht) FROM '.MAIN_DB_PREFIX.'facture_fourn facf WHERE facf.datef BETWEEN "'.$date_debut.'" AND "'.$date_fin.'") as mt_total_ht
+	$sql = 'SELECT soc.rowid, soc.nom, SUM(facf.total_ht) as mt_total_ht_fournisseur, (SELECT SUM(facf.total_ht) FROM '.MAIN_DB_PREFIX.'facture_fourn facf WHERE facf.datef BETWEEN "'.$date_debut.'" AND "'.$date_fin.'") as mt_total_ht
 			FROM '.MAIN_DB_PREFIX.'facture_fourn facf
 			INNER JOIN '.MAIN_DB_PREFIX.'societe soc ON (soc.rowid = facf.fk_soc)
 			WHERE facf.datef BETWEEN "'.$date_debut.'" AND "'.$date_fin.'"
@@ -87,8 +90,8 @@ function _print_repartition_achats($date_debut, $date_fin) {
 		print '<table class="liste">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre($langs->trans('Supplier'),$_SERVER['PHP_SELF'],'soc.nom','',$param,'',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('TotalHT'),$_SERVER['PHP_SELF'],'mt_total_ht_producteur','',$param,'',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans('Percent'),$_SERVER['PHP_SELF'],'mt_total_ht_producteur','',$param,'',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('TotalHT'),$_SERVER['PHP_SELF'],'mt_total_ht_fournisseur','',$param,'',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('Percent'),$_SERVER['PHP_SELF'],'mt_total_ht_fournisseur','',$param,'',$sortfield,$sortorder);
 		print '</tr>';
 		
 		$var=0;
@@ -96,7 +99,7 @@ function _print_repartition_achats($date_debut, $date_fin) {
 		
 		while($res = $db->fetch_object($resql)) {
 			
-			$percent = $res->mt_total_ht_producteur / $res->mt_total_ht * 100;
+			$percent = $res->mt_total_ht_fournisseur / $res->mt_total_ht * 100;
 			
 			if(!empty($conf->global->MANDARIN_POURCENTAGE_ALERTE)
 					&& $percent > $conf->global->MANDARIN_POURCENTAGE_ALERTE) $plus = ' bgcolor="#F5A9A9" style="font-weight:bold;"';
@@ -106,7 +109,7 @@ function _print_repartition_achats($date_debut, $date_fin) {
 			$soc->fetch($res->rowid);
 			print '<td>'.$soc->getNomUrl(1).'</td>';
 			
-			print '<td >'.price($res->mt_total_ht_producteur, 0, $langs, 1, -1, -1, 'EUR').'</td>';
+			print '<td >'.price($res->mt_total_ht_fournisseur, 0, $langs, 1, -1, -1, 'EUR').'</td>';
 			print '<td >'.price($percent, 0, $langs, 1, -1, 2).' %</td>';
 			print '</tr>';
 			$var=!$var;
