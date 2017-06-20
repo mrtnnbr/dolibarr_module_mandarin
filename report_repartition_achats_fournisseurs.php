@@ -54,6 +54,8 @@ switch ($action) {
 		break;
 }
 
+llxFooter();
+
 function _print_form_repartition_achats($date_debut, $date_fin) {
 	
 	global $db, $form, $formother, $langs;
