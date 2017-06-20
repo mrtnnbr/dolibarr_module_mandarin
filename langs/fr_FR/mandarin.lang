@@ -153,3 +153,10 @@ commande_amount_ht=Montant Commande HT
 commande_amount_ttc=Montant Commande TTC
 diff_ht=Diff HT
 diff_ttc=Diff TTC
+
+# Report Repartition achats fournisseurs
+mandarinTitleRepartitionAchatsFournisseurs=Répartition des achats par %s
+AnalyseDate=Période d'analyse
+MANDARIN_POURCENTAGE_ALERTE=Pourcentage à partir duquel les données sont affichées en rouge
+permReportRepartitionBySupplier=Autoriser la visualisation du rapport de répartition des achats par producteur
+linkMenuRepartitionAchatsBySupplier=Rapport répartition des achats

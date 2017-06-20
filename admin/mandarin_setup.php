@@ -49,7 +49,7 @@ $action = GETPOST('action', 'alpha');
 if (preg_match('/set_(.*)/',$action,$reg))
 {
 	$code=$reg[1];
-	if (dolibarr_set_const($db, $code, GETPOST($code) == 'yes' ? 1 : 0, 'entier', 0, '', $conf->entity) > 0)
+	if (dolibarr_set_const($db, $code, GETPOST($code), 'entier', 0, '', $conf->entity) > 0)
 	{
 		if($code == 'MANDARIN_TRACE_COST_PRICE' &&  GETPOST($code) == 'yes') {
 			define('INC_FROM_DOLIBARR',true);
@@ -178,8 +178,21 @@ print '<td align="right" width="300">';
 print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="set_MANDARIN_TRACE_COST_PRICE">';
-echo $form->selectyesno('MANDARIN_TRACE_COST_PRICE',$conf->global->MANDARIN_TRACE_COST_PRICE); // attention pas ajax car je dois passer en haut
+echo $form->selectyesno('MANDARIN_TRACE_COST_PRICE',$conf->global->MANDARIN_TRACE_COST_PRICE,1); // attention pas ajax car je dois passer en haut
 
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("MANDARIN_POURCENTAGE_ALERTE").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_MANDARIN_POURCENTAGE_ALERTE">';
+print '<input type="number" name="MANDARIN_POURCENTAGE_ALERTE" value="'.$conf->global->MANDARIN_POURCENTAGE_ALERTE.'" />%';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</form>';
 print '</td></tr>';
