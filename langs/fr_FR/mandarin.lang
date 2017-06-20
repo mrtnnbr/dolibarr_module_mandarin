@@ -157,6 +157,6 @@ diff_ttc=Diff TTC
 # Report Repartition achats fournisseurs
 mandarinTitleRepartitionAchatsFournisseurs=Répartition des achats par %s
 AnalyseDate=Période d'analyse
-MANDARIN_POURCENTAGE_ALERTE=Pourcentage à partir duquel les données sont affichées en rouge
+MANDARIN_POURCENTAGE_ALERTE=Pourcentage à partir duquel les données du rapport de répartition des achats par fournisseur sont affichées en rouge
 permReportRepartitionBySupplier=Autoriser la visualisation du rapport de répartition des achats par producteur
 linkMenuRepartitionAchatsBySupplier=Rapport répartition des achats
