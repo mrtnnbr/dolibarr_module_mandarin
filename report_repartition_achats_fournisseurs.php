@@ -17,7 +17,6 @@ if(empty($sortfield)) {
 }
 
 llxHeader('', $langs->trans('mandarinTitleRepartitionAchatsFournisseurs'), '');
-//print dol_get_fiche_head('mandarinTitleRepartitionAchatsFournisseurs');
 print_fiche_titre($langs->trans('mandarinTitleRepartitionAchatsFournisseurs'));
 
 switch ($action) {
@@ -46,7 +45,7 @@ function _print_form_repartition_achats($year) {
 
 function _print_repartition_achats($year) {
 	
-	global $db, $langs, $sortfield, $sortorder, $param, $bc;
+	global $conf, $db, $langs, $sortfield, $sortorder, $param, $bc;
 	
 	$sql = 'SELECT soc.rowid, soc.nom, SUM(facf.total_ht) as mt_total_ht_producteur, (SELECT SUM(facf.total_ht) FROM '.MAIN_DB_PREFIX.'facture_fourn facf WHERE YEAR(facf.datef) = '.$year.') as mt_total_ht
 			FROM '.MAIN_DB_PREFIX.'facture_fourn facf
@@ -59,24 +58,38 @@ function _print_repartition_achats($year) {
 	$resql = $db->query($sql);
 	
 	if(!empty($resql)) {
+		
 		print '<table class="liste">';
 		print '<tr class="liste_titre">';
 		print_liste_field_titre($langs->trans('Supplier'),$_SERVER['PHP_SELF'],'soc.nom','',$param,'',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans('TotalHT'),$_SERVER['PHP_SELF'],'mt_total_ht_producteur','',$param,'',$sortfield,$sortorder);
-		print '<td>'.$langs->trans('Percent').'</td>';
+		print_liste_field_titre($langs->trans('Percent'),$_SERVER['PHP_SELF'],'mt_total_ht_producteur','',$param,'',$sortfield,$sortorder);
 		print '</tr>';
+		
 		$var=0;
 		$soc = new Societe($db);
+		
 		while($res = $db->fetch_object($resql)) {
+			
 			print '<tr '.$bc[$var].'>';
 			$soc->fetch($res->rowid);
 			print '<td>'.$soc->getNomUrl(1).'</td>';
-			print '<td>'.price($res->mt_total_ht_producteur, 0, $langs, 1, -1, -1, 'EUR').'</td>';
-			print '<td>'.price($res->mt_total_ht_producteur / $res->mt_total_ht * 100, 0, $langs, 1, -1, 2).'</td>';
+			
+			$percent = $res->mt_total_ht_producteur / $res->mt_total_ht * 100;
+			
+			$plus = '';
+			if(!empty($conf->global->MANDARIN_POURCENTAGE_ALERTE)
+				&& $percent > $conf->global->MANDARIN_POURCENTAGE_ALERTE) $plus = 'style="color:red;font-weight:bold;"';
+			
+			print '<td '.$plus.' >'.price($res->mt_total_ht_producteur, 0, $langs, 1, -1, -1, 'EUR').'</td>';
+			print '<td '.$plus.' >'.price($percent, 0, $langs, 1, -1, 2).' %</td>';
 			print '</tr>';
 			$var=!$var;
+			
 		}
+		
 		print '</table>';
+		
 	}
 	
 }
