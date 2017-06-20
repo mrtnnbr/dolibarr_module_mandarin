@@ -153,3 +153,7 @@ commande_amount_ht=Montant Commande HT
 commande_amount_ttc=Montant Commande TTC
 diff_ht=Diff HT
 diff_ttc=Diff TTC
+
+# Report Repartition achats fournisseurs
+mandarinTitleRepartitionAchatsFournisseurs=Répartition des achats par fournisseur
+YearOfSearch=Année de recherche
