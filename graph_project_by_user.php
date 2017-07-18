@@ -86,22 +86,29 @@ function get_data_tab($userid) {
 	$resql = $db->query($sql);
 	while($res = $db->fetch_object($resql)) $TData[$res->code][$res->fk_socpeople] = $res->nb_projects;
 	
+	$sql = getSqlForData($userid, false, true);
+	$resql = $db->query($sql);
+	
+	while($res = $db->fetch_object($resql)) $TData[$res->code][$res->fk_socpeople] = $res->nb_projects;
+	
 	return $TData;
 	
 }
 
-function getSqlForData($userid, $only_draft=false)
+function getSqlForData($userid, $only_draft=false, $only_close=false)
 {
-	if (!$only_draft) $sql = 'SELECT ls.code, c.fk_socpeople, COUNT(*) as nb_projects';
-	else  $sql = 'SELECT "DRAFT" as code, c.fk_socpeople, COUNT(*) as nb_projects';
+	if (!$only_draft && !$only_close) $sql = 'SELECT ls.code, c.fk_socpeople, COUNT(*) as nb_projects';
+	elseif ($only_draft)  $sql = 'SELECT "DRAFT" as code, c.fk_socpeople, COUNT(*) as nb_projects';
+	elseif ($only_close)  $sql = 'SELECT "CLOSE" as code, c.fk_socpeople, COUNT(*) as nb_projects';
 	
 	$sql.=' FROM '.MAIN_DB_PREFIX.'projet p 
 			LEFT JOIN '.MAIN_DB_PREFIX.'c_lead_status ls ON (p.fk_opp_status = ls.rowid)
 			LEFT JOIN '.MAIN_DB_PREFIX.'element_contact c ON (p.rowid = c.element_id AND fk_c_type_contact IN(160, 161))
 			LEFT JOIN '.MAIN_DB_PREFIX.'user u ON (u.rowid = c.fk_socpeople)';
 			
-	if (!$only_draft) $sql.=' WHERE p.fk_statut > 0	AND fk_opp_status > 0';
-	else $sql.=' WHERE p.fk_statut = 0';
+	if (!$only_draft && !$only_close) $sql.=' WHERE p.fk_statut = 1	AND fk_opp_status > 0';
+	elseif ($only_draft) $sql.=' WHERE p.fk_statut = 0';
+	elseif ($only_close) $sql.=' WHERE p.fk_statut = 2';
 	
 	$sql.=' AND u.statut = 1';
 	
@@ -109,7 +116,7 @@ function getSqlForData($userid, $only_draft=false)
 	if(!empty($_REQUEST['date_fin'])) $sql.= ' AND p.dateo <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
 	if($userid > 0) $sql.= ' AND u.fk_user = '.$userid;
 	
-	if (!$only_draft) $sql.= ' GROUP BY p.fk_opp_status, c.fk_socpeople';
+	if (!$only_draft && !$only_close) $sql.= ' GROUP BY p.fk_opp_status, c.fk_socpeople';
 	else $sql.= ' GROUP BY c.fk_socpeople';
 
 	$sql .= ' ORDER BY ls.percent';
@@ -174,13 +181,16 @@ function draw_table(&$TData, &$TIDUser, &$TLabelStatutOpportunite) {
 
 	foreach($TFkStatutOpportunite as $status) {
 		print '<td>';
-		if ($status != 'DRAFT')
+		if ($status != 'DRAFT' && $status != 'CLOSE')
 		{
 			print $TLabelStatutOpportunite[$status]['label'];
 			print ' ('.$TLabelStatutOpportunite[$status]['percent'].')';
 		}
-		else {
+		elseif ($status == 'DRAFT') {
 			print $langs->trans('Draft');
+		}
+		elseif ($status == 'CLOSE') {
+			print $langs->trans('Closed');
 		}
 		
 		print '</td>';
