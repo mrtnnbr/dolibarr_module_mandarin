@@ -58,6 +58,8 @@ subTitleHAxisGraphHoraireMoyen=Semaines
 
 # GRAPH PROPAL FACTURE
 permGraphPropalFacture=Autoriser la visualisation du rapport concernant les propal/facture par commercial (menu SIG)
+permGraphPropalCommercial=Autoriser la visualisation du rapport de ses propales par status
+permGraphPropalAllCommercial=Autoriser la visualisation du rapport des propales par status et par commercial
 mandarinTitlePropalFactureCommercial=Commercial
 mandarinTitlePropalFactureNbPropal=Nb propositions
 mandarinTitlePropalFacturePropalPercentNotSigned=Pourcent non signée
@@ -72,6 +74,7 @@ linkMenuGraphPropalFacture=Rapport propal/facture par commercial
 titleGraphPalmaresPercentCA=Palmares pourcent CA par client (%s)
 titleGraphPercentCAPerCC=Pourcent CA par CC (%s)
 noData=Aucune donnée disponible
+linkMenuPropalesByCommercial=Nombre Propositions par commercial
 
 #GRAPH EXCES TIMPESPENT
 permGraphProjectExceed=Autoriser la visualisation des projets en dépassement (menu projet)
