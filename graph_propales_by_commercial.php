@@ -9,22 +9,26 @@ $langs->load('mandarin@mandarin');
 $userid = GETPOST('userid');
 if(!$user->rights->mandarin->graph->propal_alldata) $userid = $user->id;
 
-// à terme le group "commerciaux" sera une conf
-$conf->global->COMMERCIAL_GROUP = 1;
-
 // Begin of page
 llxHeader('', $langs->trans('linkMenuPropalesByCommercial'), '');
 
 print dol_get_fiche_head('linkMenuPropalesByCommercial');
 print_fiche_titre($langs->trans('linkMenuPropalesByCommercial'));
 
-print_form_filter($userid);
+if($conf->global->MANDARIN_COMMERCIAL_GROUP > 0){ // la requête SQL étant dépendante de cette conf, il est important de la renseigh
+    echo 'cool';
+    print_form_filter($userid);
 
-$TData = get_data_tab($userid);
-draw_table($TData, get_list_id_user($TData), get_tab_label_statut());
+    $TData = get_data_tab($userid);
+    
+    draw_table($TData, get_list_id_user($TData), get_tab_label_statut());
+    
+    print '<br />';
+    draw_graphique($TData, get_tab_label_statut());
+}
+else echo '<a href="'.dol_buildpath('/mandarin/admin/mandarin_setup.php', 1).'">'.$langs->trans('err_NOGROUPCOMM').'</a>';
 
-print '<br />';
-draw_graphique($TData, get_tab_label_statut());
+
 
 //end of page
 llxFooter();
@@ -100,10 +104,7 @@ function getSqlForData($userid, $only_draft=false, $only_valid=false, $only_sign
 {
     global $conf, $user;
     
-    if (!$only_draft && !$only_valid && !$only_signed && !$only_nonsigned && !$only_factured) $sql = 'SELECT p.fk_statut as code, u.rowid, COUNT(*) as nb_propales';
-    elseif ($only_draft)  $sql = 'SELECT "DRAFT" as code, c.fk_socpeople, COUNT(*) as nb_projects';
-    elseif ($only_valid)  $sql = 'SELECT "CLOSE" as code, c.fk_socpeople, COUNT(*) as nb_projects';
-    
+    $sql = 'SELECT p.fk_statut as code, u.rowid, COUNT(*) as nb_propales'; 
     
     $sql.=' FROM '.MAIN_DB_PREFIX.'propal p
 			LEFT JOIN '.MAIN_DB_PREFIX.'user u ON (u.rowid = p.fk_user_author)
@@ -117,27 +118,15 @@ function getSqlForData($userid, $only_draft=false, $only_valid=false, $only_sign
     elseif ($only_factured) $sql.=' WHERE p.fk_statut = 4';
     
     $sql.=' AND p.entity=' . $conf->entity;
-    $sql.=' AND ug.fk_usergroup='.$conf->global->COMMERCIAL_GROUP; 
+    $sql.=' AND ug.fk_usergroup='.$conf->global->MANDARIN_COMMERCIAL_GROUP; 
     
-    //if(!empty($_REQUEST['date_deb'])) $sql.= ' AND p.dateo >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debday'].' 00:00:00"';
-    //if(!empty($_REQUEST['date_fin'])) $sql.= ' AND p.dateo <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
+    if(!empty($_REQUEST['date_deb'])) $sql.= ' AND p.datec >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debday'].' 00:00:00"';
+    if(!empty($_REQUEST['date_fin'])) $sql.= ' AND p.datec <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
     
     if($userid > 0) $sql.= ' AND u.rowid = '.$userid;
     
     $sql.= ' GROUP BY p.fk_statut, u.rowid';
-        
-    /*
-    $sql = 'SELECT DISTINCT u.rowid as Commercial,
-        (SELECT COUNT(p.rowid) FROM llx_propal p LEFT JOIN llx_user u ON (u.rowid = p.fk_user_author) WHERE p.fk_statut = 0 ) AS Brouillon,
-        (SELECT COUNT(p.rowid) FROM llx_propal p LEFT JOIN llx_user u ON (u.rowid = p.fk_user_author) WHERE p.fk_statut = 1 ) AS Validees,
-        (SELECT COUNT(p.rowid) FROM llx_propal p LEFT JOIN llx_user u ON (u.rowid = p.fk_user_author) WHERE p.fk_statut = 2 ) AS Signees,
-        (SELECT COUNT(p.rowid) FROM llx_propal p LEFT JOIN llx_user u ON (u.rowid = p.fk_user_author) WHERE p.fk_statut = 3 ) AS NonSignees,
-        (SELECT COUNT(p.rowid) FROM llx_propal p LEFT JOIN llx_user u ON (u.rowid = p.fk_user_author) ) AS Total
-        FROM llx_propal p
-        LEFT JOIN llx_user u ON (u.rowid = p.fk_user_author)
-        WHERE p.entity = 1';
-        */
-    
+           
     return $sql;
 }
 
@@ -193,7 +182,6 @@ function draw_table(&$TData, &$TIDUser, &$TLabelStatut) {
     
     // Rangement par pourcentage croissant
     ksort($TFkStatut);
-   
     
     foreach($TFkStatut as $status) {
         print '<td>';

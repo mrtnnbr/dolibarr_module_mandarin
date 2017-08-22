@@ -57,6 +57,8 @@ subTitleVAxisGraphHoraireMoyen=Heures
 subTitleHAxisGraphHoraireMoyen=Semaines
 
 # GRAPH PROPAL FACTURE
+set_MANDARIN_COMMERCIAL_GROUP=Selectionner le groupe d'utilisateur ayant le status de "Commercial"
+err_NOGROUPCOMM=Pour utiliser ce rapport, il vous faut choisir un groupe utilisateur "Commerciaux" dans la configuration du module
 permGraphPropalFacture=Autoriser la visualisation du rapport concernant les propal/facture par commercial (menu SIG)
 permGraphPropalCommercial=Autoriser la visualisation du rapport de ses propales par status
 permGraphPropalAllCommercial=Autoriser la visualisation du rapport des propales par status et par commercial
