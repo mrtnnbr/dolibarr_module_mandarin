@@ -7,6 +7,9 @@ if (!$user->rights->mandarin->graph->propal_commercial) accessforbidden();
 $langs->load('mandarin@mandarin');
 
 $userid = GETPOST('userid');
+$ca = (bool)GETPOST('ca'); // Booléen pour afficher le chiffre d'affaire au lieu du nb de propales
+
+// si l'utilisateur n'est pas admin, il ne voit que c'est chiffre
 if(!$user->rights->mandarin->graph->propal_alldata) $userid = $user->id;
 
 // Begin of page
@@ -15,8 +18,8 @@ llxHeader('', $langs->trans('linkMenuPropalesByCommercial'), '');
 print dol_get_fiche_head('linkMenuPropalesByCommercial');
 print_fiche_titre($langs->trans('linkMenuPropalesByCommercial'));
 
-if($conf->global->MANDARIN_COMMERCIAL_GROUP > 0){ // la requête SQL étant dépendante de cette conf, il est important de la renseigh
-    echo 'cool';
+// la requête SQL étant dépendante de cette conf, il est important de la renseigner
+if($conf->global->MANDARIN_COMMERCIAL_GROUP > 0){ 
     print_form_filter($userid);
 
     $TData = get_data_tab($userid);
@@ -26,16 +29,14 @@ if($conf->global->MANDARIN_COMMERCIAL_GROUP > 0){ // la requête SQL étant dép
     print '<br />';
     draw_graphique($TData, get_tab_label_statut());
 }
-else echo '<a href="'.dol_buildpath('/mandarin/admin/mandarin_setup.php', 1).'">'.$langs->trans('err_NOGROUPCOMM').'</a>';
-
-
+else print '<a href="'.dol_buildpath('/mandarin/admin/mandarin_setup.php', 1).'">'.$langs->trans('err_NOGROUPCOMM').'</a>';
 
 //end of page
 llxFooter();
 
 function print_form_filter($userid) {
     
-    global $db, $langs;
+    global $db, $langs, $ca;
     
     $langs->load('users');
     
@@ -48,6 +49,7 @@ function print_form_filter($userid) {
     print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', '', 1);
     
     print '<br /><br />';
+    print '<input type="hidden" name="ca" value="'.$ca.'">';
     
     $date_deb = explode('/', $_REQUEST['date_deb']);
     $date_deb = implode('/', array_reverse($date_deb));
@@ -104,7 +106,9 @@ function getSqlForData($userid, $only_draft=false, $only_valid=false, $only_sign
 {
     global $conf, $user;
     
-    $sql = 'SELECT p.fk_statut as code, u.rowid, COUNT(*) as nb_propales'; 
+    if(GETPOST('ca') == true) $sql = 'SELECT DISTINCT p.fk_statut as code, u.rowid, SUM(p.total_ht) as nb_propales';
+    else $sql = 'SELECT p.fk_statut as code, u.rowid, COUNT(*) as nb_propales';
+    
     
     $sql.=' FROM '.MAIN_DB_PREFIX.'propal p
 			LEFT JOIN '.MAIN_DB_PREFIX.'user u ON (u.rowid = p.fk_user_author)
@@ -166,7 +170,7 @@ function get_list_id_user(&$TData) {
 
 function draw_table(&$TData, &$TIDUser, &$TLabelStatut) {
     
-    global $db, $langs;
+    global $db, $langs,$ca;
     
     $langs->load('agenda');
     
@@ -184,14 +188,14 @@ function draw_table(&$TData, &$TIDUser, &$TLabelStatut) {
     ksort($TFkStatut);
     
     foreach($TFkStatut as $status) {
-        print '<td>';
+        print '<td align="right">';
         
         print $TLabelStatut[$status]['label'];
                 
         print '</td>';
     }
     
-    print '<td>';
+    print '<td align="right">';
     print 'Total';
     print '</td>';
     print '</tr>';
@@ -212,15 +216,17 @@ function draw_table(&$TData, &$TIDUser, &$TLabelStatut) {
         
         $nb_total_user = 0; // Contient le nombre d'occurences pour chaque user, tout type d'événement confondu
         for($i = 0; $i < count($TFkStatut); $i++) {
-            print '<td>';
-            print '<a href="'.dol_buildpath('/comm/propal/list.php?search_author='.$u->login.'&propal_statut='.$i, 1).'">'.$TData[$i][$id_user].'</a>';
+            print '<td align="right">';
+            $unit = ($ca) ? price($TData[$i][$id_user]) : $TData[$i][$id_user];
+            print '<a href="'.dol_buildpath('/comm/propal/list.php?search_author='.$u->login.'&propal_statut='.$i, 1).'">'. $unit .'</a>';
             print '</td>';
             $nb_total_user+=$TData[$i][$id_user];
             $TNBTotalType[$i]+=$TData[$i][$id_user];
         }
                 
-        print '<td>';
-        print '<a href="'.dol_buildpath('/comm/propal/list.php?search_author='.$u->login, 1).'">'.$nb_total_user.'</a>';
+        print '<td align="right">';
+        $unit = ($ca) ? price($nb_total_user) : $nb_total_user;
+        print '<a href="'.dol_buildpath('/comm/propal/list.php?search_author='.$u->login, 1).'">'.$unit.'</a>';
         print '</td>';
         print '</tr>';
         
@@ -232,8 +238,13 @@ function draw_table(&$TData, &$TIDUser, &$TLabelStatut) {
     print '<td>';
     print 'Total';
     print '</td>';
-    foreach($TFkStatut as $k =>$v) print '<td><a href="'.dol_buildpath('/comm/propal/list.php?propal_statut='.$TLabelStatut[$v]['rowid'], 1).'">'.$TNBTotalType[$k].'</a></td>';
-    print '<td>'.array_sum($TNBTotalType).'</td>';
+    //$TNBTotalType[$k]
+   
+    foreach($TFkStatut as $k =>$v){
+        $unit = ($ca) ? price($TNBTotalType[$k]) : $TNBTotalType[$k];
+        print '<td align="right"><a href="'.dol_buildpath('/comm/propal/list.php?propal_statut='.$TLabelStatut[$v]['rowid'], 1).'">'.$unit.'</a></td>';
+    }
+    print '<td align="right">'.array_sum($TNBTotalType).'</td>';
     print '</tr>';
     
     print '</table>';

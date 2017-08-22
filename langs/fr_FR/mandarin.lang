@@ -77,6 +77,7 @@ titleGraphPalmaresPercentCA=Palmares pourcent CA par client (%s)
 titleGraphPercentCAPerCC=Pourcent CA par CC (%s)
 noData=Aucune donnée disponible
 linkMenuPropalesByCommercial=Nombre Propositions par commercial
+linkMenuCAPropalesByCommercial=CA Propositions par commercial
 
 #GRAPH EXCES TIMPESPENT
 permGraphProjectExceed=Autoriser la visualisation des projets en dépassement (menu projet)
