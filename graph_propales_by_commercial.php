@@ -57,9 +57,9 @@ function print_form_filter($userid) {
     $date_fin = explode('/', $_REQUEST['date_fin']);
     $date_fin = implode('/', array_reverse($date_fin));
     
-    print 'Du ';
+    print $langs->trans('propalCreationDate') . ' ' . strtolower($langs->trans('From')) . ' ';
     $form->select_date(strtotime($date_deb), 'date_deb');
-    print 'Au ';
+    print $langs->trans('to') .' ';
     $form->select_date(strtotime($date_fin), 'date_fin');
     
     print '<input type="SUBMIT" class="butAction" value="Filtrer" />';

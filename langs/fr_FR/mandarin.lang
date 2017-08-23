@@ -80,6 +80,7 @@ titleGraphCaPropalByComm=Graphique du chiffre d'affaire des propositions par sta
 noData=Aucune donnée disponible
 linkMenuPropalesByCommercial=Nombre Propositions par commercial
 linkMenuCAPropalesByCommercial=CA Propositions par commercial
+propalCreationDate=Date de création de la proposition
 
 #GRAPH EXCES TIMPESPENT
 permGraphProjectExceed=Autoriser la visualisation des projets en dépassement (menu projet)
