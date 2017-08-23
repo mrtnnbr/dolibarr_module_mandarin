@@ -79,31 +79,12 @@ function get_data_tab($userid) {
     $sql = getSqlForData($userid);
     $resql = $db->query($sql);
     while($res = $db->fetch_object($resql)) $TData[$res->code][$res->rowid] = $res->propales;
-    
-    $sql = getSqlForData($userid, true);
-    $resql = $db->query($sql);
-    while($res = $db->fetch_object($resql)) $TData[$res->code][$res->rowid] = $res->propales;
-    
-    $sql = getSqlForData($userid, false, true);
-    $resql = $db->query($sql);  
-    while($res = $db->fetch_object($resql)) $TData[$res->code][$res->rowid] = $res->propales;
-    
-    $sql = getSqlForData($userid, false, false, true);
-    $resql = $db->query($sql);
-    while($res = $db->fetch_object($resql)) $TData[$res->code][$res->rowid] = $res->propales;
-    
-    $sql = getSqlForData($userid, false, false, false, true);
-    $resql = $db->query($sql);
-    while($res = $db->fetch_object($resql)) $TData[$res->code][$res->rowid] = $res->propales;
-    $sql = getSqlForData($userid, false, false, false, false, true);
-    $resql = $db->query($sql);
-    while($res = $db->fetch_object($resql)) $TData[$res->code][$res->rowid] = $res->propales;
-    
+
     return $TData;
     
 }
 
-function getSqlForData($userid, $only_draft=false, $only_valid=false, $only_signed=false, $only_nonsigned=false, $only_factured=false)
+function getSqlForData($userid)
 {
     global $conf, $user, $ca;
     
@@ -115,13 +96,8 @@ function getSqlForData($userid, $only_draft=false, $only_valid=false, $only_sign
 			LEFT JOIN '.MAIN_DB_PREFIX.'user u ON (u.rowid = p.fk_user_author)
             LEFT JOIN '.MAIN_DB_PREFIX.'usergroup_user ug ON (ug.fk_user = p.fk_user_author)';
     
-    $sql.=' WHERE 1=1';
-    if ($only_draft) $sql.=' WHERE p.fk_statut = 0';
-    elseif ($only_valid) $sql.=' WHERE p.fk_statut = 1';
-    elseif ($only_signed) $sql.=' WHERE p.fk_statut = 2';
-    elseif ($only_nonsigned) $sql.=' WHERE p.fk_statut = 3';
-    elseif ($only_factured) $sql.=' WHERE p.fk_statut = 4';
     
+    $sql.=' WHERE 1=1';
     $sql.=' AND p.entity=' . $conf->entity;
     $sql.=' AND ug.fk_usergroup='.$conf->global->MANDARIN_COMMERCIAL_GROUP; 
     
