@@ -57,7 +57,11 @@ subTitleVAxisGraphHoraireMoyen=Heures
 subTitleHAxisGraphHoraireMoyen=Semaines
 
 # GRAPH PROPAL FACTURE
+set_MANDARIN_COMMERCIAL_GROUP=Selectionner le groupe d'utilisateur ayant le status de "Commercial"
+err_NOGROUPCOMM=Pour utiliser ce rapport, il vous faut choisir un groupe utilisateur "Commerciaux" dans la configuration du module
 permGraphPropalFacture=Autoriser la visualisation du rapport concernant les propal/facture par commercial (menu SIG)
+permGraphPropalCommercial=Autoriser la visualisation du rapport de ses propales par status
+permGraphPropalAllCommercial=Autoriser la visualisation du rapport des propales par status et par commercial
 mandarinTitlePropalFactureCommercial=Commercial
 mandarinTitlePropalFactureNbPropal=Nb propositions
 mandarinTitlePropalFacturePropalPercentNotSigned=Pourcent non signée
@@ -71,7 +75,12 @@ mandarinInvoicesPerCommercial=Factures par chargé de clientèle
 linkMenuGraphPropalFacture=Rapport propal/facture par commercial
 titleGraphPalmaresPercentCA=Palmares pourcent CA par client (%s)
 titleGraphPercentCAPerCC=Pourcent CA par CC (%s)
+titleGraphPropalByComm=Graphique du nombre de propositions par statut
+titleGraphCaPropalByComm=Graphique du chiffre d'affaire des propositions par statut
 noData=Aucune donnée disponible
+linkMenuPropalesByCommercial=Nombre Propositions par commercial
+linkMenuCAPropalesByCommercial=CA Propositions par commercial
+propalCreationDate=Date de création de la proposition
 
 #GRAPH EXCES TIMPESPENT
 permGraphProjectExceed=Autoriser la visualisation des projets en dépassement (menu projet)

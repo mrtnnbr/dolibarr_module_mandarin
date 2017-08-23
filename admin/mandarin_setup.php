@@ -197,6 +197,20 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print '</form>';
 print '</td></tr>';
 
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("set_MANDARIN_COMMERCIAL_GROUP").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_MANDARIN_COMMERCIAL_GROUP">';
+echo $form->select_dolgroups($conf->global->MANDARIN_COMMERCIAL_GROUP, 'MANDARIN_COMMERCIAL_GROUP', 1);
+
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print '</td></tr>';
+
 
 print '</table>';
 
