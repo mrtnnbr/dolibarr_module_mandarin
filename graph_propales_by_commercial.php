@@ -19,6 +19,7 @@ print dol_get_fiche_head('linkMenuPropalesByCommercial');
 print_fiche_titre($langs->trans('linkMenuPropalesByCommercial'));
 
 // la requête SQL étant dépendante de cette conf, il est important de la renseigner
+// je vérifie si >0 pour prendre en compte le cas où il serait égal à -1 si l'utilisateur met la valeur nulle dans le select de configuration
 if($conf->global->MANDARIN_COMMERCIAL_GROUP > 0){ 
     print_form_filter($userid);
 
@@ -77,26 +78,26 @@ function get_data_tab($userid) {
     
     $sql = getSqlForData($userid);
     $resql = $db->query($sql);
-    while($res = $db->fetch_object($resql)) $TData[$res->code][$res->rowid] = $res->nb_propales;
+    while($res = $db->fetch_object($resql)) $TData[$res->code][$res->rowid] = $res->propales;
     
     $sql = getSqlForData($userid, true);
     $resql = $db->query($sql);
-    while($res = $db->fetch_object($resql)) $TData[$res->code][$res->rowid] = $res->nb_propales;
+    while($res = $db->fetch_object($resql)) $TData[$res->code][$res->rowid] = $res->propales;
     
     $sql = getSqlForData($userid, false, true);
     $resql = $db->query($sql);  
-    while($res = $db->fetch_object($resql)) $TData[$res->code][$res->rowid] = $res->nb_propales;
+    while($res = $db->fetch_object($resql)) $TData[$res->code][$res->rowid] = $res->propales;
     
     $sql = getSqlForData($userid, false, false, true);
     $resql = $db->query($sql);
-    while($res = $db->fetch_object($resql)) $TData[$res->code][$res->rowid] = $res->nb_propales;
+    while($res = $db->fetch_object($resql)) $TData[$res->code][$res->rowid] = $res->propales;
     
     $sql = getSqlForData($userid, false, false, false, true);
     $resql = $db->query($sql);
-    while($res = $db->fetch_object($resql)) $TData[$res->code][$res->rowid] = $res->nb_propales;
+    while($res = $db->fetch_object($resql)) $TData[$res->code][$res->rowid] = $res->propales;
     $sql = getSqlForData($userid, false, false, false, false, true);
     $resql = $db->query($sql);
-    while($res = $db->fetch_object($resql)) $TData[$res->code][$res->rowid] = $res->nb_propales;
+    while($res = $db->fetch_object($resql)) $TData[$res->code][$res->rowid] = $res->propales;
     
     return $TData;
     
@@ -104,10 +105,10 @@ function get_data_tab($userid) {
 
 function getSqlForData($userid, $only_draft=false, $only_valid=false, $only_signed=false, $only_nonsigned=false, $only_factured=false)
 {
-    global $conf, $user;
+    global $conf, $user, $ca;
     
-    if(GETPOST('ca') == true) $sql = 'SELECT DISTINCT p.fk_statut as code, u.rowid, SUM(p.total_ht) as nb_propales';
-    else $sql = 'SELECT p.fk_statut as code, u.rowid, COUNT(*) as nb_propales';
+    if($ca) $sql = 'SELECT DISTINCT p.fk_statut as code, u.rowid, SUM(p.total_ht) as propales';
+    else $sql = 'SELECT p.fk_statut as code, u.rowid, COUNT(*) as propales';
     
     
     $sql.=' FROM '.MAIN_DB_PREFIX.'propal p
@@ -184,7 +185,6 @@ function draw_table(&$TData, &$TIDUser, &$TLabelStatut) {
     print $langs->trans('User');
     print '</td>';
     
-    // Rangement par pourcentage croissant
     ksort($TFkStatut);
     
     foreach($TFkStatut as $status) {
@@ -205,7 +205,7 @@ function draw_table(&$TData, &$TIDUser, &$TLabelStatut) {
     $class = array('pair', 'impair');
     $var = true;
     
-    $TNBTotalType = array(); // Contient le nombre d'occurences pour chaque type d'événement, tout user confondu
+    $TNBTotalType = array(); // Contient le nombre d'occurences pour chaque type de propal, tout user confondu
     foreach($TIDUser as $id_user) {
         
         print '<tr class="'.$class[$var].'">';
@@ -238,13 +238,13 @@ function draw_table(&$TData, &$TIDUser, &$TLabelStatut) {
     print '<td>';
     print 'Total';
     print '</td>';
-    //$TNBTotalType[$k]
    
     foreach($TFkStatut as $k =>$v){
         $unit = ($ca) ? price($TNBTotalType[$k]) : $TNBTotalType[$k];
         print '<td align="right"><a href="'.dol_buildpath('/comm/propal/list.php?propal_statut='.$TLabelStatut[$v]['rowid'], 1).'">'.$unit.'</a></td>';
     }
-    print '<td align="right">'.array_sum($TNBTotalType).'</td>';
+    $total = ($ca) ? price(array_sum($TNBTotalType)) : array_sum($TNBTotalType);
+    print '<td align="right">' . $total . '</td>';
     print '</tr>';
     
     print '</table>';
@@ -253,25 +253,29 @@ function draw_table(&$TData, &$TIDUser, &$TLabelStatut) {
 
 function draw_graphique(&$TData, &$TabTrad) {
     
-    global $langs;
-    
+    global $langs, $ca;
+
     $PDOdb = new TPDOdb;
     
     $TSum = array();
     
     foreach($TData as $code=>$Tab) {
+        foreach ($TabTrad as $k=>$v){
+            if($v['rowid'] == $code) $code = $k;
+        }
         if (empty($TabTrad[$code]['label'])) continue;
         $TSum[] = array($TabTrad[$code]['label'], array_sum($Tab));
     }
     
-    $listeview = new TListviewTBS('graphProjectByType');
+    $listeview = new TListviewTBS('graphPropalByComm');
     
+    $title = ($ca) ? 'titleGraphCaPropalByComm' : 'titleGraphPropalByComm';
     print $listeview->renderArray($PDOdb, $TSum
         ,array(
             'type' => 'chart'
             ,'chartType' => 'PieChart'
             ,'liste'=>array(
-                'titre'=>$langs->transnoentitiesnoconv('titleGraphProjectByType')
+                'titre'=>$langs->transnoentitiesnoconv($title)
             )
         )
         );
