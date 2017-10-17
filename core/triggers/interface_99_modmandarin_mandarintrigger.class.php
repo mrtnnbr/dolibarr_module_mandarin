@@ -153,7 +153,7 @@ class Interfacemandarintrigger
 				$idinserted = $db->last_insert_id(MAIN_DB_PREFIX . "product_fournisseur_price");
 				
 				$sql = "SELECT pfp.datec,pfp.fk_product,pfp.fk_user,pfp.price,pfp.quantity ,pfp.fk_soc
-							FROM ".MAIN_DB_PREFIX."product_fournisseur_price pfp WHERE  pfp.rowid=".$object->product_fourn_price_id."
+							FROM ".MAIN_DB_PREFIX."product_fournisseur_price pfp WHERE  pfp.rowid=".$idinserted."
 				";
 				
 				
