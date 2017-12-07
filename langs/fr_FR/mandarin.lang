@@ -6,6 +6,8 @@ ATMAbout = Ce module a été développé par <a href="http://www.atm-consulting.
 mandarinSetup = Configuration du module mandarin
 mandarinAbout = A propos du module mandarin
 
+UserGroup=Group utilisateur
+
 # GRAPH CA CUMULE
 permGraphCACumule=Autoriser la visualisation du graphique CA cumulé (menu SIG)
 linkMenuGraphCACumule=Graphique CA cumulé

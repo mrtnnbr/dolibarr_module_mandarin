@@ -10,15 +10,22 @@ $userid = GETPOST('userid');
 if($userid != 0) $userdefault = $userid;
 elseif(user_est_responsable_hierarchique()) $userid = $user->id;
 
+// Get user group and default
+$groupid= GETPOST('groupid', 'int');
+if(empty($groupid) && $conf->global->MANDARIN_COMMERCIAL_GROUP > 0)
+{
+	$groupid=$conf->global->MANDARIN_COMMERCIAL_GROUP;
+}
+
 // Begin of page
 llxHeader('', $langs->trans('mandarinTitleGraphEventByUser'), '');
 
 print dol_get_fiche_head('RapportEvenementsParCommerciaux');
 print_fiche_titre($langs->trans('RapportEvenementsParCommerciaux'));
 
-print_form_filter($userid);
+print_form_filter($userid,$groupid);
 
-$TData = get_data_tab($userid);
+$TData = get_data_tab($userid,$groupid);
 draw_table($TData, get_list_id_user($TData), get_tab_label_action_comm());
 
 print '<br />';
@@ -26,7 +33,7 @@ draw_graphique($TData, get_tab_label_action_comm());
 
 llxFooter();
 
-function print_form_filter($userid) {
+function print_form_filter($userid,$groupid=-1) {
 	
 	global $db, $langs;
 	
@@ -37,8 +44,12 @@ function print_form_filter($userid) {
 	print '<form name="filter" methode="GET" action="'.$_SERVER['PHP_SELF'].'">';
 	
 	print $langs->trans('HierarchicalResponsible');
-	
 	print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', '', 1);
+	
+	// User group filter
+	print ' &nbsp;&nbsp;&nbsp;&nbsp; ';
+	print $langs->trans('UserGroup');
+	print $form->select_dolgroups($groupid, 'groupid',1);
 	
 	print '<br /><br />';
 	
@@ -72,7 +83,7 @@ function user_est_responsable_hierarchique() {
 	
 }
 
-function get_data_tab($userid) {
+function get_data_tab($userid,$groupid=0) {
 	
 	global $db;
 	
@@ -88,6 +99,13 @@ function get_data_tab($userid) {
  	if(!empty($_REQUEST['date_deb'])) $sql.= ' AND a.datep >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debday'].' 00:00:00"';
  	if(!empty($_REQUEST['date_fin'])) $sql.= ' AND a.datep <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
  	if($userid > 0) $sql.= ' AND u.fk_user = '.$userid;
+ 	
+ 	// Filter by user group
+ 	if($groupid>0)
+ 	{
+ 		$sql.=' AND u.rowid IN ( SELECT ugu.fk_user FROM '.MAIN_DB_PREFIX.'usergroup_user ugu WHERE ugu.fk_usergroup = '.(int)$groupid.' ) ';
+ 	}
+ 	
  	$sql.= ' AND a.code NOT IN ("AC_OTH_AUTO")
 			GROUP BY u.rowid, c.code';
  	

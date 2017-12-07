@@ -10,15 +10,22 @@ $userid = GETPOST('userid');
 if($userid != 0) $userdefault = $userid;
 elseif(user_est_responsable_hierarchique()) $userid = $user->id;
 
+// Get user group and default
+$groupid= GETPOST('groupid', 'int');
+if(empty($groupid) && $conf->global->MANDARIN_COMMERCIAL_GROUP > 0)
+{
+	$groupid=$conf->global->MANDARIN_COMMERCIAL_GROUP;
+}
+
 // Begin of page
 llxHeader('', $langs->trans('linkMenuProjectByUserReport'), '');
 
 print dol_get_fiche_head('linkMenuProjectByUserReport');
 print_fiche_titre($langs->trans('linkMenuProjectByUserReport'));
 
-print_form_filter($userid);
+print_form_filter($userid,$groupid);
 
-$TData = get_data_tab($userid);
+$TData = get_data_tab($userid,$groupid);
 draw_table($TData, get_list_id_user($TData), get_tab_label_statut_opportunite());
 
 print '<br />';
@@ -26,7 +33,7 @@ draw_graphique($TData, get_tab_label_statut_opportunite());
 
 llxFooter();
 
-function print_form_filter($userid) {
+function print_form_filter($userid,$groupid=-1) {
 	
 	global $db, $langs;
 	
@@ -37,8 +44,13 @@ function print_form_filter($userid) {
 	print '<form name="filter" methode="GET" action="'.$_SERVER['PHP_SELF'].'">';
 	
 	print $langs->trans('HierarchicalResponsible');
-	
 	print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', '', 1);
+	
+	// User group filter
+	print ' &nbsp;&nbsp;&nbsp;&nbsp; ';
+	print $langs->trans('UserGroup');
+	print $form->select_dolgroups($groupid, 'groupid',1);
+
 	
 	print '<br /><br />';
 	
@@ -72,21 +84,21 @@ function user_est_responsable_hierarchique() {
 	
 }
 
-function get_data_tab($userid) {
+function get_data_tab($userid,$groupid=0) {
 	
 	global $db;
 	
 	$TData = array();
 	
-	$sql = getSqlForData($userid);
+	$sql = getSqlForData($userid,false,false,$groupid);
 	$resql = $db->query($sql);
 	while($res = $db->fetch_object($resql)) $TData[$res->code][$res->fk_socpeople] = $res->nb_projects;
 	
-	$sql = getSqlForData($userid, true);
+	$sql = getSqlForData($userid, true,false,$groupid);
 	$resql = $db->query($sql);
 	while($res = $db->fetch_object($resql)) $TData[$res->code][$res->fk_socpeople] = $res->nb_projects;
 	
-	$sql = getSqlForData($userid, false, true);
+	$sql = getSqlForData($userid, false, true,$groupid);
 	$resql = $db->query($sql);
 	
 	while($res = $db->fetch_object($resql)) $TData[$res->code][$res->fk_socpeople] = $res->nb_projects;
@@ -95,8 +107,9 @@ function get_data_tab($userid) {
 	
 }
 
-function getSqlForData($userid, $only_draft=false, $only_close=false)
+function getSqlForData($userid, $only_draft=false, $only_close=false,$groupid=0)
 {
+
 	if (!$only_draft && !$only_close) $sql = 'SELECT ls.code, c.fk_socpeople, COUNT(*) as nb_projects';
 	elseif ($only_draft)  $sql = 'SELECT "DRAFT" as code, c.fk_socpeople, COUNT(*) as nb_projects';
 	elseif ($only_close)  $sql = 'SELECT "CLOSE" as code, c.fk_socpeople, COUNT(*) as nb_projects';
@@ -112,6 +125,12 @@ function getSqlForData($userid, $only_draft=false, $only_close=false)
 	
 	$sql.=' AND u.statut = 1';
 	
+	// Filter by user group
+	if($groupid>0)
+	{
+		$sql.=' AND u.rowid IN ( SELECT ugu.fk_user FROM '.MAIN_DB_PREFIX.'usergroup_user ugu WHERE ugu.fk_usergroup = '.(int)$groupid.' ) ';
+	}
+	
 	if(!empty($_REQUEST['date_deb'])) $sql.= ' AND p.dateo >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debday'].' 00:00:00"';
 	if(!empty($_REQUEST['date_fin'])) $sql.= ' AND p.dateo <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
 	if($userid > 0) $sql.= ' AND u.fk_user = '.$userid;
@@ -120,7 +139,7 @@ function getSqlForData($userid, $only_draft=false, $only_close=false)
 	else $sql.= ' GROUP BY c.fk_socpeople';
 
 	$sql .= ' ORDER BY ls.percent';
-	
+
 	return $sql;
 }
 
