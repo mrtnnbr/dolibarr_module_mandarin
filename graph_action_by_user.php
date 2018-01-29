@@ -85,7 +85,7 @@ function user_est_responsable_hierarchique() {
 
 function get_data_tab($userid,$groupid=0) {
 	
-	global $db;
+	global $db, $conf;
 	
 	$TData = array();
  	
@@ -98,17 +98,31 @@ function get_data_tab($userid,$groupid=0) {
  
  	if(!empty($_REQUEST['date_deb'])) $sql.= ' AND a.datep >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debday'].' 00:00:00"';
  	if(!empty($_REQUEST['date_fin'])) $sql.= ' AND a.datep <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
- 	if($userid > 0) $sql.= ' AND u.fk_user = '.$userid;
+ 	if($userid > 0)
+ 	{
+ 		$sql.= ' AND u.fk_user = '.$userid;
+ 	}
+ 	elseif($userid > 0 && $conf->global->MANDARIN_graph_action_by_user_SHOW_MANAGER)
+ 	{
+ 		// Show selected line manager
+ 		$sql.= ' AND ( u.fk_user = '.$userid.' OR u.rowid = '.$userid.' )';
+ 	}
  	
  	// Filter by user group
  	if($groupid>0)
  	{
- 		$sql.=' AND u.rowid IN ( SELECT ugu.fk_user FROM '.MAIN_DB_PREFIX.'usergroup_user ugu WHERE ugu.fk_usergroup = '.(int)$groupid.' ) ';
+ 		$sql.=' AND ( u.rowid IN ( SELECT ugu.fk_user FROM '.MAIN_DB_PREFIX.'usergroup_user ugu WHERE ugu.fk_usergroup = '.(int)$groupid.' ) ';
+ 		if($userid > 0 && $conf->global->MANDARIN_graph_action_by_user_FORCE_SHOW_MANAGER)
+ 		{
+ 			// FORCE display selected line manager independently of group selection
+ 			$sql.= ' OR u.rowid = '.$userid.' ';
+ 		}
+ 		$sql.= ' )';
  	}
  	
  	$sql.= ' AND a.code NOT IN ("AC_OTH_AUTO")
 			GROUP BY u.rowid, c.code';
- 	
+
  	$resql = $db->query($sql);
  	while($res = $db->fetch_object($resql)){
  		$TData[$res->code][$res->rowid] = $res->nb_events;
