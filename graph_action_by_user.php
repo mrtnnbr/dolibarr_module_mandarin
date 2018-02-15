@@ -108,7 +108,9 @@ function get_data_tab($userid,$groupid=0) {
  	{
  		$sql.= ' AND u.fk_user = '.$userid;
  	}
- 	
+
+ 	if(!empty($conf->global->MANDARIN_GRAPHACTIONBYUSER_ALLOWED_ACTION_PERCENT)) $sql.= ' AND a.percent >= '.$conf->global->MANDARIN_GRAPHACTIONBYUSER_ALLOWED_ACTION_PERCENT;
+
  	// Filter by user group
  	if($groupid>0)
  	{
