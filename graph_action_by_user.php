@@ -88,7 +88,7 @@ function get_data_tab($userid,$groupid=0) {
 	global $db, $conf;
 	
 	$TData = array();
-	
+ 	
 	$sql = 'SELECT u.rowid, c.code, COUNT(*) as nb_events
  			FROM llx_user u
  			LEFT JOIN llx_actioncomm a ON (a.fk_user_action = u.rowid)
@@ -98,18 +98,34 @@ function get_data_tab($userid,$groupid=0) {
  
  	if(!empty($_REQUEST['date_deb'])) $sql.= ' AND a.datep >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debday'].' 00:00:00"';
  	if(!empty($_REQUEST['date_fin'])) $sql.= ' AND a.datep <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
- 	if($userid > 0) $sql.= ' AND u.fk_user = '.$userid;
- 	if(!empty($conf->global->MANDARIN_GRAPHACTIONBYUSER_ALLOWED_ACTION_PERCENT)) $sql.= ' AND a.percent >= '.$conf->global->MANDARIN_GRAPHACTIONBYUSER_ALLOWED_ACTION_PERCENT;
  	
+ 	if($userid > 0 && !empty($conf->global->MANDARIN_graph_action_by_user_SHOW_MANAGER))
+ 	{
+ 		// Show selected line manager
+ 		$sql.= ' AND ( u.fk_user = '.$userid.' OR u.rowid = '.$userid.' )';
+ 	}
+ 	elseif($userid > 0)
+ 	{
+ 		$sql.= ' AND u.fk_user = '.$userid;
+ 	}
+
+ 	if(!empty($conf->global->MANDARIN_GRAPHACTIONBYUSER_ALLOWED_ACTION_PERCENT)) $sql.= ' AND a.percent >= '.$conf->global->MANDARIN_GRAPHACTIONBYUSER_ALLOWED_ACTION_PERCENT;
+
  	// Filter by user group
  	if($groupid>0)
  	{
- 		$sql.=' AND u.rowid IN ( SELECT ugu.fk_user FROM '.MAIN_DB_PREFIX.'usergroup_user ugu WHERE ugu.fk_usergroup = '.(int)$groupid.' ) ';
+ 		$sql.=' AND ( u.rowid IN ( SELECT ugu.fk_user FROM '.MAIN_DB_PREFIX.'usergroup_user ugu WHERE ugu.fk_usergroup = '.(int)$groupid.' ) ';
+ 		if($userid > 0 && !empty($conf->global->MANDARIN_graph_action_by_user_FORCE_SHOW_MANAGER))
+ 		{
+ 			// FORCE display selected line manager independently of group selection
+ 			$sql.= ' OR u.rowid = '.$userid.' ';
+ 		}
+ 		$sql.= ' )';
  	}
  	
  	$sql.= ' AND a.code NOT IN ("AC_OTH_AUTO")
 			GROUP BY u.rowid, c.code';
- 	
+
  	$resql = $db->query($sql);
  	while($res = $db->fetch_object($resql)){
  		$TData[$res->code][$res->rowid] = $res->nb_events;
