@@ -171,3 +171,6 @@ AnalyseDate=Période d'analyse
 MANDARIN_POURCENTAGE_ALERTE=Pourcentage à partir duquel les données sont affichées en rouge
 permReportRepartitionBySupplier=Autoriser la visualisation du rapport de répartition des achats par producteur
 linkMenuRepartitionAchatsBySupplier=Rapport répartition des achats
+
+# Stats projet
+mandarin_create_extrafields_reste_a_engager=Le graphique des statistiques projet nécessite d'utiliser des champs supplémentaires pour le reste à engager, cliquer sur le bouton pour les créer

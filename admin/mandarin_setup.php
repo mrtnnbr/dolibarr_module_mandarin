@@ -31,6 +31,7 @@ if (! $res) {
 // Libraries
 require_once DOL_DOCUMENT_ROOT . "/core/lib/admin.lib.php";
 require_once '../lib/mandarin.lib.php';
+require_once DOL_DOCUMENT_ROOT . "/core/class/extrafields.class.php";
 
 // Translations
 $langs->load("mandarin@mandarin");
@@ -69,6 +70,14 @@ if (preg_match('/set_(.*)/',$action,$reg))
 	{
 		dol_print_error($db);
 	}
+} elseif($action === 'create_extrafields_reste_a_engager') {
+	
+	$e = new Extrafields($db);
+	$e->addExtrafield('mandarin_reste_a_engager', 'Reste à engager', 'double', '', '24,8', 'projet', 0, 0, '', '', 1);
+	$e->addExtrafield('mandarin_reste_a_engager_sous_traitance', 'Reste à engager - sous traitance', 'double', '', '24,8', 'projet', 0, 0, '', '', 1);
+	$e->addExtrafield('mandarin_reste_a_engager_mo', 'Reste à engager - MO', 'double', '', '24,8', 'projet', 0, 0, '', '', 1);
+	setEventMessage('Champs créés avec succès');
+	
 }
 	
 if (preg_match('/del_(.*)/',$action,$reg))
@@ -208,6 +217,18 @@ print '<input type="hidden" name="action" value="set_MANDARIN_COMMERCIAL_GROUP">
 echo $form->select_dolgroups($conf->global->MANDARIN_COMMERCIAL_GROUP, 'MANDARIN_COMMERCIAL_GROUP', 1);
 
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</form>';
+print '</td></tr>';
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("mandarin_create_extrafields_reste_a_engager").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="create_extrafields_reste_a_engager">';
+print '<input type="submit" class="button" value="'.$langs->trans("Activate").'">';
 print '</form>';
 print '</td></tr>';
 
