@@ -173,4 +173,5 @@ permReportRepartitionBySupplier=Autoriser la visualisation du rapport de répart
 linkMenuRepartitionAchatsBySupplier=Rapport répartition des achats
 
 # Stats projet
-mandarin_create_extrafields_reste_a_engager=Le graphique des statistiques projet nécessite d'utiliser des champs supplémentaires pour le reste à engager, cliquer sur le bouton pour les créer
+mandarin_create_extrafields_reste_a_engager=Le graphique des statistiques projet nécessite d'utiliser des champs supplémentaires pour le reste à engager. S'ils n'existent pas déjà, cliquer sur le bouton pour les créer
+MANDARIN_TSERVICES_SOUS_TRAITANCE=Graphique statistiques projets : services de sous traitance

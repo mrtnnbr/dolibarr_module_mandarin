@@ -120,7 +120,7 @@ function _get_statistiques_projet(&$PDOdb){
 	$TRapport = array();
 	//pre($sql, true);
 	while ($PDOdb->Get_line()) {
-		list($total_cmd,$total_fac,$total_fac_fourn,$total_cmd_fourn_no_fac) = _getTotauxProjet($PDOdb, $PDOdb->Get_field('rowid'),$t_deb, $t_fin);
+		list($pj, $total_cmd,$total_fac,$total_fac_fourn,$total_cmd_fourn_no_fac,$reste_a_engager) = _getTotauxProjet($PDOdb, $PDOdb->Get_field('rowid'),$t_deb, $t_fin);
 		
 		//$marge = $vente - $achat - $ndf- $PDOdb->Get_field('total_cout_homme');
 		$TRapport[]= array(
@@ -130,7 +130,9 @@ function _get_statistiques_projet(&$PDOdb){
 				"total_cmd"       			=> $total_cmd,
 				"total_fac"       			=> $total_fac,
 				"total_fac_fourn"   		=> $total_fac_fourn,
-				"total_cmd_fourn_no_fac"	=> $total_cmd_fourn_no_fac
+				"total_cmd_fourn_no_fac"	=> $total_cmd_fourn_no_fac,
+				"projet"					=> $pj,
+				"reste_a_engager"			=> $reste_a_engager
 		);
 		
 	}
@@ -159,7 +161,10 @@ function _getTotauxProjet($PDOdb, $fk_projet, $t_deb=0,$t_fin=0){
 	
 	$total_cmd = $total_fac = $total_fac_fourn = $total_cmd_fourn_no_fac = 0;
 	
-	
+	$project=new Project($db);
+	$project->fetch($fk_projet);
+	$project->fetch_optionals();
+	//var_dump($project->array_options);
 	// CMD
 	$sqlCmd = "SELECT SUM(c.total_ht) as total
 			        FROM ".MAIN_DB_PREFIX."commande as c 
@@ -193,10 +198,12 @@ function _getTotauxProjet($PDOdb, $fk_projet, $t_deb=0,$t_fin=0){
 	while($obj = $PDOdb2->Get_line()) $total_cmd_fourn_no_fac+=$obj->total;
 	//var_dump($total_cmd_fourn_no_fac);
 	return array(
-	$total_cmd
-	,$total_fac
-	,$total_fac_fourn
-	,$total_cmd_fourn_no_fac
+		$project
+		,$total_cmd
+		,$total_fac
+		,$total_fac_fourn
+		,$total_cmd_fourn_no_fac
+		,$project->array_options['options_mandarin_reste_a_engager']
 	);
 	
 }
@@ -221,10 +228,15 @@ function _print_statistiques_projet(&$TRapport){
                     print_liste_field_titre('Date début', $_SERVER["PHP_SELF"], "p.dateo", "", $params, "", $sortfield, $sortorder);
                     print_liste_field_titre('Date fin', $_SERVER["PHP_SELF"], "p.datee", "", $params, "", $sortfield, $sortorder);
                     ?>
-                    <th class="liste_titre">Vente : commandes</th>
-                    <th class="liste_titre">Vente : factures</th>
+                    <th class="liste_titre">Vente : commande</th>
+                    <th class="liste_titre">Vente : PV/MV</th>
+                    <th class="liste_titre">Vente : facturation</th>
+                    <th class="liste_titre">Vente : Taux de marge prévu</th>
                     <th class="liste_titre">Achat : réalisé</th>
                     <th class="liste_titre">Achat : engagé</th>
+                    <th class="liste_titre">Achat : reste à engager</th>
+                    <th class="liste_titre">Total</th>
+                    <th class="liste_titre">Budget</th>
                     <?php if($conf->ndfp->enabled){ ?><th class="liste_titre">Total Note de frais (€)</th><?php } ?>
                     <th class="liste_titre">Total temps passé (JH)</th>
                     <th class="liste_titre">Total coût MO (€)</th>
@@ -235,9 +247,9 @@ function _print_statistiques_projet(&$TRapport){
                 <?php
 
                 foreach($TRapport as $line){
-                    $project=new Project($db);
-                    $project->fetch($line['IdProject']);
-
+					
+                    $project = $line['projet'];
+                    
                     $date_debut = empty($line['date_debut']) ? '' : date('d/m/Y', strtotime($line['date_debut']));
                     $date_fin = empty($line['date_fin']) ? '' : date('d/m/Y', strtotime($line['date_fin']));
 
@@ -247,9 +259,14 @@ function _print_statistiques_projet(&$TRapport){
                         <td><?php echo $date_debut;  ?></td>
                         <td><?php echo $date_fin; ?></td>
                         <td nowrap="nowrap"><?php echo price(round($line['total_cmd'],2)) ?></td>
+                        <td nowrap="nowrap">TODO</td>
                         <td nowrap="nowrap"><?php echo price(round($line['total_fac'],2)) ?></td>
+                        <td nowrap="nowrap">TODO</td>
                         <td nowrap="nowrap"><?php echo price(round($line['total_fac_fourn'],2)) ?></td>
                         <td nowrap="nowrap"><?php echo price(round($line['total_cmd_fourn_no_fac'],2)) ?></td>
+                        <td nowrap="nowrap"><?php echo price(round($line['reste_a_engager'],2)) ?></td>
+                        <td nowrap="nowrap"><?php echo price(round($line['total_fac_fourn']+$line['total_cmd_fourn_no_fac']+$line['reste_a_engager'],2)) ?></td>
+                        <td nowrap="nowrap">TODO</td>
                         <?php if($conf->ndfp->enabled){ ?><td nowrap="nowrap"><?php echo price(round($line['total_ndf'],2)) ?></td><?php } ?>
                         <td nowrap="nowrap"><?php echo convertSecondToTime($line['total_temps'],'all',$conf->global->DOC2PROJECT_NB_HOURS_PER_DAY*60*60) ?></td>
                         <td nowrap="nowrap"><?php echo price(round($line['total_cout_homme'],2)) ?></td>

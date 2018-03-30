@@ -50,7 +50,8 @@ $action = GETPOST('action', 'alpha');
 if (preg_match('/set_(.*)/',$action,$reg))
 {
 	$code=$reg[1];
-	if (dolibarr_set_const($db, $code, GETPOST($code), 'entier', 0, '', $conf->entity) > 0)
+	$val = is_array(GETPOST($code)) ? serialize(GETPOST($code)) : GETPOST($code);
+	if (dolibarr_set_const($db, $code, $val, 'entier', 0, '', $conf->entity) > 0)
 	{
 		if($code == 'MANDARIN_TRACE_COST_PRICE' &&  GETPOST($code) == 'yes') {
 			define('INC_FROM_DOLIBARR',true);
@@ -229,6 +230,24 @@ print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
 print '<input type="hidden" name="action" value="create_extrafields_reste_a_engager">';
 print '<input type="submit" class="button" value="'.$langs->trans("Activate").'">';
+print '</form>';
+print '</td></tr>';
+
+$TService=array();
+$sql = 'SELECT rowid, ref FROM '.MAIN_DB_PREFIX.'product';
+$resql = $db->query($sql);
+while($res = $db->fetch_object($resql)) $TService[$res->rowid] = $res->ref;
+
+$var=!$var;
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("MANDARIN_TSERVICES_SOUS_TRAITANCE").'</td>';
+print '<td align="center" width="20">&nbsp;</td>';
+print '<td align="right" width="300">';
+print '<form method="POST" action="'.$_SERVER['PHP_SELF'].'">';
+print '<input type="hidden" name="token" value="'.$_SESSION['newtoken'].'">';
+print '<input type="hidden" name="action" value="set_MANDARIN_TSERVICES_SOUS_TRAITANCE">';
+print $form->multiselectarray('MANDARIN_TSERVICES_SOUS_TRAITANCE', $TService, unserialize($conf->global->MANDARIN_TSERVICES_SOUS_TRAITANCE), 0, 0, '', 0, 100);
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</form>';
 print '</td></tr>';
 
