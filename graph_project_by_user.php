@@ -7,8 +7,16 @@ if (!$user->rights->mandarin->graph->project_by_user) accessforbidden();
 $langs->load('mandarin@mandarin');
 
 $userid = GETPOST('userid');
-if($userid != 0) $userdefault = $userid;
-elseif(user_est_responsable_hierarchique()) $userid = $user->id;
+if($userid != 0){
+    $userdefault = $userid;
+}
+elseif(user_est_responsable_hierarchique()){
+    $userid = $user->id;
+}
+
+if(!empty($conf->global->GRAPH_PROJECT_BY_USER_HIERARCHYME) && (empty($userid) || $userid < 0)){
+    $userid = $user->id;
+}
 
 // Get user group and default
 $groupid= GETPOST('groupid', 'int');
@@ -35,7 +43,7 @@ llxFooter();
 
 function print_form_filter($userid,$groupid=-1) {
 	
-	global $db, $langs;
+	global $db, $langs, $conf;
 	
 	$langs->load('users');
 	
@@ -44,7 +52,15 @@ function print_form_filter($userid,$groupid=-1) {
 	print '<form name="filter" methode="GET" action="'.$_SERVER['PHP_SELF'].'">';
 	
 	print $langs->trans('HierarchicalResponsible');
-	print $form->select_dolusers($userid, 'userid', 1, '', 0, '', '', 0, 0, 0, '', 0, '', '', 1);
+	
+	$include = '';
+	$show_empty=1;
+	if(!empty($conf->global->GRAPH_PROJECT_BY_USER_HIERARCHYME)){
+	   $include = 'hierarchyme';
+	   $show_empty=0;
+	}
+	
+	print $form->select_dolusers($userid, 'userid', $show_empty, '', 0, $include, '', 0, 0, 0, '', 0, '', '', 1);
 	
 	// User group filter
 	print ' &nbsp;&nbsp;&nbsp;&nbsp; ';
@@ -92,16 +108,22 @@ function get_data_tab($userid,$groupid=0) {
 	
 	$sql = getSqlForData($userid,false,false,$groupid);
 	$resql = $db->query($sql);
-	while($res = $db->fetch_object($resql)) $TData[$res->code][$res->fk_socpeople] = $res->nb_projects;
+	if(!empty($resql)){
+	   while($res = $db->fetch_object($resql)) $TData[$res->code][$res->fk_socpeople] = $res->nb_projects;
+	}
 	
 	$sql = getSqlForData($userid, true,false,$groupid);
 	$resql = $db->query($sql);
-	while($res = $db->fetch_object($resql)) $TData[$res->code][$res->fk_socpeople] = $res->nb_projects;
+	if(!empty($resql)){
+	   while($res = $db->fetch_object($resql)) $TData[$res->code][$res->fk_socpeople] = $res->nb_projects;
+	}
 	
 	$sql = getSqlForData($userid, false, true,$groupid);
 	$resql = $db->query($sql);
 	
-	while($res = $db->fetch_object($resql)) $TData[$res->code][$res->fk_socpeople] = $res->nb_projects;
+	if(!empty($resql)){
+	   while($res = $db->fetch_object($resql)) $TData[$res->code][$res->fk_socpeople] = $res->nb_projects;
+	}
 	
 	return $TData;
 	

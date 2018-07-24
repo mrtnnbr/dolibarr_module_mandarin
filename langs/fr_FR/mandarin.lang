@@ -8,6 +8,9 @@ mandarinAbout = A propos du module mandarin
 
 UserGroup=Groupe utilisateur
 
+GRAPH_PROJECT_BY_USER_HIERARCHYME=Limiter la vue à l'utilisateur et ces subordonnés (fonctionne sur le rapport : Nombre de projets par statut opportunité et par commercial)
+
+
 # GRAPH CA CUMULE
 permGraphCACumule=Autoriser la visualisation du graphique CA cumulé (menu SIG)
 linkMenuGraphCACumule=Graphique CA cumulé
