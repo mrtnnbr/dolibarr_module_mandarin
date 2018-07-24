@@ -92,16 +92,22 @@ function get_data_tab($userid,$groupid=0) {
 	
 	$sql = getSqlForData($userid,false,false,$groupid);
 	$resql = $db->query($sql);
-	while($res = $db->fetch_object($resql)) $TData[$res->code][$res->fk_socpeople] = $res->nb_projects;
+	if(!empty($resql)){
+	   while($res = $db->fetch_object($resql)) $TData[$res->code][$res->fk_socpeople] = $res->nb_projects;
+	}
 	
 	$sql = getSqlForData($userid, true,false,$groupid);
 	$resql = $db->query($sql);
-	while($res = $db->fetch_object($resql)) $TData[$res->code][$res->fk_socpeople] = $res->nb_projects;
+	if(!empty($resql)){
+	   while($res = $db->fetch_object($resql)) $TData[$res->code][$res->fk_socpeople] = $res->nb_projects;
+	}
 	
 	$sql = getSqlForData($userid, false, true,$groupid);
 	$resql = $db->query($sql);
 	
-	while($res = $db->fetch_object($resql)) $TData[$res->code][$res->fk_socpeople] = $res->nb_projects;
+	if(!empty($resql)){
+	   while($res = $db->fetch_object($resql)) $TData[$res->code][$res->fk_socpeople] = $res->nb_projects;
+	}
 	
 	return $TData;
 	
