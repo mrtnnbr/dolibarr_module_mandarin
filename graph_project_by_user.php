@@ -111,15 +111,18 @@ function get_data_tab($userid,$groupid=0) {
 	if(!empty($resql)){
 	   while($res = $db->fetch_object($resql)) $TData[$res->code][$res->fk_socpeople] = $res->nb_projects;
 	}
+	echo '<p>'.$sql.'</p>';
 	
 	$sql = getSqlForData($userid, true,false,$groupid);
 	$resql = $db->query($sql);
+	echo '<p>'.$sql.'</p>';
 	if(!empty($resql)){
 	   while($res = $db->fetch_object($resql)) $TData[$res->code][$res->fk_socpeople] = $res->nb_projects;
 	}
 	
 	$sql = getSqlForData($userid, false, true,$groupid);
 	$resql = $db->query($sql);
+	echo '<p>'.$sql.'</p>';
 	
 	if(!empty($resql)){
 	   while($res = $db->fetch_object($resql)) $TData[$res->code][$res->fk_socpeople] = $res->nb_projects;
@@ -131,7 +134,8 @@ function get_data_tab($userid,$groupid=0) {
 
 function getSqlForData($userid, $only_draft=false, $only_close=false,$groupid=0)
 {
-
+    global $db;
+    
 	if (!$only_draft && !$only_close) $sql = 'SELECT ls.code, c.fk_socpeople, COUNT(*) as nb_projects';
 	elseif ($only_draft)  $sql = 'SELECT "DRAFT" as code, c.fk_socpeople, COUNT(*) as nb_projects';
 	elseif ($only_close)  $sql = 'SELECT "CLOSE" as code, c.fk_socpeople, COUNT(*) as nb_projects';
@@ -155,7 +159,18 @@ function getSqlForData($userid, $only_draft=false, $only_close=false,$groupid=0)
 	
 	if(!empty($_REQUEST['date_deb'])) $sql.= ' AND p.dateo >= "'.$_REQUEST['date_debyear'].'-'.$_REQUEST['date_debmonth'].'-'.$_REQUEST['date_debday'].' 00:00:00"';
 	if(!empty($_REQUEST['date_fin'])) $sql.= ' AND p.dateo <= "'.$_REQUEST['date_finyear'].'-'.$_REQUEST['date_finmonth'].'-'.$_REQUEST['date_finday'].' 23:59:59"';
-	if($userid > 0) $sql.= ' AND u.fk_user = '.$userid;
+	if($userid > 0){
+	    $userselected = new User($db);
+	    $userselected->fetch($userid);
+	    $TincludeUsers = $userselected->getAllChildIds(1);
+	    if(!empty($TincludeUsers) && is_array($TincludeUsers)){
+	        $sql.= ' AND c.fk_socpeople IN ('.implode(',',$TincludeUsers).')'; 
+	    }
+	    else{
+	        $sql.= ' AND c.fk_socpeople = '.$userid; 
+	    }
+	    
+	}
 	
 	if (!$only_draft && !$only_close) $sql.= ' GROUP BY p.fk_opp_status, c.fk_socpeople';
 	else $sql.= ' GROUP BY c.fk_socpeople';
