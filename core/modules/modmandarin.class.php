@@ -58,7 +58,7 @@ class modmandarin extends DolibarrModules
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Description of module mandarin";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = '1.0';
+		$this->version = '1.1.0';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -738,6 +738,28 @@ class modmandarin extends DolibarrModules
 		// $this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
 		// $this->export_sql_order[$r] .=' ORDER BY s.nom';
 		// $r++;
+		
+		 $this->export_code[$r]=$this->rights_class.'_'.$r;
+		 $this->export_label[$r]='CustomerOrderAndBills';	// Translation key (used only if key ExportDataset_xxx_z not found)
+         $this->export_enabled[$r]='1';                               // Condition to show export in list (ie: '$user->id==3'). Set to 1 to always show when module is enabled.
+		 $this->export_permission[$r]=array(array("facture","facture","export"));
+		 $this->export_fields_array[$r]=array('s.rowid'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.zip'=>'Zip','s.town'=>'Town','f.rowid'=>"InvoiceId",'f.facnumber'=>"InvoiceRef",'f.datec'=>"InvoiceDateCreation",'f.datef'=>"DateInvoice",'f.total'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.tva'=>"TotalVAT",'f.paye'=>"InvoicePaid",'f.fk_statut'=>'InvoiceStatus','c.rowid'=>"OrderId",'c.ref'=>"OrderRef",'c.date_creation'=>"OrderDateCreation",'c.date_commande'=>"DateOrder",'c.total_ht'=>"TotalHT",'c.total_ttc'=>"TotalTTC",'c.tva'=>"TotalVAT",'c.fk_statut'=>"OrderStatus");
+         $this->export_fields_array[$r]+=array('u.login'=>'SaleRepresentativeLogin','u.firstname'=>'SaleRepresentativeFirstname', 'u.lastname'=>'SaleRepresentativeLastname');
+		 $this->export_entities_array[$r]=array('s.rowid'=>"company",'s.nom'=>'company','s.address'=>'company','s.zip'=>'company','s.town'=>'company','f.rowid'=>"invoice",'f.facnumber'=>"invoice",'f.datec'=>"invoice",'f.datef'=>"invoice",'f.total'=>"invoice",'f.total_ttc'=>"invoice",'f.tva'=>"invoice",'f.paye'=>"invoice",'f.fk_statut'=>'invoice','c.rowid'=>"order",'c.ref'=>"order",'c.date_creation'=>"order",'c.date_commande'=>"order",'c.total_ht'=>"order",'c.total_ttc'=>"order",'c.tva'=>"order",'c.fk_statut'=>"order",'u.login'=>'user','u.firstname'=>'user','u.lastname'=>'user');
+		 $this->export_TypeFields_array[$r]=array('s.rowid'=>"Numeric", 's.nom'=>"Text",'s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','f.rowid'=>"Numeric",'f.facnumber'=>"Text",'f.datec'=>"Date",'f.datef'=>"Date",'f.total'=>"Numeric",'f.total_ttc'=>"Numeric",'f.tva'=>"Numeric",'f.paye'=>"Boolean",'f.fk_statut'=>'Numeric','c.rowid'=>"Numeric",'c.ref'=>"Text",'c.date_creation'=>"Date",'c.date_commande'=>"Date",'c.total_ht'=>"Numeric",'c.total_ttc'=>"Numeric",'c.tva'=>"Numeric",'c.fk_statut'=>"Numeric",'u.login'=>'Text','u.firstname'=>'Text','u.lastname'=>'Text');
+
+		 $this->export_sql_start[$r]='SELECT DISTINCT ';
+		 
+		 $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'commande as c';
+		 $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'element_element as ee on (ee.fk_source=c.rowid AND ee.sourcetype="commande")';
+		 $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'facture as f on (f.rowid=ee.fk_target AND  ee.targettype="facture")';
+		 $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s on (c.fk_soc = s.rowid)';
+		 $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'societe_commerciaux as sc ON sc.fk_soc = s.rowid LEFT JOIN '.MAIN_DB_PREFIX.'user as u ON sc.fk_user = u.rowid';
+
+		 $this->export_sql_end[$r] .=' WHERE 1';
+		 $this->export_sql_order[$r] .=' ORDER BY s.nom';
+		 $r++;
+		 
 	}
 
 	/**
