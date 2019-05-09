@@ -16,10 +16,21 @@ $langs->load("suppliers");
 $langs->load("companies");
 
 $mode = GETPOST('mode');
-
+$fk_soc = GETPOST('fk_soc');
+$search_categ = GETPOST('search_categ', 'array');
 $date_start=dol_mktime(0,0,0,GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
-if (empty($date_start)) $date_start = strtotime('-1 year');
 $date_end=dol_mktime(0,0,0,GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
+
+// Purge search criteria
+if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
+{
+	$fk_soc="";
+	$search_categ=0;
+	$date_start = strtotime('-1 year');
+	$date_end = time();
+}
+
+if (empty($date_start)) $date_start = strtotime('-1 year');
 if (empty($date_end)) $date_end = time();
 
 $TYear = array();
@@ -62,8 +73,6 @@ foreach ($TYear as $k => $year)
     if ($i == 12) $start = 1;
 
 }
-
-$search_categ = GETPOST('search_categ', 'array');
 
 $limit = GETPOST('limit','int')?GETPOST('limit','int'):$conf->liste_limit;
 $sortfield = GETPOST("sortfield",'alpha');
@@ -108,18 +117,27 @@ foreach ($TMonth as $year => $month) {
 	$sql.= ", SUM(IF(f.datef > '".date("Y-m-d 00:00:00",$firststart)."' AND f.datef <= '".date("Y-m-d 23:59:59", $end)."', ".$numfield.", 0)) as total_".$year;
 
 }
-$sql.= " FROM llx_product as p";
-$sql.= " LEFT JOIN llx_categorie_product as cp ON cp.fk_product=p.rowid";
-$sql.= " LEFT JOIN llx_categorie as cat ON cat.rowid=cp.fk_categorie";
-$sql.= " LEFT JOIN llx_facture_fourn_det AS d ON d.fk_product = p.rowid";
-$sql.= " LEFT JOIN llx_facture_fourn AS f ON f.rowid = d.fk_facture_fourn";
+$sql.= ", SUM(IF(f.datef > '".date("Y-m-d 00:00:00",$date_start)."' AND f.datef <= '".date("Y-m-d 23:59:59", $date_end)."', ".$numfield.", 0)) as total_global";
+$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product=p.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as cat ON cat.rowid=cp.fk_categorie";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn_det AS d ON d.fk_product = p.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn AS f ON f.rowid = d.fk_facture_fourn";
 $sql.= " WHERE f.fk_statut > 0";
 $sql.= " AND f.datef > '".date('Y-m-d 00:00:00', $date_start)."'";
 $sql.= " AND f.datef <= '".date('Y-m-d 23:59:59',$date_end)."'";
+
+// filters
 if (!empty($search_categ))
 {
-    $sql.= " AND cat.rowid IN (".implode(',', $search_categ).")";
+	$sql.= " AND cat.rowid IN (".implode(',', $search_categ).")";
 }
+
+if (!empty($fk_soc) && $fk_soc !== -1)
+{
+	$sql.= " AND f.fk_soc = " . $fk_soc;
+}
+
 $sql.= " GROUP BY cat.rowid, p.rowid";
 $sql.= " ORDER BY cat.rowid ASC, p.ref ASC";
 
@@ -134,23 +152,27 @@ print '<input type="hidden" name="action" value="list">';
 print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 print '<input type="hidden" name="page" value="'.$page.'">';
+print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 print_barre_liste($langs->trans($transkey), $page, $_SERVER["PHP_SELF"]);
 
 $moreforfilter='';
-$moreforfilter.='<div class="divsearchfield">';
+$moreforfilter.='<div class="divsearchfield" style="width:50%;"><table style="width:100%;">';
 if (! empty($conf->categorie->enabled))
 {
-    $moreforfilter.=$langs->trans('Categories'). ' : ';
-    $cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
-    $moreforfilter.=$form->multiselectarray('search_categ', $cate_arbo, $search_categ, '', 0, '', 0, '50%').'<br><br>';
+	$moreforfilter.='<tr><td>'.$langs->trans('Categories'). ' : </td>';
+	$cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
+	$moreforfilter.='<td colspan="2">'.$form->multiselectarray('search_categ', $cate_arbo, $search_categ, '', 0, '', 0, '50%').'</td></tr>';
 }
 
-$moreforfilter.=$langs->trans('DateInvoice'). ' ';
-$moreforfilter.=$langs->trans('From'). ' : ' .$form->select_date($date_start, 'date_start', 0,0,0,'',1,0,1);
-$moreforfilter.=$langs->trans('to'). ' : ' .$form->select_date($date_end, 'date_end', 0,0,0,'',1,0,1);
+$moreforfilter.='<tr><td>'.$langs->trans('Supplier') . ' : </td>';
+$moreforfilter.='<td colspan="2">'.$form->select_company($fk_soc, 'fk_soc', '').'</td></tr>';
 
-$moreforfilter.='</div>';
+$moreforfilter.='<tr><td>'.$langs->trans('DateInvoice'). ' </td>';
+$moreforfilter.='<td>'.$langs->trans('From'). ' : ' .$form->select_date($date_start, 'date_start', 0,0,0,'',1,0,1) .'</td>';
+$moreforfilter.='<td>'.$langs->trans('to'). ' : ' .$form->select_date($date_end, 'date_end', 0,0,0,'',1,0,1).'</td></tr>';
+
+$moreforfilter.='</table></div>';
 
 $parameters=array();
 $reshook=$hookmanager->executeHooks('printFieldPreListTitle',$parameters);    // Note that $action and $object may have been modified by hook
@@ -169,7 +191,7 @@ print '<table class="tagtable liste'.($moreforfilter?" listwithfilterbefore":"")
 
 print '<tr class="liste_titre">';
 
-$colspan = 2;
+$colspan = 4;
 
 foreach ($TMonth as $year => $month)
 {
@@ -195,9 +217,12 @@ foreach ($TMonth as $year => $month) {
      }
     print '<th class="liste_titre">Total '.$year.'</th>';
 }
+print '<th class="liste_titre">Total&nbsp;global</th>';
+print '<th></th>';
 print '</tr>';
 
 $lastcat = '';
+$GlobalTabTotal = array();
 
 while ($obj = $db->fetch_object($resql))
 {
@@ -211,12 +236,15 @@ while ($obj = $db->fetch_object($resql))
             print "<td> Total ".(!empty($cat->label) ? $cat->label : 'Sans catégorie')."</td>";
             print "<td></td>";
             print "<td></td>";
-            foreach ($tabtotal as $tab)
-            {
+			foreach ($tabtotal as $tab)
+			{
 				if ($mode == "CA") print "<td>".price($tab)."</td>";
 				else print "<td>".$tab."</td>";
-            }
-            print "</tr>";
+			}
+			print "<td></td>";
+			print "</tr>";
+
+			foreach ($tabtotal as $k => $v) $GlobalTabTotal[$k] += $v;
         }
 
         $lastcat = $obj->cat_id;
@@ -252,22 +280,32 @@ while ($obj = $db->fetch_object($resql))
     print "<td>".$prod->label."</td>";
     print "<td style='padding-right: 15px'>".$prod->ref."</td>";
 
+	$totalligne = 0;
     foreach($TMonth as $year => $month)
     {
         foreach ($month as $m)
         {
             $field = str_replace("-", "_", $m);
-            $tabtotal[$field]+= price2num(($mode == "CA") ? price($obj->{$field}) : $obj->{$field});
+            $tabtotal[$field]+= price2num(($mode == "CA") ? price($obj->{$field}) : $obj->{$field}, 'MT');
             print '<td>'.(($mode == "CA") ? price($obj->{$field}) : $obj->{$field}).'</td>';
             //var_dump($field, price($obj->{$field}), $obj->{$field});
         }
         $field = "total_".$year;
-        if (empty($tabtotal[$field])) $tabtotal[$field] = price2num(($mode == "CA") ? price($obj->{$field}) : $obj->{$field});
-        else $tabtotal[$field] += price2num(($mode == "CA") ? price($obj->{$field}) : $obj->{$field});
+
+        if (empty($tabtotal[$field])) $tabtotal[$field] = price2num(($mode == "CA") ? price($obj->{$field}) : $obj->{$field}, 'MT');
+        else $tabtotal[$field] += price2num(($mode == "CA") ? price($obj->{$field}) : $obj->{$field}, 'MT');
+
+		if (empty($totalligne)) $totalligne = price2num(($mode == "CA") ? price($obj->{$field}) : $obj->{$field}, 'MT');
+		else $totalligne += price2num(($mode == "CA") ? price($obj->{$field}) : $obj->{$field}, 'MT');
+
         print '<td>'.(($mode == "CA") ? price($obj->{$field}) : $obj->{$field}).'</td>';
 		//var_dump($field, $tabtotal[$field]);
 
 	}
+	$tabtotal['ligne'] += price2num(($mode == "CA") ? price($totalligne) : $totalligne, 'MT');
+
+	print '<td>'.(($mode == "CA") ? price($obj->total_global) ." €" : $obj->total_global).'</td>';
+	print '<td></td>';
 
     print '</tr>';
 
@@ -284,8 +322,20 @@ if (!empty($tabtotal))
     {
         print "<td>".(($mode == "CA") ? price($tab) : $tab)."</td>";
     }
-    print "</tr>";
+	print "<td></td>";
+	print "</tr>";
 }
+
+print "<tr class='liste_total'>";
+print "<td> Total Général</td>";
+print "<td></td>";
+print "<td></td>";
+foreach ($GlobalTabTotal as $tab)
+{
+	print "<td>".(($mode == "CA") ? price($tab) . " €" : $tab)."</td>";
+}
+print "<td></td>";
+print "</tr>";
 
 print '</table>';
 print '</div>';

@@ -190,7 +190,9 @@ OrderDateCreation=Date de création de la commande
 DateOrder=Date de commande
 OrderStatus=Statut
 
-linkMenuReportCAArticles=Evolution CA Articles
-linkMenuReportVentesArticles=Evolution Ventes Articles
-linkMenuReportAchatsCAArticles=Evolution CA Achats Articles
-linkMenuReportAchatsArticles=Evolution Achats Articles
+linkMenuReportCAArticles=Evolution CA articles
+linkMenuReportVentesArticles=Evolution ventes articles
+linkMenuReportAchatsCAArticles=Evolution CA achats articles
+linkMenuReportAchatsArticles=Evolution achats articles
+linkMenuReportAchatsCAFournisseurs=Evolution CA achats fournisseurs
+linkMenuReportAchatsFournisseurs=Evolution achats fournisseurs

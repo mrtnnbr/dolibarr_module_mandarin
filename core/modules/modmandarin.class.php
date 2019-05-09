@@ -758,6 +758,35 @@ class modmandarin extends DolibarrModules
 			'user'=>2
 		);
 		$r++;
+
+		$this->menu[$r]=array(
+			'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=rapports',
+			'type'=>'left',
+			'titre'=>$langs->transnoentitiesnoconv('linkMenuReportAchatsFournisseurs'),
+			'mainmenu'=>'tools',
+			'leftmenu'=>'rapports_achats_fourn',
+			'url'=>'/mandarin/evo_achats_fournisseurs.php',
+			'position'=>100,
+			'perms'=>'$user->rights->facture->lire',
+			'target'=>'',
+			'user'=>2
+		);
+		$r++;
+
+
+		$this->menu[$r]=array(
+			'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=rapports',
+			'type'=>'left',
+			'titre'=>$langs->transnoentitiesnoconv('linkMenuReportAchatsCAFournisseurs'),
+			'mainmenu'=>'tools',
+			'leftmenu'=>'rapports_achats_ca_fourn',
+			'url'=>'/mandarin/evo_achats_fournisseurs.php?mode=CA',
+			'position'=>100,
+			'perms'=>'$user->rights->facture->lire',
+			'target'=>'',
+			'user'=>2
+		);
+		$r++;
 		
 		// Add here entries to declare new menus
 		//

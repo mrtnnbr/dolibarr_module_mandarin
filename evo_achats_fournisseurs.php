@@ -91,14 +91,14 @@ $htmlother=new FormOther($db);
 $hookmanager->initHooks(array('mandarinArticleslist'));
 $extrafields = new ExtraFields($db);
 
-$transkey = 'linkMenuReportVentesArticles';
-if ($mode == "CA") $transkey = 'linkMenuReportCAArticles';
+$transkey = 'linkMenuReportAchatsFournisseurs';
+if ($mode == "CA") $transkey = 'linkMenuReportAchatsCAFournisseurs';
 
 llxHeader('', $langs->trans($transkey), '');
 
 dol_fiche_head();
 
-$sql = "SELECT cat.rowid as cat_id, p.rowid as p_id";
+$sql = "SELECT cat.rowid as cat_id, s.rowid as socid";
 
 if ($mode == "CA") $numfield = 'd.total_ht';
 else $numfield = 'd.qty';
@@ -118,11 +118,13 @@ foreach ($TMonth as $year => $month) {
 
 }
 $sql.= ", SUM(IF(f.datef > '".date("Y-m-d 00:00:00",$date_start)."' AND f.datef <= '".date("Y-m-d 23:59:59", $date_end)."', ".$numfield.", 0)) as total_global";
-$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product=p.rowid";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as cat ON cat.rowid=cp.fk_categorie";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet AS d ON d.fk_product = p.rowid";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture AS f ON f.rowid = d.fk_facture";
+
+$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn_det AS d";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as f ON f.rowid = d.fk_facture_fourn";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = f.fk_soc";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_fournisseur AS cf ON cf.fk_soc = s.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie AS cat ON cat.rowid = cf.fk_categorie";
+
 $sql.= " WHERE f.fk_statut > 0";
 $sql.= " AND f.datef > '".date('Y-m-d 00:00:00', $date_start)."'";
 $sql.= " AND f.datef <= '".date('Y-m-d 23:59:59',$date_end)."'";
@@ -130,17 +132,18 @@ $sql.= " AND f.datef <= '".date('Y-m-d 23:59:59',$date_end)."'";
 // filters
 if (!empty($search_categ))
 {
-    $sql.= " AND cat.rowid IN (".implode(',', $search_categ).")";
+	$sql.= " AND cat.rowid IN (".implode(',', $search_categ).")";
 }
 
 if (!empty($fk_soc) && $fk_soc !== -1)
 {
 	$sql.= " AND f.fk_soc = " . $fk_soc;
 }
-$sql.= " GROUP BY cat.rowid, p.rowid";
-$sql.= " ORDER BY cat.rowid ASC, p.ref ASC";
 
-// print $sql;
+$sql.= " GROUP BY cat.rowid, s.rowid";
+$sql.= " ORDER BY cat.rowid ASC, s.nom ASC";
+
+//print $sql;
 $resql = $db->query($sql);
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
@@ -159,13 +162,13 @@ $moreforfilter='';
 $moreforfilter.='<div class="divsearchfield" style="width:50%;"><table style="width:100%;">';
 if (! empty($conf->categorie->enabled))
 {
-    $moreforfilter.='<tr><td>'.$langs->trans('Categories'). ' : </td>';
-    $cate_arbo = $form->select_all_categories(Categorie::TYPE_PRODUCT, '', 'parent', 64, 0, 1);
-    $moreforfilter.='<td colspan="2">'.$form->multiselectarray('search_categ', $cate_arbo, $search_categ, '', 0, '', 0, '50%').'</td></tr>';
+	$moreforfilter.='<tr><td>'.$langs->trans('Categories'). ' : </td>';
+	$cate_arbo = $form->select_all_categories(Categorie::TYPE_SUPPLIER, '', 'parent', 64, 0, 1);
+	$moreforfilter.='<td colspan="2">'.$form->multiselectarray('search_categ', $cate_arbo, $search_categ, '', 0, '', 0, '50%').'</td></tr>';
 }
 
-$moreforfilter.='<tr><td>'.$langs->trans('Customer') . ' : </td>';
-$moreforfilter.='<td colspan="2">'.$form->select_company($fk_soc, 'fk_soc').'</td></tr>';
+$moreforfilter.='<tr><td>'.$langs->trans('Supplier') . ' : </td>';
+$moreforfilter.='<td colspan="2">'.$form->select_company($fk_soc, 'fk_soc', 's.fournisseur = 1').'</td></tr>';
 
 $moreforfilter.='<tr><td>'.$langs->trans('DateInvoice'). ' </td>';
 $moreforfilter.='<td>'.$langs->trans('From'). ' : ' .$form->select_date($date_start, 'date_start', 0,0,0,'',1,0,1) .'</td>';
@@ -207,7 +210,7 @@ print '</tr>';
 print '<tr class="liste_titre">';
 print '<th class="liste_titre">'.$langs->trans('Categories').'</th>';
 // print '<th class="liste_titre">'.$langs->trans('Ref').'</th>';
-print '<th class="liste_titre">'.$langs->trans('Product').'</th>';
+print '<th class="liste_titre">'.$langs->trans('Supplier').'</th>';
 print '<th class="liste_titre">'.$langs->trans('Ref').'</th>';
 foreach ($TMonth as $year => $month) {
      foreach ($month as $m)
@@ -225,7 +228,6 @@ $GlobalTabTotal = array();
 
 while ($obj = $db->fetch_object($resql))
 {
-
     if ($lastcat !== $obj->cat_id)
     {
         if (!empty($tabtotal))
@@ -244,7 +246,7 @@ while ($obj = $db->fetch_object($resql))
 			print "<td></td>";
 			print "</tr>";
 
-            foreach ($tabtotal as $k => $v) $GlobalTabTotal[$k] += $v;
+			foreach ($tabtotal as $k => $v) $GlobalTabTotal[$k] += $v;
         }
 
         $lastcat = $obj->cat_id;
@@ -274,35 +276,41 @@ while ($obj = $db->fetch_object($resql))
         $catprinted = true;
     }
 
-    $prod = new Product($db);
-    $prod->fetch($obj->p_id);
+    $soc = new Societe($db);
+    $soc->fetch($obj->socid);
 
-    print "<td>".$prod->label."</td>";
-    print "<td style='padding-right: 15px'>".$prod->ref."</td>";
+    print "<td>".$soc->name."</td>";
+    print "<td style='padding-right: 15px'>".$soc->code_fournisseur."</td>";
 
-    $totalligne = 0;
-    foreach($TMonth as $year => $month) {
-		foreach ($month as $m) {
-			$field = str_replace("-", "_", $m);
-			$tabtotal[$field] += price2num(($mode == "CA") ? price($obj->{$field}) : $obj->{$field});
-			print '<td>' . (($mode == "CA") ? price($obj->{$field}) . " €" : $obj->{$field}) . '</td>';
-			//var_dump($field, price($obj->{$field}), $obj->{$field});
-		}
-		$field = "total_" . $year;
-		if (empty($tabtotal[$field])) $tabtotal[$field] = price2num(($mode == "CA") ? price($obj->{$field}) : $obj->{$field});
-		else $tabtotal[$field] += price2num(($mode == "CA") ? price($obj->{$field}) : $obj->{$field});
+	$totalligne = 0;
+    foreach($TMonth as $year => $month)
+    {
+        foreach ($month as $m)
+        {
+            $field = str_replace("-", "_", $m);
+            $val = price2num($obj->{$field}, 'MT');
 
-		if (empty($totalligne)) $totalligne = price2num(($mode == "CA") ? price($obj->{$field}) : $obj->{$field});
-		else $totalligne += price2num(($mode == "CA") ? price($obj->{$field}) : $obj->{$field});
+            $tabtotal[$field]+= ($mode == "CA") ? price($val) : $val;
+            print '<td>'.(($mode == "CA") ? price($val) . " €" : $val).'</td>';
+        }
+        $field = "total_".$year;
+		$val = price2num($obj->{$field}, 'MT');
 
-		print '<td>' . (($mode == "CA") ? price($obj->{$field}) . " €" : $obj->{$field}) . '</td>';
-		//var_dump($field, $tabtotal[$field]);
+        if (empty($tabtotal[$field])) $tabtotal[$field] = ($mode == "CA") ? price($val) : $val;
+        else $tabtotal[$field] += ($mode == "CA") ? price($val) : $val;
+
+		if (empty($totalligne)) $totalligne = ($mode == "CA") ? price($val) : $val;
+		else $totalligne += ($mode == "CA") ? price($val) : $val;
+
+        print '<td>'.(($mode == "CA") ? price($val) . " €" : $val).'</td>';
+
 
 	}
-	$tabtotal['ligne'] += price2num(($mode == "CA") ? price($totalligne) : $totalligne);
+	$tabtotal['ligne'] += price2num(($mode == "CA") ? price($totalligne) : $totalligne, 'MT');
 
 	print '<td>'.(($mode == "CA") ? price($obj->total_global) ." €" : $obj->total_global).'</td>';
 	print '<td></td>';
+
     print '</tr>';
 
 }
@@ -316,10 +324,10 @@ if (!empty($tabtotal))
     print "<td></td>";
     foreach ($tabtotal as $tab)
     {
-        print "<td>".(($mode == "CA") ? price($tab) . " €": $tab)."</td>";
+        print "<td>".(($mode == "CA") ? price($tab) . " €" : $tab)."</td>";
     }
 	print "<td></td>";
-    print "</tr>";
+	print "</tr>";
 }
 
 print "<tr class='liste_total'>";
