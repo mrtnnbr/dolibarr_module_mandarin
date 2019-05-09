@@ -189,3 +189,8 @@ OrderRef=Ref. Commande
 OrderDateCreation=Date de création de la commande
 DateOrder=Date de commande
 OrderStatus=Statut
+
+linkMenuReportCAArticles=Evolution CA Articles
+linkMenuReportVentesArticles=Evolution Ventes Articles
+linkMenuReportAchatsCAArticles=Evolution CA Achats Articles
+linkMenuReportAchatsArticles=Evolution Achats Articles
