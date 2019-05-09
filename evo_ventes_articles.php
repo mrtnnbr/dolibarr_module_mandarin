@@ -155,6 +155,11 @@ print '<input type="hidden" name="mode" value="'.$mode.'">';
 
 print_barre_liste($langs->trans($transkey), $page, $_SERVER["PHP_SELF"]);
 
+print '<div class="info">';
+print '<span class="fa fa-info-circle" title="Information pour les administrateurs"></span> ';
+print $langs->trans($transkey.'Help');
+print '</div>';
+
 $moreforfilter='';
 $moreforfilter.='<div class="divsearchfield" style="width:50%;"><table style="width:100%;">';
 if (! empty($conf->categorie->enabled))
