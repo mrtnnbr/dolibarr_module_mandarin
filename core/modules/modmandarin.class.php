@@ -687,7 +687,106 @@ class modmandarin extends DolibarrModules
 			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
-		
+
+        $this->menu[$r]=array(
+            'fk_menu'=>'fk_mainmenu=tools',
+            'type'=>'left',
+            'titre'=>$langs->transnoentitiesnoconv('Reports'),
+            'mainmenu'=>'tools',
+            'leftmenu'=>'rapports',
+            'url'=>'/core/tools.php',
+            'position'=>100,
+            'perms'=>'$user->rights->facture->lire',
+            'target'=>'',
+            'user'=>2
+        );
+        $r++;
+
+        $this->menu[$r]=array(
+            'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=rapports',
+            'type'=>'left',
+            'titre'=>$langs->transnoentitiesnoconv('linkMenuReportVentesArticles'),
+            'mainmenu'=>'tools',
+            'leftmenu'=>'rapports_vente_prod',
+            'url'=>'/mandarin/evo_ventes_articles.php',
+            'position'=>100,
+            'perms'=>'$user->rights->facture->lire',
+            'target'=>'',
+            'user'=>2
+        );
+        $r++;
+
+        $this->menu[$r]=array(
+            'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=rapports',
+            'type'=>'left',
+            'titre'=>$langs->transnoentitiesnoconv('linkMenuReportCAArticles'),
+            'mainmenu'=>'tools',
+            'leftmenu'=>'rapports_ca_prod',
+            'url'=>'/mandarin/evo_ventes_articles.php?mode=CA',
+            'position'=>100,
+            'perms'=>'$user->rights->facture->lire',
+            'target'=>'',
+            'user'=>2
+        );
+        $r++;
+
+		$this->menu[$r]=array(
+			'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=rapports',
+			'type'=>'left',
+			'titre'=>$langs->transnoentitiesnoconv('linkMenuReportAchatsArticles'),
+			'mainmenu'=>'tools',
+			'leftmenu'=>'rapports_achats_prod',
+			'url'=>'/mandarin/evo_achats_articles.php',
+			'position'=>100,
+			'perms'=>'$user->rights->facture->lire',
+			'target'=>'',
+			'user'=>2
+		);
+		$r++;
+
+
+		$this->menu[$r]=array(
+			'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=rapports',
+			'type'=>'left',
+			'titre'=>$langs->transnoentitiesnoconv('linkMenuReportAchatsCAArticles'),
+			'mainmenu'=>'tools',
+			'leftmenu'=>'rapports_achats_ca_prod',
+			'url'=>'/mandarin/evo_achats_articles.php?mode=CA',
+			'position'=>100,
+			'perms'=>'$user->rights->facture->lire',
+			'target'=>'',
+			'user'=>2
+		);
+		$r++;
+
+		$this->menu[$r]=array(
+			'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=rapports',
+			'type'=>'left',
+			'titre'=>$langs->transnoentitiesnoconv('linkMenuReportAchatsFournisseurs'),
+			'mainmenu'=>'tools',
+			'leftmenu'=>'rapports_achats_fourn',
+			'url'=>'/mandarin/evo_achats_fournisseurs.php',
+			'position'=>100,
+			'perms'=>'$user->rights->facture->lire',
+			'target'=>'',
+			'user'=>2
+		);
+		$r++;
+
+
+		$this->menu[$r]=array(
+			'fk_menu'=>'fk_mainmenu=tools,fk_leftmenu=rapports',
+			'type'=>'left',
+			'titre'=>$langs->transnoentitiesnoconv('linkMenuReportAchatsCAFournisseurs'),
+			'mainmenu'=>'tools',
+			'leftmenu'=>'rapports_achats_ca_fourn',
+			'url'=>'/mandarin/evo_achats_fournisseurs.php?mode=CA',
+			'position'=>100,
+			'perms'=>'$user->rights->facture->lire',
+			'target'=>'',
+			'user'=>2
+		);
+		$r++;
 		
 		// Add here entries to declare new menus
 		//

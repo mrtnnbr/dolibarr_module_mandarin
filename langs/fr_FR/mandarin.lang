@@ -189,3 +189,21 @@ OrderRef=Ref. Commande
 OrderDateCreation=Date de création de la commande
 DateOrder=Date de commande
 OrderStatus=Statut
+
+linkMenuReportCAArticles=Evolution CA articles
+linkMenuReportCAArticlesHelp=Chiffre d'affaire réalisé par catégorie d'article, par article et par mois
+
+linkMenuReportVentesArticles=Evolution ventes articles
+linkMenuReportVentesArticlesHelp=Volume total vendu par catégorie d'article, par article et par mois
+
+linkMenuReportAchatsCAArticles=Evolution CA achats articles
+linkMenuReportAchatsCAArticlesHelp=Sommes des factures fournisseurs par catégorie d'article, par article et par mois
+
+linkMenuReportAchatsArticles=Evolution achats articles
+linkMenuReportAchatsArticlesHelp=Volume total acheté par catégorie d'article, par article et par mois
+
+linkMenuReportAchatsCAFournisseurs=Evolution CA achats fournisseurs
+linkMenuReportAchatsCAFournisseursHelp=Sommes des factures fournisseurs par catégorie de fournisseur, par fournisseur et par mois
+
+linkMenuReportAchatsFournisseurs=Evolution achats fournisseurs
+linkMenuReportAchatsFournisseursHelp=Volume total acheté par catégorie de fournisseur, par fournisseur et par mois
