@@ -93,7 +93,8 @@ function getSqlForData($userid)
     
     
     $sql.=' FROM '.MAIN_DB_PREFIX.'propal p
-			LEFT JOIN '.MAIN_DB_PREFIX.'user u ON (u.rowid = p.fk_user_author)
+            INNER JOIN ' . MAIN_DB_PREFIX . 'societe_commerciaux sc ON sc.fk_soc = p.fk_soc
+			LEFT JOIN '.MAIN_DB_PREFIX.'user u ON (u.rowid = sc.fk_user)
             LEFT JOIN '.MAIN_DB_PREFIX.'usergroup_user ug ON (ug.fk_user = p.fk_user_author)';
     
     
