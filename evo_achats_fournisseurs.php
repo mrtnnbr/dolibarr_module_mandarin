@@ -26,12 +26,12 @@ if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x',
 {
 	$fk_soc="";
 	$search_categ=0;
-	$date_start = strtotime('-1 year');
-	$date_end = time();
+	$date_start = strtotime(date("01-01-Y"));
+	$date_end = strtotime(date("31-12-Y"));
 }
 
-if (empty($date_start)) $date_start = strtotime('-1 year');
-if (empty($date_end)) $date_end = time();
+if (empty($date_start)) $date_start = strtotime(date("01-01-Y"));
+if (empty($date_end)) $date_end = strtotime(date("31-12-Y"));
 
 $TYear = array();
 $year = (int) date('Y', $date_start);
@@ -135,7 +135,7 @@ if (!empty($search_categ))
 	$sql.= " AND cat.rowid IN (".implode(',', $search_categ).")";
 }
 
-if (!empty($fk_soc) && $fk_soc !== -1)
+if (!empty($fk_soc) && $fk_soc > 0)
 {
 	$sql.= " AND f.fk_soc = " . $fk_soc;
 }
@@ -173,7 +173,7 @@ if (! empty($conf->categorie->enabled))
 }
 
 $moreforfilter.='<tr><td>'.$langs->trans('Supplier') . ' : </td>';
-$moreforfilter.='<td colspan="2">'.$form->select_company($fk_soc, 'fk_soc', 's.fournisseur = 1').'</td></tr>';
+$moreforfilter.='<td colspan="2">'.$form->select_company($fk_soc, 'fk_soc', 's.fournisseur = 1', 1).'</td></tr>';
 
 $moreforfilter.='<tr><td>'.$langs->trans('DateInvoice'). ' </td>';
 $moreforfilter.='<td>'.$langs->trans('From'). ' : ' .$form->select_date($date_start, 'date_start', 0,0,0,'',1,0,1) .'</td>';
