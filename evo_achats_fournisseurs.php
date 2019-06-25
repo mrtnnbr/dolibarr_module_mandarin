@@ -333,6 +333,8 @@ if (!empty($tabtotal))
     }
 	print "<td></td>";
 	print "</tr>";
+
+	foreach ($tabtotal as $k => $v) $GlobalTabTotal[$k] += $v;
 }
 
 print "<tr class='liste_total'>";
