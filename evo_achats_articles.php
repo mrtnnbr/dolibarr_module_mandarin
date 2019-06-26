@@ -96,7 +96,7 @@ if ($mode == "CA") $transkey = 'linkMenuReportAchatsCAArticles';
 
 llxHeader('', $langs->trans($transkey), '');
 
-dol_fiche_head();
+//dol_fiche_head();
 
 $sql = "SELECT cat.rowid as cat_id, p.rowid as p_id";
 
@@ -200,10 +200,10 @@ $colspan = 4;
 
 foreach ($TMonth as $year => $month)
 {
-    $colspan+=count($month)+1;
+    $colspan+=count($month);
 }
 
-print '<td colspan="'.$colspan.'"></td>';
+print '<td class="liste_titre" colspan="'.$colspan.'"></td>';
 print '<td class="liste_titre" align="middle">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
@@ -223,7 +223,6 @@ foreach ($TMonth as $year => $month) {
     print '<th class="liste_titre">Total '.$year.'</th>';
 }
 print '<th class="liste_titre">Total&nbsp;global</th>';
-print '<th></th>';
 print '</tr>';
 
 $lastcat = '';
@@ -246,7 +245,6 @@ while ($obj = $db->fetch_object($resql))
 				if ($mode == "CA") print "<td>".price($tab)."</td>";
 				else print "<td>".$tab."</td>";
 			}
-			print "<td></td>";
 			print "</tr>";
 
 			foreach ($tabtotal as $k => $v) $GlobalTabTotal[$k] += $v;
@@ -310,7 +308,6 @@ while ($obj = $db->fetch_object($resql))
 	$tabtotal['ligne'] += price2num(($mode == "CA") ? price($totalligne) : $totalligne, 'MT');
 
 	print '<td>'.(($mode == "CA") ? price($obj->total_global) ." €" : $obj->total_global).'</td>';
-	print '<td></td>';
 
     print '</tr>';
 
@@ -327,7 +324,6 @@ if (!empty($tabtotal))
     {
         print "<td>".(($mode == "CA") ? price($tab) : $tab)."</td>";
     }
-	print "<td></td>";
 	print "</tr>";
 
 	foreach ($tabtotal as $k => $v) $GlobalTabTotal[$k] += $v;
@@ -341,7 +337,6 @@ foreach ($GlobalTabTotal as $tab)
 {
 	print "<td>".(($mode == "CA") ? price($tab) . " €" : $tab)."</td>";
 }
-print "<td></td>";
 print "</tr>";
 
 print '</table>';
