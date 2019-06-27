@@ -15,6 +15,10 @@ $langs->load("products");
 $langs->load("suppliers");
 $langs->load("companies");
 
+// extra column because CSV export ignores the last column of the list -> it will ignore this dummy column instead of a real data column.
+$dummyColTd = '<td style="display: none"></td>';
+$dummyColTh = '<th style="display: none"></th>';
+
 $mode = GETPOST('mode');
 $fk_soc = GETPOST('fk_soc');
 $search_categ = GETPOST('search_categ', 'array');
@@ -207,6 +211,7 @@ print '<td class="liste_titre" align="middle">';
 $searchpicto=$form->showFilterButtons();
 print $searchpicto;
 print '</td>';
+print $dummyColTd;
 print '</tr>';
 
 print '<tr class="liste_titre">';
@@ -222,6 +227,7 @@ foreach ($TMonth as $year => $month) {
     print '<th class="liste_titre">Total '.$year.'</th>';
 }
 print '<th class="liste_titre">Total&nbsp;global</th>';
+print $dummyColTh;
 print '</tr>';
 
 $lastcat = '';
@@ -305,6 +311,7 @@ while ($obj = $db->fetch_object($resql))
 	$tabtotal['ligne'] += price2num(($mode == "CA") ? price($totalligne) : $totalligne);
 
 	print '<td>'.(($mode == "CA") ? price($obj->total_global) ." €" : $obj->total_global).'</td>';
+    print $dummyColTd;
     print '</tr>';
 
 }
@@ -320,6 +327,7 @@ if (!empty($tabtotal))
     {
         print "<td>".(($mode == "CA") ? price($tab) . " €": $tab)."</td>";
     }
+    print $dummyColTd;
     print "</tr>";
 
 	foreach ($tabtotal as $k => $v) $GlobalTabTotal[$k] += $v;
@@ -333,6 +341,7 @@ foreach ($GlobalTabTotal as $tab)
 {
 	print "<td>".(($mode == "CA") ? price($tab) . " €" : $tab)."</td>";
 }
+print $dummyColTd;
 print "</tr>";
 
 print '</table>';
