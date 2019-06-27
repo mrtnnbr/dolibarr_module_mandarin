@@ -24,6 +24,7 @@ $fk_soc = GETPOST('fk_soc');
 $search_categ = GETPOST('search_categ', 'array');
 $date_start=dol_mktime(0,0,0,GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 $date_end=dol_mktime(0,0,0,GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
+$includeAllProducts = boolval(GETPOST('includeAllProducts', 'alpha'));
 
 // Purge search criteria
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
@@ -121,15 +122,19 @@ foreach ($TMonth as $year => $month) {
 	$sql.= ", SUM(IF(f.datef > '".date("Y-m-d 00:00:00",$firststart)."' AND f.datef <= '".date("Y-m-d 23:59:59", $end)."', ".$numfield.", 0)) as total_".$year;
 
 }
+
 $sql.= ", SUM(IF(f.datef > '".date("Y-m-d 00:00:00",$date_start)."' AND f.datef <= '".date("Y-m-d 23:59:59", $date_end)."', ".$numfield.", 0)) as total_global";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product=p.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as cat ON cat.rowid=cp.fk_categorie";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet AS d ON d.fk_product = p.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture AS f ON f.rowid = d.fk_facture";
-$sql.= " WHERE f.fk_statut > 0";
+$sql.= " WHERE ";
+$sql.= ($includeAllProducts ? 'f.rowid IS NULL OR (' : '');
+$sql.= " f.fk_statut > 0";
 $sql.= " AND f.datef > '".date('Y-m-d 00:00:00', $date_start)."'";
 $sql.= " AND f.datef <= '".date('Y-m-d 23:59:59',$date_end)."'";
+$sql.= ($includeAllProducts ? ')' : '');
 
 // filters
 if (!empty($search_categ))
@@ -144,7 +149,6 @@ if (!empty($fk_soc) && $fk_soc > 0)
 $sql.= " GROUP BY cat.rowid, p.rowid";
 $sql.= " ORDER BY cat.rowid ASC, p.ref ASC";
 
-// print $sql;
 $resql = $db->query($sql);
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
@@ -179,6 +183,11 @@ $moreforfilter.='<td colspan="2">'.$form->select_company($fk_soc, 'fk_soc', '', 
 $moreforfilter.='<tr><td>'.$langs->trans('DateInvoice'). ' </td>';
 $moreforfilter.='<td>'.$langs->trans('From'). ' : ' .$form->select_date($date_start, 'date_start', 0,0,0,'',1,0,1) .'</td>';
 $moreforfilter.='<td>'.$langs->trans('to'). ' : ' .$form->select_date($date_end, 'date_end', 0,0,0,'',1,0,1).'</td></tr>';
+
+$moreforfilter.='<tr>';
+$moreforfilter.='<td>' . $langs->trans('IncludeAllProducts') . '</td>';
+$moreforfilter.='<td>' . '<input type="checkbox" name="includeAllProducts" '. ($includeAllProducts ? 'checked' : '') .'/>' . '</td>';
+$moreforfilter.='</tr>';
 
 $moreforfilter.='</table></div>';
 
