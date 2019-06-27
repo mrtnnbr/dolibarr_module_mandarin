@@ -11,13 +11,13 @@ if (! empty($conf->categorie->enabled))
 if (! empty($conf->stock->enabled)) $langs->load("stocks");
 if (! empty($conf->facture->enabled)) $langs->load("bills");
 
-// extra column because CSV export ignores the last column of the list -> it will ignore this dummy column instead of a real data column.
-$dummyColTd = '<td style="display: none"></td>';
-$dummyColTh = '<th style="display: none"></th>';
-
 $langs->load("products");
 $langs->load("suppliers");
 $langs->load("companies");
+
+// extra column because CSV export ignores the last column of the list -> it will ignore this dummy column instead of a real data column.
+$dummyColTd = '<td style="display: none"></td>';
+$dummyColTh = '<th style="display: none"></th>';
 
 $mode = GETPOST('mode');
 $fk_soc = GETPOST('fk_soc');
