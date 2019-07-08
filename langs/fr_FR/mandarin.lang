@@ -189,6 +189,7 @@ OrderRef=Ref. Commande
 OrderDateCreation=Date de création de la commande
 DateOrder=Date de commande
 OrderStatus=Statut
+IncludeAllProducts=Inclure tous les produits
 
 linkMenuReportCAArticles=Evolution CA articles
 linkMenuReportCAArticlesHelp=Chiffre d'affaire réalisé par catégorie d'article, par article et par mois
