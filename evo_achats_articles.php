@@ -116,13 +116,13 @@ foreach ($TMonth as $year => $month) {
         $start = strtotime(" 01-$k-$year");
         $end = strtotime("+1 month -1 day", $start);
 
-        $sql.= ", SUM(IF(f.datef > '".date("Y-m-d 00:00:00",$start)."' AND f.datef <= '".date("Y-m-d 23:59:59", $end)."', ".$numfield.", 0)) as ".str_replace("-", "_", $m);
+        $sql.= ", SUM(IF(f.datef >= '".date("Y-m-d 00:00:00",$start)."' AND f.datef <= '".date("Y-m-d 23:59:59", $end)."', ".$numfield.", 0)) as ".str_replace("-", "_", $m);
     }
 
-	$sql.= ", SUM(IF(f.datef > '".date("Y-m-d 00:00:00",$firststart)."' AND f.datef <= '".date("Y-m-d 23:59:59", $end)."', ".$numfield.", 0)) as total_".$year;
+	$sql.= ", SUM(IF(f.datef >= '".date("Y-m-d 00:00:00",$firststart)."' AND f.datef <= '".date("Y-m-d 23:59:59", $end)."', ".$numfield.", 0)) as total_".$year;
 
 }
-$sql.= ", SUM(IF(f.datef > '".date("Y-m-d 00:00:00",$date_start)."' AND f.datef <= '".date("Y-m-d 23:59:59", $date_end)."', ".$numfield.", 0)) as total_global";
+$sql.= ", SUM(IF(f.datef >= '".date("Y-m-d 00:00:00",$date_start)."' AND f.datef <= '".date("Y-m-d 23:59:59", $date_end)."', ".$numfield.", 0)) as total_global";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product=p.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as cat ON cat.rowid=cp.fk_categorie";
@@ -131,7 +131,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn AS f ON f.rowid = d.fk_factur
 $sql.= " WHERE ";
 $sql.= ($includeAllProducts ? 'f.rowid IS NULL OR (' : '');
 $sql.= " f.fk_statut > 0";
-$sql.= " AND f.datef > '".date('Y-m-d 00:00:00', $date_start)."'";
+$sql.= " AND f.datef >= '".date('Y-m-d 00:00:00', $date_start)."'";
 $sql.= " AND f.datef <= '".date('Y-m-d 23:59:59',$date_end)."'";
 $sql.= ($includeAllProducts ? ')' : '');
 //print($sql); exit;
