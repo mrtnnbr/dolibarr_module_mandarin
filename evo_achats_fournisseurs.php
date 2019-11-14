@@ -3,6 +3,8 @@
 require 'config.php';
 
 dol_include_once('/core/class/html.form.class.php');
+dol_include_once('/fourn/class/fournisseur.facture.class.php');
+
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
 
 if (! empty($conf->categorie->enabled))
@@ -105,7 +107,7 @@ llxHeader('', $langs->trans($transkey), '');
 $sql = "SELECT cat.rowid as cat_id, s.rowid as socid";
 
 if ($mode == "CA") $numfield = 'd.total_ht';
-else $numfield = 'd.qty';
+else $numfield = "IF(f.type = ".FactureFournisseur::TYPE_CREDIT_NOTE." , -(d.qty), d.qty)";
 
 foreach ($TMonth as $year => $month) {
     $start = '';
