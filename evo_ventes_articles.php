@@ -26,6 +26,7 @@ $search_categ = GETPOST('search_categ', 'array');
 $date_start=dol_mktime(0,0,0,GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 $date_end=dol_mktime(0,0,0,GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 $includeAllProducts = boolval(GETPOST('includeAllProducts', 'alpha'));
+$product_ref = GETPOST('product_ref');
 
 // Purge search criteria
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
@@ -131,6 +132,7 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as cat ON cat.rowid=cp.fk_categor
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet AS d ON d.fk_product = p.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture AS f ON f.rowid = d.fk_facture";
 $sql.= " WHERE ";
+$sql.= (!empty($product_ref) ? "p.ref LIKE '".$product_ref."%' AND" : "");
 $sql.= ($includeAllProducts ? 'f.rowid IS NULL OR (' : '');
 $sql.= " f.fk_statut > 0";
 $sql.= " AND f.datef >= '".date('Y-m-d 00:00:00', $date_start)."'";
@@ -180,6 +182,9 @@ if (! empty($conf->categorie->enabled))
 
 $moreforfilter.='<tr><td>'.$langs->trans('Customer') . ' : </td>';
 $moreforfilter.='<td colspan="2">'.$form->select_company($fk_soc, 'fk_soc', '', 1).'</td></tr>';
+
+$moreforfilter.='<tr><td>'.$langs->trans('Ref') . ' : </td>';
+$moreforfilter.='<td colspan="2"><input type="text" name="product_ref" value="'.$product_ref.'" /></td></tr>';
 
 $moreforfilter.='<tr><td>'.$langs->trans('DateInvoice'). ' </td>';
 $moreforfilter.='<td>'.$langs->trans('From'). ' : ' .$form->select_date($date_start, 'date_start', 0,0,0,'',1,0,1) .'</td>';
