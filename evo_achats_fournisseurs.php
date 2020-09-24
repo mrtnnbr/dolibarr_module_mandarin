@@ -6,6 +6,8 @@ dol_include_once('/core/class/html.form.class.php');
 dol_include_once('/fourn/class/fournisseur.facture.class.php');
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formother.class.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/mandarin/lib/mandarin.lib.php';
+
 
 if (! empty($conf->categorie->enabled))
     require_once DOL_DOCUMENT_ROOT.'/categories/class/categorie.class.php';
@@ -302,9 +304,18 @@ while ($obj = $db->fetch_object($resql))
             $field = str_replace("-", "_", $m);
             $val = price2num($obj->{$field}, 'MT');
 
-            $tabtotal[$field]+= ($mode == "CA") ? price($val) : $val;
+            $tabtotal[$field]+= $val;
+
             print '<td>'.(($mode == "CA") ? price($val) . " €" : $val).'</td>';
         }
+
+        //on convertit en prix si évol CA après le calcul du montant
+        if($mode == "CA") {
+            foreach($tabtotal as $field =>$val){
+                $tabtotal[$field] = price($val);
+            }
+        }
+
         $field = "total_".$year;
 		$val = price2num($obj->{$field}, 'MT');
 
@@ -341,7 +352,12 @@ if (!empty($tabtotal))
     print $dummyColTd;
 	print "</tr>";
 
-	foreach ($tabtotal as $k => $v) $GlobalTabTotal[$k] += $v;
+	foreach ($tabtotal as $k => $v) {
+
+	    if(empty($GlobalTabTotal[$k])) $GlobalTabTotal[$k] = 0;
+	    $v = price2num($v);
+	    $GlobalTabTotal[$k] += $v;
+    }
 }
 
 print "<tr class='liste_total'>";
