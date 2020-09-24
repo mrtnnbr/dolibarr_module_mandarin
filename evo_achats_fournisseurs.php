@@ -355,7 +355,7 @@ if (!empty($tabtotal))
 	foreach ($tabtotal as $k => $v) {
 
 	    if(empty($GlobalTabTotal[$k])) $GlobalTabTotal[$k] = 0;
-	    $v = priceToFloat($v);
+	    $v = price2num($v);
 	    $GlobalTabTotal[$k] += $v;
     }
 }
