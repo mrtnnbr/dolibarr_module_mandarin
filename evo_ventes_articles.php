@@ -95,7 +95,7 @@ if (! $sortorder) $sortorder="ASC";
 $form = new Form($db);
 $htmlother=new FormOther($db);
 
-$hookmanager->initHooks(array('mandarinArticleslist'));
+$hookmanager->initHooks(array('mandarinArticleslist', 'mandarinevoventearticle'));
 $extrafields = new ExtraFields($db);
 
 $transkey = 'linkMenuReportVentesArticles';
@@ -131,6 +131,12 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product=p.
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as cat ON cat.rowid=cp.fk_categorie";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet AS d ON d.fk_product = p.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture AS f ON f.rowid = d.fk_facture";
+
+// Add fields from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListJoin',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
+
 $sql.= " WHERE ";
 $sql.= (!empty($product_ref) ? "p.ref LIKE '".$product_ref."%' AND" : "");
 $sql.= ($includeAllProducts ? 'f.rowid IS NULL OR (' : '');
@@ -149,6 +155,12 @@ if (!empty($fk_soc) && $fk_soc > 0)
 {
 	$sql.= " AND f.fk_soc = " . $fk_soc;
 }
+
+// Add where from hooks
+$parameters=array('sql' => $sql);
+$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
+
 $sql.= " GROUP BY cat.rowid, p.rowid";
 $sql.= " ORDER BY cat.rowid ASC, p.ref ASC";
 
