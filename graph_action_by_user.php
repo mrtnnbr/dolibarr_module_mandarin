@@ -215,14 +215,14 @@ function draw_table(&$TData, &$TIDUser, &$TLabelActionComm) {
 		$nb_total_user = 0; // Contient le nombre d'occurences pour chaque user, tout type d'événement confondu
 		foreach($TTypeEvents as $type) {
 			print '<td>';
-			print '<a href="'.dol_buildpath('/comm/action/listactions.php?actioncode='.$type.'&usertodo='.$id_user, 1).'">'.$TData[$type][$id_user].'</a>';
+			print '<a href="'.dol_buildpath('/comm/action/listactions.php?actioncode='.$type.'&filtert='.$id_user, 1).'">'.$TData[$type][$id_user].'</a>';
 			print '</td>';
 			$nb_total_user+=$TData[$type][$id_user];
 			$TNBTotalType[$type]+=$TData[$type][$id_user];
 		}
 		
 		print '<td>';
-		print '<a href="'.dol_buildpath('/comm/action/listactions.php?&usertodo='.$id_user, 1).'">'.$nb_total_user.'</a>';
+		print '<a href="'.dol_buildpath('/comm/action/listactions.php?&filtert='.$id_user, 1).'">'.$nb_total_user.'</a>';
 		print '</td>';
 		print '</tr>';
 		
@@ -234,7 +234,7 @@ function draw_table(&$TData, &$TIDUser, &$TLabelActionComm) {
 	print '<td>';
 	print 'Total';
 	print '</td>';
-	foreach($TTypeEvents as $type) print '<td><a href="'.dol_buildpath('/comm/action/listactions.php?actioncode='.$type.'&usertodo=-1', 1).'">'.$TNBTotalType[$type].'</a></td>';
+	foreach($TTypeEvents as $type) print '<td><a href="'.dol_buildpath('/comm/action/listactions.php?actioncode='.$type.'&filtert=-1', 1).'">'.$TNBTotalType[$type].'</a></td>';
 	print '<td>'.array_sum($TNBTotalType).'</td>';
 	print '</tr>';
 	
