@@ -26,7 +26,8 @@ $search_categ = GETPOST('search_categ', 'array');
 $date_start=dol_mktime(0,0,0,GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 $date_end=dol_mktime(0,0,0,GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 $includeAllProducts = boolval(GETPOST('includeAllProducts', 'alpha'));
-$product_ref = GETPOST('product_ref');
+$product_ref = GETPOST('product_ref', 'nohtml');
+$product_label = GETPOST('product_label', 'nohtml');
 
 // Purge search criteria
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
@@ -138,7 +139,8 @@ $reshook=$hookmanager->executeHooks('printFieldListJoin',$parameters);    // Not
 $sql.=$hookmanager->resPrint;
 
 $sql.= " WHERE ";
-$sql.= (!empty($product_ref) ? "p.ref LIKE '".$product_ref."%' AND" : "");
+$sql.= (!empty($product_ref) ? natural_search("p.ref", $db->escape($product_ref), 0, 1) . ' AND ' : "");
+$sql.= (!empty($product_label) ? natural_search("p.label", $db->escape($product_label), 0, 1) . ' AND ' : "");
 $sql.= ($includeAllProducts ? 'f.rowid IS NULL OR (' : '');
 $sql.= " f.fk_statut > 0";
 $sql.= " AND f.datef >= '".date('Y-m-d 00:00:00', $date_start)."'";
@@ -165,6 +167,10 @@ $sql.= " GROUP BY cat.rowid, p.rowid";
 $sql.= " ORDER BY cat.rowid ASC, p.ref ASC";
 
 $resql = $db->query($sql);
+
+if(!$resql){
+	dol_print_error($db);
+}
 
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post" name="formulaire">';
 if ($optioncss != '') print '<input type="hidden" name="optioncss" value="'.$optioncss.'">';
@@ -195,8 +201,8 @@ if (! empty($conf->categorie->enabled))
 $moreforfilter.='<tr><td>'.$langs->trans('Customer') . ' : </td>';
 $moreforfilter.='<td colspan="2">'.$form->select_company($fk_soc, 'fk_soc', '', 1).'</td></tr>';
 
-$moreforfilter.='<tr><td>'.$langs->trans('Ref') . ' : </td>';
-$moreforfilter.='<td colspan="2"><input type="text" name="product_ref" value="'.$product_ref.'" /></td></tr>';
+$moreforfilter.='<tr><td>'.$langs->trans('Product') . ' : </td>';
+$moreforfilter.='<td colspan="2"><input type="text" name="product_ref" value="'.$product_ref.'" placeholder="'.$langs->trans('Ref') . '" /> <input type="text" name="product_label" value="'.$product_label.'"  placeholder="'.$langs->trans('Label') . '"  /></td></tr>';
 
 $moreforfilter.='<tr><td>'.$langs->trans('DateInvoice'). ' </td>';
 $moreforfilter.='<td>'.$langs->trans('From'). ' : ' .$form->select_date($date_start, 'date_start', 0,0,0,'',1,0,1) .'</td>';
