@@ -27,6 +27,8 @@ $search_categ = GETPOST('search_categ', 'array');
 $date_start=dol_mktime(0,0,0,GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 $date_end=dol_mktime(0,0,0,GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 $includeAllProducts = boolval(GETPOST('includeAllProducts', 'alpha'));
+$product_ref = GETPOST('product_ref', 'nohtml');
+$product_label = GETPOST('product_label', 'nohtml');
 
 // Purge search criteria
 if (GETPOST('button_removefilter_x','alpha') || GETPOST('button_removefilter.x','alpha') || GETPOST('button_removefilter','alpha')) // All tests are required to be compatible with all browsers
@@ -95,7 +97,7 @@ if (! $sortorder) $sortorder="ASC";
 $form = new Form($db);
 $htmlother=new FormOther($db);
 
-$hookmanager->initHooks(array('mandarinArticleslist'));
+$hookmanager->initHooks(array('mandarinArticleslist', 'mandarinevoachatarticle'));
 $extrafields = new ExtraFields($db);
 
 $transkey = 'linkMenuReportAchatsArticles';
@@ -130,13 +132,21 @@ $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product=p.
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as cat ON cat.rowid=cp.fk_categorie";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn_det AS d ON d.fk_product = p.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn AS f ON f.rowid = d.fk_facture_fourn";
+
+// Add fields from hooks
+$parameters=array();
+$reshook=$hookmanager->executeHooks('printFieldListJoin',$parameters);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
+
 $sql.= " WHERE ";
 $sql.= ($includeAllProducts ? 'f.rowid IS NULL OR (' : '');
 $sql.= " f.fk_statut > 0";
+$sql.= (!empty($product_ref) ? natural_search("p.ref", $db->escape($product_ref), 0): "");
+$sql.= (!empty($product_label) ? natural_search("p.label", $db->escape($product_label), 0): "");
 $sql.= " AND f.datef >= '".date('Y-m-d 00:00:00', $date_start)."'";
 $sql.= " AND f.datef <= '".date('Y-m-d 23:59:59',$date_end)."'";
 $sql.= ($includeAllProducts ? ')' : '');
-//print($sql); exit;
+
 
 // filters
 if (!empty($search_categ))
@@ -148,6 +158,11 @@ if (!empty($fk_soc) && $fk_soc > 0)
 {
 	$sql.= " AND f.fk_soc = " . $fk_soc;
 }
+
+// Add where from hooks
+$parameters=array('sql' => $sql);
+$reshook=$hookmanager->executeHooks('printFieldListWhere', $parameters, $object);    // Note that $action and $object may have been modified by hook
+$sql.=$hookmanager->resPrint;
 
 $sql.= " GROUP BY cat.rowid, p.rowid";
 $sql.= " ORDER BY cat.rowid ASC, p.ref ASC";
@@ -183,6 +198,10 @@ if (! empty($conf->categorie->enabled))
 
 $moreforfilter.='<tr><td>'.$langs->trans('Supplier') . ' : </td>';
 $moreforfilter.='<td colspan="2">'.$form->select_company($fk_soc, 'fk_soc', '', 1).'</td></tr>';
+
+$moreforfilter.='<tr><td>'.$langs->trans('Product') . ' : </td>';
+$moreforfilter.='<td colspan="2"><input type="text" name="product_ref" value="'.$product_ref.'" placeholder="'.$langs->trans('Ref') . '" /> <input type="text" name="product_label" value="'.$product_label.'"  placeholder="'.$langs->trans('Label') . '"  /></td></tr>';
+
 
 $moreforfilter.='<tr><td>'.$langs->trans('DateInvoice'). ' </td>';
 $moreforfilter.='<td>'.$langs->trans('From'). ' : ' .$form->select_date($date_start, 'date_start', 0,0,0,'',1,0,1) .'</td>';
