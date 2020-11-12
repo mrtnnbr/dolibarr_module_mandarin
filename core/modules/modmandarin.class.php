@@ -58,7 +58,7 @@ class modmandarin extends DolibarrModules
 		// Module description, used if translation string 'ModuleXXXDesc' not found (where XXX is value of numeric property 'numero' of module)
 		$this->description = "Description of module mandarin";
 		// Possible values for version are: 'development', 'experimental', 'dolibarr' or version
-		$this->version = '1.1.1';
+		$this->version = '1.2.0';
 		// Key used in llx_const table to save module status enabled/disabled (where MYMODULE is value of property name of module in uppercase)
 		$this->const_name = 'MAIN_MODULE_'.strtoupper($this->name);
 		// Where to store the module in setup page (0=common,1=interface,2=others,3=very specific)
@@ -184,35 +184,35 @@ class modmandarin extends DolibarrModules
 		$this->rights[$r][4] = 'graph';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = 'ca_cumule';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
-		
+
 		$this->rights[$r][0] = $this->numero . $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = $langs->transnoentitiesnoconv('permGraphCAHoraire');	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'graph';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = 'ca_horaire';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
-		
+
 		$this->rights[$r][0] = $this->numero . $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = $langs->transnoentitiesnoconv('permGraphInterim');	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'graph';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = 'cout_interim';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
-		
+
 		$this->rights[$r][0] = $this->numero . $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = $langs->transnoentitiesnoconv('permGraphTotalHeure');	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'graph';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = 'total_heure';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
-		
+
 		$this->rights[$r][0] = $this->numero . $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = $langs->transnoentitiesnoconv('permGraphEffectif');	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'graph';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = 'effectif';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
-		
+
 		$this->rights[$r][0] = $this->numero . $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = $langs->transnoentitiesnoconv('permGraphHoraireMoyen');	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
@@ -226,28 +226,28 @@ class modmandarin extends DolibarrModules
 		$this->rights[$r][4] = 'graph';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = 'propal_facture';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
-		
+
 		$this->rights[$r][0] = $this->numero . $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = $langs->transnoentitiesnoconv('permGraphProject');	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'graph';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = 'project';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
-		
+
 		$this->rights[$r][0] = $this->numero . $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = $langs->transnoentitiesnoconv('permGraphProjectTask');	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'graph';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = 'project_task';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
-		
+
 		$this->rights[$r][0] = $this->numero . $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = $langs->transnoentitiesnoconv('permGraphProjectExceed');	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
 		$this->rights[$r][4] = 'graph';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$this->rights[$r][5] = 'project';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		$r++;
-		
+
 		$this->rights[$r][0] = $this->numero . $r;	// Permission id (must not be already used)
 		$this->rights[$r][1] = $langs->transnoentitiesnoconv('permReportActionByUser');	// Permission label
 		$this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
@@ -289,28 +289,28 @@ class modmandarin extends DolibarrModules
         $this->rights[$r][4] = 'graph';                         // In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
         $this->rights[$r][5] = 'products_receipt_average';                               // In php code, permission will be checked by test if ($user->rights->permkey->$
         $r++;
-        
+
         $this->rights[$r][0] = $this->numero . $r;	// Permission id (must not be already used)
         $this->rights[$r][1] = $langs->transnoentitiesnoconv('permGraphDiffByCommercial');	// Permission label
         $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
         $this->rights[$r][4] = 'list';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
         $this->rights[$r][5] = 'diff_by_commercial';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
         $r++;
-        
+
         $this->rights[$r][0] = $this->numero . $r;	// Permission id (must not be already used)
         $this->rights[$r][1] = $langs->transnoentitiesnoconv('permReportRepartitionBySupplier');	// Permission label
         $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
         $this->rights[$r][4] = 'list';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
         $this->rights[$r][5] = 'repartition_by_supplier';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
         $r++;
-        
+
         $this->rights[$r][0] = $this->numero . $r;	// Permission id (must not be already used)
         $this->rights[$r][1] = $langs->transnoentitiesnoconv('permGraphPropalCommercial');	// Permission label
         $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
         $this->rights[$r][4] = 'graph';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
         $this->rights[$r][5] = 'propal_commercial';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
         $r++;
-        
+
         $this->rights[$r][0] = $this->numero . $r;	// Permission id (must not be already used)
         $this->rights[$r][1] = $langs->transnoentitiesnoconv('permGraphPropalAllCommercial');	// Permission label
         $this->rights[$r][3] = 0; 					// Permission by default for new user (0/1)
@@ -335,7 +335,7 @@ class modmandarin extends DolibarrModules
 			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
-		
+
 		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=sig',			                // Put 0 if this is a top menu
 			'type'=>'left',			                // This is a Top menu entry
 			'titre'=>$langs->transnoentitiesnoconv('linkMenuGraphCAHoraire'),
@@ -350,7 +350,7 @@ class modmandarin extends DolibarrModules
 			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
-		
+
 		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=sig',			                // Put 0 if this is a top menu
 			'type'=>'left',			                // This is a Top menu entry
 			'titre'=>$langs->transnoentitiesnoconv('linkMenuGraphInterim'),
@@ -365,7 +365,7 @@ class modmandarin extends DolibarrModules
 			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
-		
+
 		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=sig',			                // Put 0 if this is a top menu
 			'type'=>'left',			                // This is a Top menu entry
 			'titre'=>$langs->transnoentitiesnoconv('linkMenuGraphTotalHeure'),
@@ -380,7 +380,7 @@ class modmandarin extends DolibarrModules
 			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
-		
+
 		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=sig',			                // Put 0 if this is a top menu
 			'type'=>'left',			                // This is a Top menu entry
 			'titre'=>$langs->transnoentitiesnoconv('linkMenuGraphHoraireMoyen'),
@@ -395,7 +395,7 @@ class modmandarin extends DolibarrModules
 			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
-		
+
 		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=sig',			                // Put 0 if this is a top menu
 			'type'=>'left',			                // This is a Top menu entry
 			'titre'=>$langs->transnoentitiesnoconv('linkMenuGraphEffectif'),
@@ -410,7 +410,7 @@ class modmandarin extends DolibarrModules
 			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
-		
+
 		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=sig',			                // Put 0 if this is a top menu
 			'type'=>'left',			                // This is a Top menu entry
 			'titre'=>$langs->transnoentitiesnoconv('linkMenuGraphPropalFacture'),
@@ -425,7 +425,7 @@ class modmandarin extends DolibarrModules
 			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
-		
+
 		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=project,fk_leftmenu=projects',			                // Put 0 if this is a top menu
 			'type'=>'left',			                // This is a Top menu entry
 			'titre'=>$langs->transnoentitiesnoconv('linkMenuGraphProject'),
@@ -440,8 +440,8 @@ class modmandarin extends DolibarrModules
 			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
-		
-		
+
+
 		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=project,fk_leftmenu=projects',			                // Put 0 if this is a top menu
 			'type'=>'left',			                // This is a Top menu entry
 			'titre'=>$langs->transnoentitiesnoconv('linkMenuProjectExceedReport'),
@@ -456,8 +456,8 @@ class modmandarin extends DolibarrModules
 			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
-		
-		
+
+
 		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=project,fk_leftmenu=projects',			                // Put 0 if this is a top menu
 			'type'=>'left',			                // This is a Top menu entry
 			'titre'=>$langs->transnoentitiesnoconv('linkMenuProjectByUserReportShort'),
@@ -472,7 +472,7 @@ class modmandarin extends DolibarrModules
 			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
-		
+
 
 		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=project,fk_leftmenu=projects',			                // Put 0 if this is a top menu
 			'type'=>'left',			                // This is a Top menu entry
@@ -504,7 +504,7 @@ class modmandarin extends DolibarrModules
 			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
-		
+
 
 		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=agenda,fk_leftmenu=ReportAgenda',			                // Put 0 if this is a top menu
 			'type'=>'left',			                // This is a Top menu entry
@@ -520,7 +520,7 @@ class modmandarin extends DolibarrModules
 			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
-		
+
 
 		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=gpao,fk_leftmenu=assetOFlist',			                // Put 0 if this is a top menu
 			'type'=>'left',			                // This is a Top menu entry
@@ -536,7 +536,7 @@ class modmandarin extends DolibarrModules
 			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
-		
+
 		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=customers_bills',			                // Put 0 if this is a top menu
 			'type'=>'left',			                // This is a Top menu entry
 			'titre'=>$langs->transnoentitiesnoconv('CAClientMonth'),
@@ -551,7 +551,7 @@ class modmandarin extends DolibarrModules
 			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
-		
+
 		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=commercial,fk_leftmenu=orders',			                // Put 0 if this is a top menu
 			'type'=>'left',			                // This is a Top menu entry
 			'titre'=>$langs->transnoentitiesnoconv('CAClientMonth'),
@@ -582,7 +582,7 @@ class modmandarin extends DolibarrModules
 			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
-		
+
 		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=products,fk_leftmenu=ReportProducts',			                // Put 0 if this is a top menu
 			'type'=>'left',			                // This is a Top menu entry
 			'titre'=>$langs->transnoentitiesnoconv('AverageProducts'),
@@ -597,7 +597,7 @@ class modmandarin extends DolibarrModules
 			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
-		
+
 		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=products,fk_leftmenu=ReportProducts',			                // Put 0 if this is a top menu
 			'type'=>'left',			                // This is a Top menu entry
 			'titre'=>$langs->transnoentitiesnoconv('AverageReceipProducts'),
@@ -612,7 +612,7 @@ class modmandarin extends DolibarrModules
 			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
-		
+
 		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=commercial,fk_leftmenu=orders',			                // Put 0 if this is a top menu
 			'type'=>'left',			                // This is a Top menu entry
 			'titre'=>$langs->transnoentitiesnoconv('linkMenuGraphByCommercial'),
@@ -627,7 +627,7 @@ class modmandarin extends DolibarrModules
 			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
-		
+
 		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=commercial,fk_leftmenu=propals',			                // Put 0 if this is a top menu
 			'type'=>'left',			                // This is a Top menu entry
 			'titre'=>$langs->transnoentitiesnoconv('linkMenuGraphByCommercial'),
@@ -642,7 +642,7 @@ class modmandarin extends DolibarrModules
 			'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
-		
+
 		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=commercial,fk_leftmenu=propals',			                // Put 0 if this is a top menu
 		    'type'=>'left',			                // This is a Top menu entry
 		    'titre'=>$langs->transnoentitiesnoconv('linkMenuPropalesByCommercial'),
@@ -657,7 +657,7 @@ class modmandarin extends DolibarrModules
 		    'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
-		
+
 		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=commercial,fk_leftmenu=propals',			                // Put 0 if this is a top menu
 		    'type'=>'left',			                // This is a Top menu entry
 		    'titre'=>$langs->transnoentitiesnoconv('linkMenuCAPropalesByCommercial'),
@@ -672,7 +672,7 @@ class modmandarin extends DolibarrModules
 		    'user'=>2				                // 0=Menu for internal users, 1=external users, 2=both
 		);
 		$r++;
-		
+
 		$this->menu[$r]=array('fk_menu'=>'fk_mainmenu=accountancy,fk_leftmenu=suppliers_bills',			                // Put 0 if this is a top menu
 			'type'=>'left',			                // This is a Top menu entry
 			'titre'=>$langs->transnoentitiesnoconv('linkMenuRepartitionAchatsBySupplier'),
@@ -787,7 +787,7 @@ class modmandarin extends DolibarrModules
 			'user'=>2
 		);
 		$r++;
-		
+
 		// Add here entries to declare new menus
 		//
 		// Example to declare a new Top Menu entry and its Left menu entry:
@@ -837,7 +837,7 @@ class modmandarin extends DolibarrModules
 		// $this->export_sql_end[$r] .=' WHERE f.fk_soc = s.rowid AND f.rowid = fd.fk_facture';
 		// $this->export_sql_order[$r] .=' ORDER BY s.nom';
 		// $r++;
-		
+
 		 $this->export_code[$r]=$this->rights_class.'_'.$r;
 		 $this->export_label[$r]='CustomerOrderAndBills';	// Translation key (used only if key ExportDataset_xxx_z not found)
          $this->export_enabled[$r]='1';                               // Condition to show export in list (ie: '$user->id==3'). Set to 1 to always show when module is enabled.
@@ -848,7 +848,7 @@ class modmandarin extends DolibarrModules
 		 $this->export_TypeFields_array[$r]=array('s.rowid'=>"Numeric", 's.nom'=>"Text",'s.address'=>'Text','s.zip'=>'Text','s.town'=>'Text','f.rowid'=>"Numeric",'f.facnumber'=>"Text",'f.datec'=>"Date",'f.datef'=>"Date",'f.total'=>"Numeric",'f.total_ttc'=>"Numeric",'f.tva'=>"Numeric",'f.paye'=>"Boolean",'f.fk_statut'=>'Numeric','c.rowid'=>"Numeric",'c.ref'=>"Text",'c.date_creation'=>"Date",'c.date_commande'=>"Date",'c.total_ht'=>"Numeric",'c.total_ttc'=>"Numeric",'c.tva'=>"Numeric",'c.fk_statut'=>"Numeric",'u.login'=>'Text','u.firstname'=>'Text','u.lastname'=>'Text');
 
 		 $this->export_sql_start[$r]='SELECT DISTINCT ';
-		 
+
 		 $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'commande as c';
 		 $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'element_element as ee on (ee.fk_source=c.rowid AND ee.sourcetype="commande")';
 		 $this->export_sql_end[$r] .=' LEFT JOIN '.MAIN_DB_PREFIX.'facture as f on (f.rowid=ee.fk_target AND  ee.targettype="facture")';
@@ -858,7 +858,7 @@ class modmandarin extends DolibarrModules
 		 $this->export_sql_end[$r] .=' WHERE 1';
 		 $this->export_sql_order[$r] .=' ORDER BY s.nom';
 		 $r++;
-		 
+
 	}
 
 	/**
@@ -872,24 +872,24 @@ class modmandarin extends DolibarrModules
 	function init($options='')
 	{
 		$sql = array();
-		
+
 		define('INC_FROM_DOLIBARR',true);
 
 		dol_include_once('/mandarin/config.php');
 		dol_include_once('/mandarin/script/create-maj-base.php');
 
 		$result=$this->_load_tables('/mandarin/sql/');
-		
+
 		dol_include_once('/core/class/extrafields.class.php');
         $extrafields=new ExtraFields($this->db);
 		$res = $extrafields->addExtraField('contrat', 'Contrat', 'varchar', 0, 150, 'user');
-		
+
 		$extrafields=new ExtraFields($this->db);
 		$res = $extrafields->addExtraField('thm', 'THM', 'double', 0, '', 'user');
-		
+
 		$extrafields=new ExtraFields($this->db);
 		$res = $extrafields->addExtraField('horaire', 'Horaire contractuel', 'varchar', 0, 150, 'user');
-		
+
 		$extrafields=new ExtraFields($this->db);
 		$res = $extrafields->addExtraField('dds', 'Date de sortie', 'date', 0, 10, 'user');
 
