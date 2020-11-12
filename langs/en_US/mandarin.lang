@@ -7,3 +7,10 @@ mandarinSetup = mandarin module setup
 mandarinAbout = About mandarin
 
 UserGroup=User group
+
+# GRAPH CA CUMULE / GRAPH CA CUMULATES
+permGraphCACumule = Allow viewing of the Cumulative AC graph (SIG menu)
+linkMenuGraphCACumule = Cumulative turnover graph
+titleGraphCACumule = Cumulative turnover N and N-1
+subTitleVAxisGraphCACumule = Amount excl. tax
+subTitleHAxisGraphCACumule = Weeks
