@@ -6,104 +6,104 @@ ATMAbout = Ce module a été développé par <a href="http://www.atm-consulting.
 mandarinSetup = Configuration du module mandarin
 mandarinAbout = A propos du module mandarin
 
-UserGroup=Groupe utilisateur
+UserGroup = Groupe utilisateur
 
-GRAPH_PROJECT_BY_USER_HIERARCHYME=Limiter la vue à l'utilisateur et ces subordonnés (fonctionne sur le rapport : Nombre de projets par statut opportunité et par commercial)
+GRAPH_PROJECT_BY_USER_HIERARCHYME = Limiter la vue à l'utilisateur et ces subordonnés (fonctionne sur le rapport : Nombre de projets par statut opportunité et par commercial)
 
 
 # GRAPH CA CUMULE
-permGraphCACumule=Autoriser la visualisation du graphique CA cumulé (menu SIG)
-linkMenuGraphCACumule=Graphique CA cumulé
-titleGraphCACumule=CA cumulé N et N-1
-subTitleVAxisGraphCACumule=Montant HT
-subTitleHAxisGraphCACumule=Semaines
+permGraphCACumule = Autoriser la visualisation du graphique CA cumulé (menu SIG)
+linkMenuGraphCACumule = Graphique CA cumulé
+titleGraphCACumule = CA cumulé N et N-1
+subTitleVAxisGraphCACumule = Montant HT
+subTitleHAxisGraphCACumule = Semaines
 
 
 # GRAPH CA HORAIRE
-permGraphCAHoraire=Autoriser la visualisation du graphique CA par heures travaillées (menu SIG)
-linkMenuGraphCAHoraire=Graphique CA horaire
-titleGraphCAHoraire=CA / heures travaillées
-subTitleVAxisGraphCAHoraire=CA / %s et Nombre d'heures à la semaine
-subTitleHAxisGraphCAHoraire=Semaines
+permGraphCAHoraire = Autoriser la visualisation du graphique CA par heures travaillées (menu SIG)
+linkMenuGraphCAHoraire = Graphique CA horaire
+titleGraphCAHoraire = CA / heures travaillées
+subTitleVAxisGraphCAHoraire = CA / %s et Nombre d'heures à la semaine
+subTitleHAxisGraphCAHoraire = Semaines
 
 # GRAPH COUT INTERIM
-MANDARIN_OBJECTIF_COUT_INTERIM=Valeur par défaut de l'objectif coût intérim (vide pour ne pas le voir apparaître sur le graphique)
-permGraphInterim=Autoriser la visualisation du graphique coût intérim (menu sig)
-linkMenuGraphInterim=Graphique coût intérim
-titleGraphInterim=Coût intérim
-subTitleVAxisGraphInterim=Coût à la semaine
-subTitleHAxisGraphInterim=Semaines
+MANDARIN_OBJECTIF_COUT_INTERIM = Valeur par défaut de l'objectif coût intérim (vide pour ne pas le voir apparaître sur le graphique)
+permGraphInterim = Autoriser la visualisation du graphique coût intérim (menu sig)
+linkMenuGraphInterim = Graphique coût intérim
+titleGraphInterim = Coût intérim
+subTitleVAxisGraphInterim = Coût à la semaine
+subTitleHAxisGraphInterim = Semaines
 
 # GRAPH HEURES TRAVAILLEES
-permGraphTotalHeure=Autoriser la visualisation du graphique total heures travaillées (menu SIG)
-linkMenuGraphTotalHeure=Graphique heures travaillées
-titleGraphTotalHeure=Heures travaillées (CDI)
-subTitleVAxisGraphTotalHeure=Heures à la semaine
-subTitleHAxisGraphTotalHeure=Semaines
+permGraphTotalHeure = Autoriser la visualisation du graphique total heures travaillées (menu SIG)
+linkMenuGraphTotalHeure = Graphique heures travaillées
+titleGraphTotalHeure = Heures travaillées (CDI)
+subTitleVAxisGraphTotalHeure = Heures à la semaine
+subTitleHAxisGraphTotalHeure = Semaines
 
 # GRAPH EFFECTIF
-permGraphEffectif=Autoriser la visualisation du graphique de l'effectif (menu SIG)
-linkMenuGraphEffectif=Graphique effectif
-titleGraphEffectif=Effectif
-subTitleVAxisGraphEffectif=Personnels
-subTitleHAxisGraphEffectif=Semaines
+permGraphEffectif = Autoriser la visualisation du graphique de l'effectif (menu SIG)
+linkMenuGraphEffectif = Graphique effectif
+titleGraphEffectif = Effectif
+subTitleVAxisGraphEffectif = Personnels
+subTitleHAxisGraphEffectif = Semaines
 
 #GRAPH CAPACITE DE PRODUCTION PERIODE
-RapportCapaciteProduction=Capacité de production 
-timeInput=Temps saisi sur la période
-set_MANDARIN_GRAPH_TIME_ON_PERIOD=Afficher le rapport de temps saisi/capacité de production.
+RapportCapaciteProduction = Capacité de production 
+timeInput = Temps saisi sur la période
+set_MANDARIN_GRAPH_TIME_ON_PERIOD = Afficher le rapport de temps saisi/capacité de production.
 
 # GRAPH HORAIRE MOYEN
-MANDARIN_HORAIRE_MOYEN_NOMAL=Valeur par défaut de l'horaire moyen (vide pour ne pas le voir apparaître sur le graphique)
-permGraphHoraireMoyen=Autoriser la visualisation du graphique horaire moyen (menu SIG)
-linkMenuGraphHoraireMoyen=Graphique horaire moyen
-titleGraphHoraireMoyen=Horaire moyen
-subTitleVAxisGraphHoraireMoyen=Heures
-subTitleHAxisGraphHoraireMoyen=Semaines
+MANDARIN_HORAIRE_MOYEN_NOMAL = Valeur par défaut de l'horaire moyen (vide pour ne pas le voir apparaître sur le graphique)
+permGraphHoraireMoyen = Autoriser la visualisation du graphique horaire moyen (menu SIG)
+linkMenuGraphHoraireMoyen = Graphique horaire moyen
+titleGraphHoraireMoyen = Horaire moyen
+subTitleVAxisGraphHoraireMoyen = Heures
+subTitleHAxisGraphHoraireMoyen = Semaines
 
 # GRAPH PROPAL FACTURE
-set_MANDARIN_COMMERCIAL_GROUP=Selectionner le groupe d'utilisateur ayant le status de "Commercial"
-err_NOGROUPCOMM=Pour utiliser ce rapport, il vous faut choisir un groupe utilisateur "Commerciaux" dans la configuration du module
-permGraphPropalFacture=Autoriser la visualisation du rapport concernant les propal/facture par commercial (menu SIG)
-permGraphPropalCommercial=Autoriser la visualisation du rapport de ses propales par status
-permGraphPropalAllCommercial=Autoriser la visualisation du rapport des propales par status et par commercial
-mandarinTitlePropalFactureCommercial=Commercial
-mandarinTitlePropalFactureNbPropal=Nb propositions
-mandarinTitlePropalFacturePropalPercentNotSigned=Pourcent non signée
-mandarinTitlePropalFacturePropalNbClient=Nb clients
-mandarinTitlePropalFactureTopClient=Top client
-mandarinTitlePropalFactureTopClientPercent=Pourcent
-mandarinTitlePropalFactureCA=CA
-mandarinTitlePropalFacturePropalPercentCA=Pourcent CA
-mandarinPropalsPerCommercial=Propositions par chargé de clientèle
-mandarinInvoicesPerCommercial=Factures par chargé de clientèle
-linkMenuGraphPropalFacture=Rapport propal/facture par commercial
-titleGraphPalmaresPercentCA=Palmares pourcent CA par client (%s)
-titleGraphPercentCAPerCC=Pourcent CA par CC (%s)
-titleGraphPropalByComm=Graphique du nombre de propositions par statut
-titleGraphCaPropalByComm=Graphique du chiffre d'affaire des propositions par statut
-noData=Aucune donnée disponible
-linkMenuPropalesByCommercial=Nombre Propositions par commercial
-linkMenuCAPropalesByCommercial=CA Propositions par commercial
-propalCreationDate=Date de création de la proposition
+set_MANDARIN_COMMERCIAL_GROUP = Selectionner le groupe d'utilisateur ayant le status de "Commercial"
+err_NOGROUPCOMM = Pour utiliser ce rapport, il vous faut choisir un groupe utilisateur "Commerciaux" dans la configuration du module
+permGraphPropalFacture = Autoriser la visualisation du rapport concernant les propal/facture par commercial (menu SIG)
+permGraphPropalCommercial = Autoriser la visualisation du rapport de ses propales par status
+permGraphPropalAllCommercial = Autoriser la visualisation du rapport des propales par status et par commercial
+mandarinTitlePropalFactureCommercial = Commercial
+mandarinTitlePropalFactureNbPropal = Nb propositions
+mandarinTitlePropalFacturePropalPercentNotSigned = Pourcent non signée
+mandarinTitlePropalFacturePropalNbClient = Nb clients
+mandarinTitlePropalFactureTopClient = Top client
+mandarinTitlePropalFactureTopClientPercent = Pourcent
+mandarinTitlePropalFactureCA = CA
+mandarinTitlePropalFacturePropalPercentCA = Pourcent CA
+mandarinPropalsPerCommercial = Propositions par chargé de clientèle
+mandarinInvoicesPerCommercial = Factures par chargé de clientèle
+linkMenuGraphPropalFacture = Rapport propal/facture par commercial
+titleGraphPalmaresPercentCA = Palmares pourcent CA par client (%s)
+titleGraphPercentCAPerCC = Pourcent CA par CC (%s)
+titleGraphPropalByComm = Graphique du nombre de propositions par statut
+titleGraphCaPropalByComm = Graphique du chiffre d'affaire des propositions par statut
+noData = Aucune donnée disponible
+linkMenuPropalesByCommercial = Nombre Propositions par commercial
+linkMenuCAPropalesByCommercial = CA Propositions par commercial
+propalCreationDate = Date de création de la proposition
 
 #GRAPH EXCES TIMPESPENT
-permGraphProjectExceed=Autoriser la visualisation des projets en dépassement (menu projet)
-linkMenuProjectExceedReport=Projets en dépassement
-ReportExceed=Rapport dépassement projet
+permGraphProjectExceed = Autoriser la visualisation des projets en dépassement (menu projet)
+linkMenuProjectExceedReport = Projets en dépassement
+ReportExceed = Rapport dépassement projet
 
 # GRAPH PROJECT
-permGraphProject=Autoriser la visualisation du graphique projets (menu projets)
-linkMenuGraphProject=Graphique projets
-titleGraphProject=Etat d'avancement des projets
-subTitleVAxisGraphProject=Progression
-subTitleHAxisGraphProject=Projets
+permGraphProject = Autoriser la visualisation du graphique projets (menu projets)
+linkMenuGraphProject = Graphique projets
+titleGraphProject = Etat d'avancement des projets
+subTitleVAxisGraphProject = Progression
+subTitleHAxisGraphProject = Projets
 
 # GRAPH PROJECT TASK
-permGraphProjectTask=Autoriser la visualisation du graphique des tâches (onglet sur fiche projet)
-titleGraphProjectTask=Etat avancement des tâches
-subTitleVAxisGraphProjectTask=Progression
-subTitleHAxisGraphProjectTask=Tâches
+permGraphProjectTask = Autoriser la visualisation du graphique des tâches (onglet sur fiche projet)
+titleGraphProjectTask = Etat avancement des tâches
+subTitleVAxisGraphProjectTask = Progression
+subTitleHAxisGraphProjectTask = Tâches
 
 # RAPPORT EVENEMENTS PAR COMMERCIAUX
 permReportActionByUser=Autoriser la visualisation du rapport nombre événements par commerciaux (menu agenda)
