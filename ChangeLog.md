@@ -4,6 +4,8 @@
 
 ## Not Released
 
+- 1.2.2 : FIX supplier filter on the purchase progression report
+  is not filtered on suppliers *2021-04-06* - 1.2.2. 
 - 1.2.1 : FIX menus not enabled for sales / purchases / turnover
   progression reports *2021-03-31* - 1.2.1.
   
