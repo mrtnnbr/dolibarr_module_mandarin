@@ -197,7 +197,7 @@ if (! empty($conf->categorie->enabled))
 }
 
 $moreforfilter.='<tr><td>'.$langs->trans('Supplier') . ' : </td>';
-$moreforfilter.='<td colspan="2">'.$form->select_company($fk_soc, 'fk_soc', '', 1).'</td></tr>';
+$moreforfilter.='<td colspan="2">'.$form->select_company($fk_soc, 'fk_soc', 's.fournisseur = 1', 1).'</td></tr>';
 
 $moreforfilter.='<tr><td>'.$langs->trans('Product') . ' : </td>';
 $moreforfilter.='<td colspan="2"><input type="text" name="product_ref" value="'.$product_ref.'" placeholder="'.$langs->trans('Ref') . '" /> <input type="text" name="product_label" value="'.$product_label.'"  placeholder="'.$langs->trans('Label') . '"  /></td></tr>';
