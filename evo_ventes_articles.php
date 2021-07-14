@@ -26,6 +26,7 @@ $search_categ = GETPOST('search_categ', 'array');
 $date_start=dol_mktime(0,0,0,GETPOST('date_startmonth'), GETPOST('date_startday'), GETPOST('date_startyear'));
 $date_end=dol_mktime(0,0,0,GETPOST('date_endmonth'), GETPOST('date_endday'), GETPOST('date_endyear'));
 $includeAllProducts = boolval(GETPOST('includeAllProducts', 'alpha'));
+$useBaseCategories = boolval(GETPOST('useBaseCategories', 'alpha'));
 $product_ref = GETPOST('product_ref', 'nohtml');
 $product_label = GETPOST('product_label', 'nohtml');
 
@@ -128,8 +129,14 @@ foreach ($TMonth as $year => $month) {
 
 $sql.= ", SUM(IF(f.datef >= '".date("Y-m-d 00:00:00",$date_start)."' AND f.datef <= '".date("Y-m-d 23:59:59", $date_end)."', ".$numfield.", 0)) as total_global";
 $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_attribute_combination AS com ON com.fk_product_child = p.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product AS basecp ON basecp.fk_product=com.fk_product_parent";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie AS basecat on basecat.rowid=basecp.fk_categorie";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product=p.rowid";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as cat ON cat.rowid=cp.fk_categorie";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as cat ON cat.rowid=";
+$sql.= ($useBaseCategories ? 'COALESCE(' : '');
+$sql.= "cp.fk_categorie";
+$sql.= ($useBaseCategories ? ', basecp.fk_categorie)' : '');
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facturedet AS d ON d.fk_product = p.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture AS f ON f.rowid = d.fk_facture";
 
@@ -211,6 +218,9 @@ $moreforfilter.='<td>'.$langs->trans('to'). ' : ' .$form->select_date($date_end,
 $moreforfilter.='<tr>';
 $moreforfilter.='<td>' . $langs->trans('IncludeAllProducts') . '</td>';
 $moreforfilter.='<td>' . '<input type="checkbox" name="includeAllProducts" '. ($includeAllProducts ? 'checked' : '') .'/>' . '</td>';
+$moreforfilter.='<tr>';
+$moreforfilter.='<td>' . $langs->trans('UseBaseCategories') . '</td>';
+$moreforfilter.='<td>' . '<input type="checkbox" name="useBaseCategories" '. ($useBaseCategories ? 'checked' : '') .'/>' . '</td>';
 $moreforfilter.='</tr>';
 
 $moreforfilter.='</table></div>';
